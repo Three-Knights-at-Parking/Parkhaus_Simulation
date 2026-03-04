@@ -8,10 +8,10 @@
 #include "../types.h"
 
 /*
- * Demand-Modul
- * - simuliert den gesamten Demand pro Tick (global)
- * INPUT: Settings, Current_Tick, Random Number Generator(mit seed)
- * OUTPUT: RETURN Total Demand als GZ
+ * Demand module
+ * - simulates the total demand per tick (global)
+ * INPUT: Settings, Current_Tick, random number generator (with seed)
+ * OUTPUT: returns total demand as unsigned integer
  */
 
 uint16_t Demand_GenerateTotalPerTick(const Settings *p_settings, uint32_t current_tick, const rng* rng);

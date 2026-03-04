@@ -1,9 +1,14 @@
 #ifndef UI_H
 #define UI_H
 
-/*
- * File: ui.h
- * Description: Declarations for general UI functions and shared UI types.
+/**
+ * @file ui.h
+ * @brief Public interface of the terminal-based UI (state machine, input helpers).
+ *
+ * This module provides:
+ * - The main UI state machine (ui_start)
+ * - Basic user input and validation helpers
+ * - The initial welcome screen
  */
 
 #include <stdint.h>
@@ -33,6 +38,9 @@ typedef enum
  * @brief Reads an integer choice from the user via terminal.
  *
  * @return The integer entered by the user.
+ *
+ * @note In the C implementation, handle invalid input safely
+ *       (e.g., check scanf return value or parse with strtol).
  */
 int user_input(void);
 
@@ -43,7 +51,7 @@ int user_input(void);
  * @param[in] max_valid_number   Maximum allowed menu number (minimum is always 0).
  * @return VALID if user_choice is within range, otherwise INVALID.
  */
-validation_flag validate_user_input(int user_choice, const int max_valid_number);
+validation_flag validate_user_input(int user_choice, int max_valid_number);
 
 /**
  * @brief Prints the welcome message and waits for user confirmation.

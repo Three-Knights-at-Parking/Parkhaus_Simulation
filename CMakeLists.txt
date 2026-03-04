@@ -3,51 +3,22 @@ cmake_minimum_required(VERSION 3.16)
 project(Parkhaus_Simulation C)
 
 set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+file(GLOB_RECURSE PARKHAUS_SIMULATION_SOURCES CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
+)
+
+file(GLOB_RECURSE PARKHAUS_SIMULATION_HEADERS CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
+)
 
 add_executable(Parkhaus_Simulation
-        include/types.h
-        include/Car.h
-        include/Queue.h
-        include/Parkhaus.h
-        include/ui/ui_simulation.h
-        include/SimulationObject.h
-        include/Settings.h
-        include/utils/VehicleList.h
-        include/io/ConfigFileHandler.h
-        include/io/SaveHandler.h
-        include/io/GraphHandler.h
-        include/utils/RNG.h
-        include/Simulation.h
-        include/GenericVehicle.h
-        include/utils/StatList.h
-        include/ui/ui.h
-        include/ui/ui_home.h
-        include/ui/ui_config.h
-        include/ui/ui_storage.h
-        src/main.c
-        src/Car.c
-        src/Queue.c
-        src/Parkhaus.c
-        src/generic/SimulationObject.c
-        src/Settings.c
-        src/Simulation.c
-        src/generic/GenericVehicle.c
-        src/io/ConfigFileHandler.c
-        src/io/SaveHandler.c
-        src/io/GraphHandler.c
-        src/ui/ui_simulation.c
-        src/generic/RNG.c
-        src/generic/StatList.c
-        src/generic/VehicleList.c
-        src/ui/ui.c
-        src/ui/ui_home.c
-        src/ui/ui_config.c
-        src/ui/ui_storage.c
-        include/utils/SafteyUtils.h
-        src/utils/SafteyUtils.c
+        ${PARKHAUS_SIMULATION_SOURCES}
+        ${PARKHAUS_SIMULATION_HEADERS}
 )
 
 target_include_directories(Parkhaus_Simulation
         PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )

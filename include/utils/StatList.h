@@ -16,7 +16,7 @@
 
     /**
      * @brief Remove and free all StatsTick nodes in the Simulation's stats list.
-     *        After this call, stats_head and stats_tail will be NULL.
+     *        After this call, p_sim->StatList->p_tick_head and p_sim->StatList->p_tick_tail will be NULL.
      * @note Takes ownership of all StatTick nodes.
      * @param p_sim Pointer to Simulation (owns the list).
      */
@@ -25,7 +25,7 @@
     /**
      * @brief Compute an aggregated StatsSummary from the Simulation's stats list.
      *        Iterates over all StatsTick entries and fills p_summary accordingly.
-     * @param p_sim Pointer to Simulation with stats_head/stats_tail.
+     * @param p_sim Pointer to Simulation with p_sim->StatList tick history.
      * @param p_summary Pointer to StatsSummary to fill.
      * @return 0 on success, non-zero on error (e.g. no stats available).
      */

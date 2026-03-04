@@ -8,10 +8,10 @@
 #include "../types.h"
 
 /*
- * Gate-Routing-Modul
- * - verteilt den globalen Tick-Demand (100%) auf vorhandene Gate-Queues
- * - prueft bei jedem Schritt, ob Queue/Element vorhanden ist
- * - schreibt nur Demand pro Gate in die Queues
+ * Gate routing module
+ * - distributes global per-tick demand (100%) across existing gate queues
+ * - checks at every step whether queue/element exists
+ * - writes only per-gate demand values into the queues
  */
 
 uint8_t GateRouting_DistributeTotalDemand(const Settings* settings, uint_16 total_demand,const Queue* gate_queues, rng* rng, uint32_t current_tick);

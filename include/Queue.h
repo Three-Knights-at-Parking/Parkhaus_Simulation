@@ -56,7 +56,7 @@
     GenericVehicle *queue_dequeue(Queue *p_queue);
 
     /**
-     * @brief Remove a specific vehicle from the queue (z.B. Timeout / max tick reached).
+     * @brief Remove a specific vehicle from the queue (e.g. timeout / max tick reached).
      *        This will free the memory related to this vehicle.
      * @param p_queue Pointer to the Queue.
      * @param p_target Pointer to the Vehicle that should be removed.

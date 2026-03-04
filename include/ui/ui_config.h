@@ -1,95 +1,173 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-/*
- * File: config.h
- * Description: Settings structure and configuration menu declarations.
+/**
+ * @file config.h
+ * @brief Configuration menu UI and input helpers for Settings.
+ *
+ * This module is responsible for:
+ * - Initializing default Settings values (UI-side defaults)
+ * - Editing Settings values via terminal input
+ * - Printing the configuration menu screen
+ *
+ * Note:
+ * - The settings object is owned by the UI state machine (ui_start) and is
+ *   passed into this module by pointer.
  */
 
 #include <stdint.h>
 #include "ui.h"
+#include "types.h"
 
-/* Maximum valid menu number in Config menu (0..CONFIG_MAX_VALID_NUMBER). */
-#define CONFIG_MAX_VALID_NUMBER 6
+/* Maximum valid menu number in Config menu (valid range: 0..CONFIG_MAX_VALID_NUMBER). */
+#define CONFIG_MAX_VALID_NUMBER (10)
+
+/* Name input constraints */
+#define NAME_MAX_LEN (64)
+
+/* Probability is configured in percent. */
+#define MIN_PROB_PERCENT (0.0f)
+#define MAX_PROB_PERCENT (100.0f)
 
 /* Allowed ranges for settings (min/max). */
-#define MIN_SIZE       1
-#define MIN_FLOORS     1
-#define MIN_GATES      1
-#define MIN_TICK       10
-#define MIN_MAX_TICKS  -365
-#define MIN_SEED       -1
+#define MIN_CAPACITY          (1)
+#define MIN_FLOORS            (1)
+#define MIN_GATES             (1)
+#define MIN_GATE_ENTRY_SEC    (1)
+#define MIN_TICK_SEC          (1)
+#define MIN_REAL_EQUIV_SEC    (10)
+#define MIN_MAX_TICKS         (-365)
+#define MIN_SEED              (-1)
 
-#define MAX_SIZE       200
-#define MAX_FLOORS     10
-#define MAX_GATES      6
-#define MAX_TICK       8640
-#define MAX_MAX_TICKS  100
-#define MAX_SEED       2147483647
-
-/**
- * @brief Simulation settings configurable by the user.
- */
-typedef struct
-{
-    uint16_t size;            /* Total parking spots per floor */
-    uint8_t  floors;          /* Number of floors */
-    uint8_t  gates;           /* Number of gates */
-    uint16_t real_equivalent; /* Tick equivalent in real time (seconds), min. 10 */
-    int32_t  max_ticks;       /* Max ticks before stop; -1/-2/... for day equivalents */
-    int32_t  rand_seed;       /* Random seed; -1 means use current time */
-} Settings;
+#define MAX_CAPACITY          (200)
+#define MAX_FLOORS            (10)
+#define MAX_GATES             (6)
+#define MAX_GATE_ENTRY_SEC    (120)
+#define MAX_TICK_SEC          (86400)
+#define MAX_REAL_EQUIV_SEC    (86400)
+#define MAX_MAX_TICKS         (100)
+#define MAX_SEED              (2147483647)
 
 /**
- * @brief Indicates whether settings are initialized with default values.
+ * @brief Initialization state of the Settings object (UI-side).
  */
 typedef enum
 {
-    NOT_INITIALIZED,
-    INITIALIZED
-} settings_state_flag;
+    SETTINGS_NOT_INITIALIZED = 0,
+    SETTINGS_INITIALIZED
+} settings_init_state_t;
 
 /**
- * @brief Initializes Settings with default values.
+ * @brief Global initialization state flag used by UI menus.
  *
- * @return Settings structure with default configuration.
+ * The state is set to SETTINGS_NOT_INITIALIZED at program start (welcome_message)
+ * and changed to SETTINGS_INITIALIZED after default initialization.
  */
-Settings init_settings(void);
+extern settings_init_state_t g_settings_state;
+
+/**
+ * @brief Initializes the Settings struct with UI default values.
+ *
+ * @param[out] p_settings Settings object to initialize.
+ *
+ * @note This function only assigns UI default values.
+ *       If the data/simulation layer has its own initialization routine,
+ *       it should be called there (or integrated later).
+ */
+void init_settings(Settings *p_settings);
 
 /**
  * @brief Prints the configuration screen including current settings.
  *
- * @param[in] settings The current settings to display.
+ * @param[in] p_settings The current settings to display.
  */
-void print_configscreen(Settings settings);
+void print_configscreen(const Settings *p_settings);
 
 /**
- * @brief Validates a numeric config value based on range and negativity rule.
+ * @brief Validates an integer config value based on range and negativity rule.
  *
- * @param[in] new_value       Value entered by the user.
+ * @param[in] value           Value entered by the user.
  * @param[in] min             Minimum allowed value.
  * @param[in] max             Maximum allowed value.
- * @param[in] allow_negative  If FALSE, negative values are rejected.
+ * @param[in] allow_negative  If 0, negative values are rejected.
  * @return VALID if value is acceptable, otherwise INVALID.
  */
-validation_flag validate_user_input_config(int new_value, int min, int max, int allow_negative);
+validation_flag validate_int_input(int value, int min, int max, int allow_negative);
 
 /**
- * @brief Reads and validates a config value until it is valid.
+ * @brief Validates a float percentage input in the range [0.0 .. 100.0].
+ *
+ * @param[in] value Value entered by the user.
+ * @return VALID if value is within [0.0 .. 100.0], otherwise INVALID.
+ */
+validation_flag validate_float_input_percent(float value);
+
+/**
+ * @brief Validates a string input (non-empty and length <= max_len).
+ *
+ * @param[in] text     User input text.
+ * @param[in] max_len  Maximum allowed length.
+ * @return VALID if acceptable, otherwise INVALID.
+ */
+validation_flag validate_string_input(const char *text, int max_len);
+
+/**
+ * @brief Reads and validates an integer value until it is valid.
  *
  * @param[in] min             Minimum allowed value.
  * @param[in] max             Maximum allowed value.
- * @param[in] allow_negative  If FALSE, negative values are rejected.
+ * @param[in] allow_negative  If 0, negative values are rejected.
  * @return A validated integer value within the configured constraints.
  */
-int edit_setting(int min, int max, int allow_negative);
+int edit_int_setting(int min, int max, int allow_negative);
+
+/**
+ * @brief Reads and validates a float percentage value until it is valid.
+ *
+ * @return A validated percentage value within [0.0 .. 100.0].
+ */
+float edit_float_setting_percent(void);
+
+/**
+ * @brief Reads and validates a string value until it is valid.
+ *
+ * @param[in] max_len Maximum allowed length.
+ * @return A validated string (pseudocode: returned string ownership depends on your C impl).
+ */
+char *edit_string_setting(int max_len);
+
+/**
+ * @brief Shows output mode selection screen and returns selection in [0..3].
+ *
+ * @return Mode selection number (0..3).
+ */
+int edit_mode_select(void);
+
+/**
+ * @brief Maps numeric mode selection to OutputMode enum.
+ *
+ * @param[in] mode_select Number in range [0..3].
+ * @return Corresponding OutputMode value.
+ */
+enum OutputMode apply_mode_select(int mode_select);
+
+/**
+ * @brief Converts OutputMode enum to a readable string.
+ *
+ * @param[in] mode Output mode enum value.
+ * @return Constant string representation.
+ */
+const char *output_mode_to_string(enum OutputMode mode);
 
 /**
  * @brief Handles the configuration menu interaction.
  *
- * @param[in,out] settings The current settings (may be initialized/updated).
+ * Initializes settings with defaults on first entry and allows the user
+ * to change individual fields.
+ *
+ * @param[in,out] p_settings The current settings (may be initialized/updated).
  * @return Next UI state depending on user selection.
  */
-ui_state config_menu(Settings settings);
+ui_state config_menu(Settings *p_settings);
 
 #endif /* CONFIG_H */
