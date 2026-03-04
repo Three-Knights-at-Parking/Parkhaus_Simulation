@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Teil1_Parkhaus_Simulation_Plannung C)
+project(Parkhaus_Simulation C)
 
 set(CMAKE_C_STANDARD 17)
 
-add_executable(Teil1_Parkhaus_Simulation_Plannung
+add_executable(Parkhaus_Simulation
         include/types.h
         include/Car.h
         include/Queue.h
@@ -43,9 +43,11 @@ add_executable(Teil1_Parkhaus_Simulation_Plannung
         src/ui/ui_home.c
         src/ui/ui_config.c
         src/ui/ui_storage.c
+        include/utils/SafteyUtils.h
+        src/utils/SafteyUtils.c
 )
 
-target_include_directories(Teil1_Parkhaus_Simulation_Plannung
+target_include_directories(Parkhaus_Simulation
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
