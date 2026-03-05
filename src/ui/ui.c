@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <limits.h>
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_home.h"
@@ -47,6 +48,18 @@ int user_input(void)
 
     /* No digits were found - endptr points to the first element of buffer*/
     if (endptr == buffer)
+    {
+        return -1;
+    }
+
+    /* Skip trailing whitespace */
+    while (*endptr == ' ' || *endptr == '\t' || *endptr == '\n')
+    {
+        endptr++;
+    }
+
+    /* Reject trailing garbage, e.g. "12abc" */
+    if (*endptr != '\0')
     {
         return -1;
     }
