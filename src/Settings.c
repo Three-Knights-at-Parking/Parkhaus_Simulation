@@ -56,15 +56,17 @@ static int settings_set_owned_string(char **p_dest, const char *src) {
 }
 
 int settings_load_from_file(Settings *p_settings, const char *src_path) {
+    // TODO
 }
 
 int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
+    // TODO
 }
 
 int settings_init(Settings *p_settings, const char *src_path, const char *name, const uint16_t size, const uint8_t floors,
     const uint8_t gates, const uint16_t real_equivalent, const enum OutputMode output_mode, const int32_t max_ticks, const int32_t rand_seed) {
 
-    if (checkNull(p_settings) || checkNull(name) || checkNull(src_path)) {
+    if (checkNull(p_settings) || checkNull(name)  || checkNull(src_path)) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
@@ -208,6 +210,7 @@ int settings_set_rand_seed(Settings *p_settings, const int32_t rand_seed) {
 }
 
 int settings_to_parkhaus(const Settings *p_settings, Parkhaus *p_parkhaus) {
+    // TODO
 }
 
 int delete_settings(Settings *p_settings) {
