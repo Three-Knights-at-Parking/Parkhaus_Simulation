@@ -14,12 +14,14 @@
 /* Helper functions                                                          */
 /* ========================================================================= */
 
-static void wait_for_enter(void) {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+static void press_enter_to_continue(void)
+{
+    char tmp[8];
+    (void)fgets(tmp, sizeof(tmp), stdin);
 }
 
-static void clear_terminal(void)
+/* Portable pseudo-clear: prints newlines to push previous output out of view. */
+ void clear_terminal(void)
 {
     for (int i = 0; i < 40; i++)
     {
@@ -85,7 +87,7 @@ validation_flag validate_user_input(const int user_choice, const int max_valid_n
     {
         printf("Your input is not a valid integer!\n");
         printf("Please press ENTER and try again...\n");
-        wait_for_enter();
+        press_enter_to_continue();
         return INVALID;
     }
 
@@ -94,7 +96,7 @@ validation_flag validate_user_input(const int user_choice, const int max_valid_n
         printf("The number you entered is invalid!\n");
         printf("Please only choose between the numbers displayed.\n");
         printf("Press ENTER and try again...\n");
-        wait_for_enter();
+        press_enter_to_continue();
         return INVALID;
     }
 
@@ -116,7 +118,7 @@ ui_state welcome_message(void)
     printf("[Welcome Message with brief description]\n\n");
     printf("Press ENTER to continue...\n");
 
-    wait_for_enter();
+    press_enter_to_continue();
 
     return UI_HOME;
 }
