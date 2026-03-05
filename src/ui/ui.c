@@ -5,6 +5,18 @@
 
 #include "../include/ui/ui.h"
 
+/* ========================================================================= */
+/* Helper functions                                                          */
+/* ========================================================================= */
+
+static void wait_for_enter(void) {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+/* ========================================================================= */
+/* Shared input helpers                                                      */
+/* ========================================================================= */
 int user_input(void)
 {
     char buffer[64];
@@ -35,13 +47,13 @@ int user_input(void)
     return (int)value;
 }
 
-validation_flag validate_user_input(int user_choice, int max_valid_number)
+validation_flag validate_user_input(const int user_choice, const int max_valid_number)
 {
     if (user_choice < 0)
     {
         printf("Your input is not a valid integer!\n");
         printf("Please press ENTER and try again...\n");
-
+        wait_for_enter();
         return INVALID;
     }
 
@@ -50,7 +62,7 @@ validation_flag validate_user_input(int user_choice, int max_valid_number)
         printf("The number you entered is invalid!\n");
         printf("Please only choose between the numbers displayed.\n");
         printf("Press ENTER and try again...\n");
-
+        wait_for_enter();
         return INVALID;
     }
 
