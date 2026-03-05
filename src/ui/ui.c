@@ -25,6 +25,7 @@ static void clear_terminal(void)
 /* ========================================================================= */
 /* Shared input helpers                                                      */
 /* ========================================================================= */
+
 int user_input(void)
 {
     char buffer[64];
@@ -75,4 +76,24 @@ validation_flag validate_user_input(const int user_choice, const int max_valid_n
     }
 
     return VALID;
+}
+
+/* ========================================================================= */
+/* Welcome screen                                                            */
+/* ========================================================================= */
+
+ui_state welcome_message(void)
+{
+    clear_terminal();
+
+    printf("=========================================\n");
+    printf("     Parkhaus-Simulation Rauenegg\n");
+    printf("=========================================\n\n");
+
+    printf("[Welcome Message with brief description]\n\n");
+    printf("Press ENTER to continue...\n");
+
+    wait_for_enter();
+
+    return UI_HOME;
 }
