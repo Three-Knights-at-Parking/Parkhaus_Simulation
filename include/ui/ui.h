@@ -8,7 +8,7 @@
  * This module provides:
  * - The main UI state machine (ui_start)
  * - Basic user input and validation helpers
- * - The initial welcome screen
+ * - Simple terminal helper functions used by multiple UI modules
  */
 
 #include <stdint.h>
@@ -34,24 +34,49 @@ typedef enum
     VALID
 } validation_flag;
 
+/* ========================================================================= */
+/* Shared UI helper functions                                                */
+/* ========================================================================= */
+
 /**
- * @brief Reads an integer choice from the user via terminal.
+ * @brief Waits for the user to press ENTER.
  *
- * @return The integer entered by the user.
+ * Reads and discards one line from stdin. If the user types more than fits into
+ * the internal buffer, the remaining characters are discarded as well.
+ */
+void press_enter_to_continue(void);
+
+/**
+ * @brief Clears the terminal output in a portable way (pseudo clear).
  *
- * @note In the C implementation, handle invalid input safely
- *       (e.g., check scanf return value or parse with strtol).
+ * Prints multiple newlines to push previous output out of view.
+ * (This does not truly clear the terminal scrollback buffer.)
+ */
+void clear_terminal(void);
+
+/* ========================================================================= */
+/* Shared input helpers                                                      */
+/* ========================================================================= */
+
+/**
+ * @brief Reads a raw menu selection from stdin.
+ *
+ * @return Parsed integer on success, or -1 on invalid input/overflow/underflow.
  */
 int user_input(void);
 
 /**
  * @brief Validates a menu choice against a valid range [0..max_valid_number].
  *
- * @param[in] user_choice        The value entered by the user.
- * @param[in] max_valid_number   Maximum allowed menu number (minimum is always 0).
+ * @param[in] user_choice       The value entered by the user.
+ * @param[in] max_valid_number  Maximum allowed menu number (minimum is always 0).
  * @return VALID if user_choice is within range, otherwise INVALID.
  */
-validation_flag validate_user_input(int user_choice, int max_valid_number);
+validation_flag validate_user_input(const int user_choice, const int max_valid_number);
+
+/* ========================================================================= */
+/* UI state machine                                                          */
+/* ========================================================================= */
 
 /**
  * @brief Prints the welcome message and waits for user confirmation.
