@@ -17,7 +17,16 @@
 static void press_enter_to_continue(void)
 {
     char tmp[8];
-    (void)fgets(tmp, sizeof(tmp), stdin);
+
+    if (fgets(tmp, sizeof(tmp), stdin) == NULL)
+        return;
+
+    /*End Clearing buffer to prevent further complications with user inputs */
+    if (strchr(tmp, '\n') == NULL)
+    {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+    }
 }
 
 /* Portable pseudo-clear: prints newlines to push previous output out of view. */
