@@ -34,3 +34,25 @@ int user_input(void)
 
     return (int)value;
 }
+
+validation_flag validate_user_input(int user_choice, int max_valid_number)
+{
+    if (user_choice < 0)
+    {
+        printf("Your input is not a valid integer!\n");
+        printf("Please press ENTER and try again...\n");
+
+        return INVALID;
+    }
+
+    if (user_choice > max_valid_number)
+    {
+        printf("The number you entered is invalid!\n");
+        printf("Please only choose between the numbers displayed.\n");
+        printf("Press ENTER and try again...\n");
+
+        return INVALID;
+    }
+
+    return VALID;
+}
