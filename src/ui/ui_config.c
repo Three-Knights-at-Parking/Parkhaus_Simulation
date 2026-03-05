@@ -9,3 +9,31 @@
 
 #include "../include/Settings.h"
 #include "../include/types.h"
+
+/* ========================================================================= */
+/* Screen printing                                                           */
+/* ========================================================================= */
+
+void print_configscreen(const Settings *p_settings)
+{
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("             CONFIG MENU\n");
+    printf("====================================\n\n");
+
+    printf("Current Settings\n");
+    printf("------------------------------------\n");
+    printf("1  Name                 : %s\n", (p_settings->name != NULL) ? p_settings->name : "Rauenegg");
+    printf("2  Capacity / Floor     : %u\n", (unsigned)p_settings->capacity);
+    printf("3  Floors               : %u\n", (unsigned)p_settings->floors);
+    printf("4  Gates                : %u\n", (unsigned)p_settings->gates);
+    printf("5  Gate Entry Time (sec): %u\n", (unsigned)p_settings->gate_entry_inSec);
+    printf("6  Tick Length (sec)    : %u\n", (unsigned)p_settings->tick_inSec);
+    printf("7  Output Mode          : %s\n", output_mode_to_string(p_settings->output_mode));
+    printf("8  Entry Prob / Sec (%%)  : %.2f\n", p_settings->entry_probability_perSec_prec);
+    printf("9  Max Ticks            : %ld\n", (long)p_settings->max_ticks);
+    printf("10 Random Seed          : %ld\n", (long)p_settings->rand_seed);
+    printf("------------------------------------\n");
+    printf("0  Back to Home\n\n");
+}
