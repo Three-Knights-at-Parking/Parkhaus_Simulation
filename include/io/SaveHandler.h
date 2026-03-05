@@ -100,6 +100,7 @@
     const char *savehandler_resolve_stats_path(const char *dest_path);
 
     /**
+     * FIXME implemented void pointer to file because of dependency question. This is a temporary Fix!
      * @brief Write settings metadata and CSV header line if the stats file is new/empty.
      *
      * If the file is empty, write metadata and column titles into the stats file. This function
@@ -112,7 +113,7 @@
      * @param p_sim Pointer to the Simulation whose Settings are written as metadata.
      * @param mode  OutputMode that determines which header columns are used.
      */
-    void savehandler_write_header_if_new(FileHandle *file,
+    void savehandler_write_header_if_new(void *file,
                                          const Simulation *p_sim,
                                          enum OutputMode mode);
 

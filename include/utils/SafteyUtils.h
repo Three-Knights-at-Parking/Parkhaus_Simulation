@@ -7,11 +7,18 @@ enum Severity{LOW, MEDIUM, HIGH};
 
 
 /**
- * Check if a given pointer is null. This works on all non built-in types.
+ * Check if a given pointer is null. This works on all non-built-in types.
  * @param ptr Pointer to the object to be checked
- * @return If the pointer is null.
+ * @return 1 if the pointer is null.
  */
 int checkNull(const void *ptr);
+
+/**
+ * Check if any given string is empty (or NULL)
+ * @param src String to check
+ * @return 1 if empty.
+ */
+int checkEmptyString(const char *src);
 
 /**
  * Print a formatted error message.
