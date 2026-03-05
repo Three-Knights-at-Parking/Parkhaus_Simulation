@@ -57,6 +57,12 @@ int user_input(void)
         return -1;
     }
 
+    /* Range check before cast */
+    if (value < INT_MIN || value > INT_MAX)
+    {
+        return -1;
+    }
+
     return (int)value;
 }
 
