@@ -4,6 +4,10 @@
 #include <errno.h>
 
 #include "../include/ui/ui.h"
+#include "../include/ui/ui_home.h"
+#include "../include/ui/ui_config.h"
+#include "../include/ui/ui_simulation.h"
+#include "../include/ui/ui_storage.h"
 
 /* ========================================================================= */
 /* Helper functions                                                          */
@@ -96,4 +100,39 @@ ui_state welcome_message(void)
     wait_for_enter();
 
     return UI_HOME;
+}
+
+/* ========================================================================= */
+/* Main UI state machine                                                     */
+/* ========================================================================= */
+
+ui_state ui_start(void)
+{
+    ui_state state = welcome_message();
+
+    while (state != UI_EXIT)
+    {
+        if (state == UI_HOME)
+        {
+            state = home_menu();
+        }
+        else if (state == UI_KONFIG)
+        {
+            state = config_menu();
+        }
+        else if (state == UI_SIMULATION)
+        {
+            state = simulation_menu();
+        }
+        else if (state == UI_STORAGE)
+        {
+            state = storage_menu();
+        }
+        else
+        {
+            state = UI_HOME;
+        }
+    }
+
+    return UI_EXIT;
 }
