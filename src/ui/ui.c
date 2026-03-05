@@ -14,6 +14,14 @@ static void wait_for_enter(void) {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+static void clear_terminal(void)
+{
+    for (int i = 0; i < 40; i++)
+    {
+        printf("\n");
+    }
+}
+
 /* ========================================================================= */
 /* Shared input helpers                                                      */
 /* ========================================================================= */
