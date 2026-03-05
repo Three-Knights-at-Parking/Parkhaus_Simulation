@@ -30,3 +30,40 @@ void print_homescreen(void)
     printf("0 - Quit\n");
     printf("\n");
 }
+
+/* ========================================================================= */
+/* Menu logic                                                                */
+/* ========================================================================= */
+
+ui_state home_menu(void)
+{
+    int choice = 0;
+    validation_flag valid = INVALID;
+
+    print_homescreen();
+
+    while (valid != VALID)
+    {
+        choice = user_input();
+        valid = validate_user_input(choice, HOME_MAX_VALID_NUMBER);
+    }
+
+    /* Map numeric menu choice to UI state.
+       The state machine in ui_start() will call the appropriate menu handler. */
+    if (choice == 1)
+    {
+        return UI_SIMULATION;
+    }
+    else if (choice == 2)
+    {
+        return UI_KONFIG;
+    }
+    else if (choice == 3)
+    {
+        return UI_STORAGE;
+    }
+    else /* choice == 0 */
+    {
+        return UI_EXIT;
+    }
+}
