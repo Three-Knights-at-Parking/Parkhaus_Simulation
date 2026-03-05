@@ -14,23 +14,28 @@
 /* Helper functions                                                          */
 /* ========================================================================= */
 
-static void press_enter_to_continue(void)
+void press_enter_to_continue(void)
 {
     char tmp[8];
 
     if (fgets(tmp, sizeof(tmp), stdin) == NULL)
+    {
         return;
+    }
 
-    /*End Clearing buffer to prevent further complications with user inputs */
+    /* Clear remaining characters if the line did not fit into tmp[]. */
     if (strchr(tmp, '\n') == NULL)
     {
         int c;
-        while ((c = getchar()) != '\n' && c != EOF);
+        while ((c = getchar()) != '\n' && c != EOF)
+        {
+            /* discard */
+        }
     }
 }
 
 /* Portable pseudo-clear: prints newlines to push previous output out of view. */
- void clear_terminal(void)
+void clear_terminal(void)
 {
     for (int i = 0; i < 40; i++)
     {
@@ -50,14 +55,21 @@ int user_input(void)
 
     printf("Enter the number (int) you want to navigate to: ");
 
-    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
         return -1;
     }
 
     errno = 0;
     value = strtol(buffer, &endptr, 10);
 
-    /* No digits were found - endptr points to the first element of buffer*/
+    /* Overflow/underflow */
+    if (errno != 0)
+    {
+        return -1;
+    }
+
+    /* No digits were found */
     if (endptr == buffer)
     {
         return -1;
@@ -71,12 +83,6 @@ int user_input(void)
 
     /* Reject trailing garbage, e.g. "12abc" */
     if (*endptr != '\0')
-    {
-        return -1;
-    }
-
-    /* Overflow/underflow */
-    if (errno != 0)
     {
         return -1;
     }
