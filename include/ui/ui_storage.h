@@ -40,7 +40,7 @@ void print_storagescreen(void);
  *
  * @return Next UI state depending on user selection.
  */
-ui_state storage_menu(void);
+ui_state storage_menu();
 
 /**
  * @brief Browses a directory and allows navigation through its entries.
