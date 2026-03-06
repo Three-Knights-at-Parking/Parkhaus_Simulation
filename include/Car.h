@@ -28,7 +28,7 @@
      *        unless you are the owner of the car.
      * @param p_car Pointer to the Car to free (can be NULL).
      */
-    void car_destroy(Car *p_car);
+    int car_destroy(Car *p_car);
 
     /**
      * @brief Tick function for Car.
