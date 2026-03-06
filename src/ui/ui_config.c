@@ -102,6 +102,43 @@ static int parse_int32(const char *p_text, int32_t *p_out)
     return 0;
 }
 
+static int parse_float(const char *p_text, float *p_out)    //Maybe possible to synthesize with other parsing functions
+{
+    char *p_end = NULL;
+    float value = 0.0f;
+
+    if (p_text == NULL || p_out == NULL)
+    {
+        return -1;
+    }
+
+    errno = 0;
+    value = strtof(p_text, &p_end);
+
+    if (errno != 0)
+    {
+        return -1;
+    }
+
+    if (p_end == p_text)
+    {
+        return -1;
+    }
+
+    while (*p_end == ' ' || *p_end == '\t')
+    {
+        p_end++;
+    }
+
+    if (*p_end != '\0')
+    {
+        return -1;
+    }
+
+    *p_out = value;
+    return 0;
+}
+
 static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, const int allow_negative, int32_t *p_out)
 {
     char buffer[64];
