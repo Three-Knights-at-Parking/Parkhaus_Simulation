@@ -22,6 +22,7 @@ static void trim_newline(char *p_text)
     }
 
     const size_t len = strlen(p_text);
+
     if (len == 0U)
     {
         return;
@@ -33,9 +34,9 @@ static void trim_newline(char *p_text)
     }
 }
 
-static int read_line(char *p_buffer, size_t buffer_len)
+static int read_line(char *p_buffer, const size_t buffer_len)
 {
-    if (p_buffer == NULL)
+    if (p_buffer == NULL || buffer_len == 0U)
     {
         return -1;
     }
@@ -45,10 +46,10 @@ static int read_line(char *p_buffer, size_t buffer_len)
         return -1;
     }
 
-    /* If the line did not fit, discard the rest. */
     if (strchr(p_buffer, '\n') == NULL)
     {
         int c;
+
         while ((c = getchar()) != '\n' && c != EOF)
         {
             /* discard */
