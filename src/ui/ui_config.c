@@ -7,7 +7,7 @@
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_config.h"
 
-#include "../include/utils/Settings.h"
+#include "../include/Settings.h"
 #include "../include/types.h"
 
 /* ========================================================================= */
@@ -122,7 +122,7 @@ static int read_int32_in_range(const char *p_prompt, const int32_t min_val, cons
         }
 
         int32_t value = 0;
-        if (parse_int32(buffer, &value) != 0)   //parse_int32() will be implemented in the next step
+        if (parse_int32(buffer, &value) != 0)
         {
             printf("Your input is not a valid integer!\n");
             printf("Press ENTER and try again...\n");
