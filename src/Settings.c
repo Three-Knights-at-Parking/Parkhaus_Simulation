@@ -1,5 +1,4 @@
 #include "Settings.h"
-
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
@@ -33,7 +32,6 @@
 
 #include "utils/SafteyUtils.h"
 #include "json-c/json.h"
-#include "json-c/json_tokener.h"
 #include "json-c/json_object.h"
 #include "stdio.h"
 #include "sys/stat.h"
@@ -44,51 +42,6 @@ static char *settings_make_default_config_path();
 static int settings_is_relative_path(const char *path);
 
 
-static int settings_set_name(Settings *p_settings, const char *name) {
-    if (checkNull(p_settings) || checkNull(name)) {
-        print_error_s("Field cannot be null.", HIGH);
-        return ERROR;
-    }
-
-    size_t len = strlen(name);
-    if (len > SETTINGS_NAME_MAX_CHARS) {
-        len = SETTINGS_NAME_MAX_CHARS;
-    }
-
-    char *buf = (char *)malloc(len + 1);
-    if (checkNull(buf)) {
-        print_error_s("Failed setting Parkhaus name. Out of Memory.", HIGH);
-        return ERROR;
-    }
-
-    memcpy(buf, name, len);
-    buf[len] = '\0';
-
-    free(p_settings->name);
-    p_settings->name = buf;
-    return OK;
-}
-
-static int settings_set_owned_string(char **p_dest, const char *src) {
-    if (checkNull(p_dest) || checkNull(src)) {
-        return ERROR;
-    }
-    if (src[0] == '\0') {
-        return ERROR;
-    }
-
-    const size_t len = strlen(src);
-    char *buf = (char *)malloc(len + 1);
-    if (checkNull(buf)) {
-        return ERROR;
-    }
-
-    memcpy(buf, src, len + 1);
-
-    free(*p_dest);
-    *p_dest = buf;
-    return OK;
-}
 
 int settings_load_from_file(Settings *p_settings, const char *src_path) {
     if (checkNull(p_settings) || checkNull(src_path)) {
@@ -216,20 +169,20 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
 int settings_init(Settings *p_settings,
                   const char *src_path,
                   const char *name,
-                  uint16_t capacity,
-                  uint8_t floors,
-                  uint8_t gates,
-                  uint16_t real_equivalent,
-                  enum OutputMode output_mode,
-                  int32_t max_ticks,
-                  int32_t rand_seed,
-                  uint16_t gate_entry_inSec,
-                  uint16_t tick_inSec,
-                  uint32_t max_parking_ticks,
-                  uint32_t min_parking_ticks,
-                  uint8_t mode_select,
-                  float entry_probability_perSec_prec,
-                  enum QueueLeavable is_leavable) {
+                  const uint16_t capacity,
+                  const uint8_t floors,
+                  const uint8_t gates,
+                  const uint16_t real_equivalent,
+                  const enum OutputMode output_mode,
+                  const int32_t max_ticks,
+                  const int32_t rand_seed,
+                  const uint16_t gate_entry_inSec,
+                  const uint16_t tick_inSec,
+                  const uint32_t max_parking_ticks,
+                  const uint32_t min_parking_ticks,
+                  const uint8_t mode_select,
+                  const float entry_probability_perSec_prec,
+                  const enum QueueLeavable is_leavable) {
 
     if (checkNull(p_settings) || checkNull(name)  || checkNull(src_path)) {
         print_error_s("Field cannot be null.", HIGH);
@@ -617,4 +570,49 @@ static char *settings_make_default_config_path() {
     if (fallback) memcpy(fallback, default_name, strlen(default_name) + 1);
     return fallback;
 #endif
+}
+static int settings_set_name(Settings *p_settings, const char *name) {
+    if (checkNull(p_settings) || checkNull(name)) {
+        print_error_s("Field cannot be null.", HIGH);
+        return ERROR;
+    }
+
+    size_t len = strlen(name);
+    if (len > SETTINGS_NAME_MAX_LENGTH) {
+        len = SETTINGS_NAME_MAX_LENGTH;
+    }
+
+    char *buf = (char *)malloc(len + 1);
+    if (checkNull(buf)) {
+        print_error_s("Failed setting Parkhaus name. Out of Memory.", HIGH);
+        return ERROR;
+    }
+
+    memcpy(buf, name, len);
+    buf[len] = '\0';
+
+    free(p_settings->name);
+    p_settings->name = buf;
+    return OK;
+}
+
+static int settings_set_owned_string(char **p_dest, const char *src) {
+    if (checkNull(p_dest) || checkNull(src)) {
+        return ERROR;
+    }
+    if (src[0] == '\0') {
+        return ERROR;
+    }
+
+    const size_t len = strlen(src);
+    char *buf = (char *)malloc(len + 1);
+    if (checkNull(buf)) {
+        return ERROR;
+    }
+
+    memcpy(buf, src, len + 1);
+
+    free(*p_dest);
+    *p_dest = buf;
+    return OK;
 }

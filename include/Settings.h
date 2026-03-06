@@ -1,26 +1,52 @@
 #ifndef TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SETTINGS_H
 #define TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SETTINGS_H
+
 #define SETTINGS_DEFAULT_NAME "Rauenegg"
+#define SETTINGS_DEFAULT_PATH "./config.json"
+#define SETTINGS_NAME_MAX_LENGTH 19
+
 #define SETTINGS_DEFAULT_CAPACITY 255       // Reasonable starting capacity per floor
+#define SETTINGS_MINIMUM_CAPACITY 1
+#define SETTINGS_MAXIMUM_CAPACITY 400
+
+
 #define SETTINGS_DEFAULT_FLOORS 1           // Default to 1 floor
+#define SETTINGS_MINIMUM_FLOORS 1           // Default to 1 floor
+#define SETTINGS_MAXIMUM_FLOORS 10           // Default to 1 floor
+
 #define SETTINGS_DEFAULT_GATES 1            // Default to 1 gate
+#define SETTINGS_MINIMUM_GATES 1            // Default to 1 gate
+#define SETTINGS_MAXIMUM_GATES 10           // Default to 1 gate
+
 #define SETTINGS_DEFAULT_REAL_EQUIVALENT 60 // 1 tick = 60 seconds (1 minute)
 #define SETTINGS_MINIMUM_REAL_EQUIVALENT 10 // 1 tick = 10 seconds
+#define SETTINGS_MAXIMUM_REAL_EQUIVALENT 3600 // 1 tick = 1 hour
+
 #define SETTINGS_DEFAULT_OUTPUT_MODE NORMAL // Default output mode
 #define SETTINGS_DEFAULT_MAX_TICKS (-1)     // -1 represents 1 day of simulation
 #define SETTINGS_MAXIMUM_DAY_TICKS (-365)     // Max one year of simulation
 #define SETTINGS_MAXIMUM_TICKS INT32_MAX     // Max one year of simulation
 #define SETTINGS_DEFAULT_MAX_TICKS (-1)     // -1 represents 1 day of simulation
+
 #define SETTINGS_DEFAULT_RAND_SEED (-1)     // -1 tells the RNG to use the current UTC time
+
 #define SETTINGS_DEFAULT_GATE_ENTRY_SEC 5   // 5 seconds to process one car at the gate
+#define SETTINGS_MINIMUM_GATE_ENTRY_SEC 3  // 3 seconds to process one car at the gate
+#define SETTINGS_MAXIMUM_GATE_ENTRY_SEC 10  // 10 seconds to process one car at the gate
+
 #define SETTINGS_DEFAULT_TICK_SEC 60        // Logical tick step in seconds (usually matches real_equivalent)
-#define SETTINGS_DEFAULT_MAX_PARKING_TICKS 1440 // e.g., 24 hours (1440 minutes) max parking
-#define SETTINGS_DEFAULT_MIN_PARKING_TICKS 1    // Minimum parking time
+
+#define SETTINGS_DEFAULT_MAXIMUM_PARKING_TICKS 1440 // e.g., 24 hours (1440 minutes) max parking
+#define SETTINGS_DEFAULT_MINIMUM_PARKING_TICKS 1    // Minimum parking time
+
 #define SETTINGS_DEFAULT_MODE_SELECT 1          // 1 = normal mode
+
 #define SETTINGS_DEFAULT_ENTRY_PROB 5.0f        // 5.0% probability of a car arriving per second
+#define SETTINGS_MINIMUM_ENTRY_PROB 1.0f        // 5.0% probability of a car arriving per second
+#define SETTINGS_MAXIMUM_ENTRY_PROB 100.0f        // 5.0% probability of a car arriving per second
+
 #define SETTINGS_DEFAULT_IS_LEAVABLE NON_LEAVABLE // Cars cannot leave the queue
 #define SECONDS_IN_DAY 86400
-#define SETTINGS_NAME_MAX_CHARS 19
 #define SETTINGS_MAX_SIZE_PARAM 255
 
 #include "types.h"
