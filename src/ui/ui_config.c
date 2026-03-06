@@ -37,3 +37,30 @@ void print_configscreen(const Settings *p_settings)
     printf("------------------------------------\n");
     printf("0  Back to Home\n\n");
 }
+
+/* ========================================================================= */
+/* Config menu                                                               */
+/* ========================================================================= */
+
+ui_state config_menu(void) {
+    //Settings *p_settings = ui_get_settings(); //p_settings will be probably given as a parameter
+
+    if (p_settings == NULL)
+    {
+        printf("Internal error: Settings not available.\n");
+        printf("Press ENTER to return...\n");
+        press_enter_to_continue();
+        return UI_HOME;
+    }
+
+    print_configscreen(p_settings);
+
+    int choice = 0;
+    validation_flag valid = INVALID;
+
+    while (valid != VALID)
+    {
+        choice = user_input();
+        valid = validate_user_input(choice, CONFIG_MAX_VALID_NUMBER);
+    }
+}
