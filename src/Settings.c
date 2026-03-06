@@ -11,6 +11,7 @@
  */
 #ifdef _WIN32
 #include <windows.h>
+#include <direct.h>
 #endif
 #ifdef ERROR
 #undef ERROR
@@ -31,6 +32,8 @@
 #include "json-c/json.h"
 #include "json-c/json_tokener.h"
 #include "json-c/json_object.h"
+#include "stdio.h"
+#include "sys/stat.h"
 
 #define seconds_in_day 86400
 #define SETTINGS_NAME_MAX_CHARS 19
@@ -38,6 +41,7 @@
 
 static int settings_set_name(Settings *p_settings, const char *name);
 static int settings_set_owned_string(char **p_dest, const char *src);
+static int settings_create_path_to_file(const char* path);
 static char *settings_make_default_config_path();
 
 
@@ -100,27 +104,33 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
     const char *final_path = dest_path;
     char *allocated_path = NULL;
 
-    if (settings_is_valid_path_string(dest_path) == ERROR) {
+    if (settings_is_valid_system_path_string(dest_path) != OK) {
         print_warning_s("dest_path is not a valid path, creating and using default path");
         allocated_path = settings_make_default_config_path();
         final_path = allocated_path;
+    }else {
+        if (settings_create_path_to_file(dest_path) != OK) {
+            print_error_s("Something went wrong while creating the path to the settings file. Defaulting.", HIGH);
+            allocated_path = settings_make_default_config_path();
+            final_path = allocated_path;
+        }
     }
 
-    json_object *jobj = json_object_new_object();
-    if (checkNull(jobj)) return ERROR;
+    json_object *obj = json_object_new_object();
+    if (checkNull(obj)) return ERROR;
 
-    json_object_object_add(jobj, "name", json_object_new_string(p_settings->name ? p_settings->name : ""));
-    json_object_object_add(jobj, "src_path", json_object_new_string(p_settings->src_path ? p_settings->src_path : ""));
-    json_object_object_add(jobj, "capacity", json_object_new_int(p_settings->capacity));
-    json_object_object_add(jobj, "floors", json_object_new_int(p_settings->floors));
-    json_object_object_add(jobj, "gates", json_object_new_int(p_settings->gates));
-    json_object_object_add(jobj, "real_equivalent", json_object_new_int(p_settings->real_equivalent));
-    json_object_object_add(jobj, "output_mode", json_object_new_int(p_settings->output_mode));
-    json_object_object_add(jobj, "max_ticks", json_object_new_int(p_settings->max_ticks));
-    json_object_object_add(jobj, "rand_seed", json_object_new_int(p_settings->rand_seed));
-    const int result = json_object_to_file_ext(final_path, jobj, JSON_C_TO_STRING_PRETTY);
+    json_object_object_add(obj, "name", json_object_new_string(p_settings->name ? p_settings->name : ""));
+    json_object_object_add(obj, "src_path", json_object_new_string(p_settings->src_path ? p_settings->src_path : ""));
+    json_object_object_add(obj, "capacity", json_object_new_int(p_settings->capacity));
+    json_object_object_add(obj, "floors", json_object_new_int(p_settings->floors));
+    json_object_object_add(obj, "gates", json_object_new_int(p_settings->gates));
+    json_object_object_add(obj, "real_equivalent", json_object_new_int(p_settings->real_equivalent));
+    json_object_object_add(obj, "output_mode", json_object_new_int(p_settings->output_mode));
+    json_object_object_add(obj, "max_ticks", json_object_new_int(p_settings->max_ticks));
+    json_object_object_add(obj, "rand_seed", json_object_new_int(p_settings->rand_seed));
+    const int result = json_object_to_file_ext(final_path, obj, JSON_C_TO_STRING_PRETTY);
 
-    json_object_put(jobj);
+    json_object_put(obj);
     free(allocated_path);
 
     if (result < 0) {
@@ -292,17 +302,15 @@ int delete_settings(Settings *p_settings) {
     return OK;
 }
 
-int settings_is_valid_path_string(const char *path) {
+int settings_is_valid_system_path_string(const char *path) {
     if (checkNull(path)) return ERROR;
-    if (checkEmptyString(path)) return ERROR;
-
     const unsigned char *p = (const unsigned char *)path;
     while (*p != '\0' && isspace(*p)) p++;
     if (*p == '\0') return ERROR;
-#ifdef _WIN32
+#ifdef _WIN32 // Keeping this to stay compatible in case we need to compile on Windows
     for (p = (const unsigned char *)path; *p != '\0'; ++p) {
         if (*p < 32) {
-            print_error_s("Your path contains invalid charactes", MEDIUM);
+            print_error_s("Your path contains invalid characters for Windows.", MEDIUM);
             return ERROR;
         }
         switch (*p) {
@@ -315,29 +323,89 @@ int settings_is_valid_path_string(const char *path) {
 
     return OK;
 #elif defined(__linux__)
-
+    for (p = (const unsigned char *)path; *p != '\0'; ++p) {
+        if (*p < 32) {
+            print_error_s("Your path contains invalid characters for Linux.", MEDIUM);
+            return ERROR;
+        }
+    }
     return OK;
 #    else
-    print_error_s("We couldn't determine your operating system.")
+    print_error_s("We couldn't determine your operating system.", HIGH)
     return ERROR;
 #    endif
 }
 
+/**
+ * Create the path to the settings file, if it doesn't exist yet.
+ * @note This function assumes you have already checked the path is a valid
+ * path with settings_is_valid_system_path_string. It does not check that itself.
+ * @param path The path the settings file needs to be created at.
+ * @return 0 on success, non-zero on error.
+ */
+static int settings_create_path_to_file(const char* path) {
+    if (checkNull(path)) {
+        print_error_s("Path cannot be null.", HIGH);
+        return ERROR;
+    }
+    struct stat buffer;
+    if (stat(path, &buffer) != 0 && !(S_ISDIR(buffer.st_mode))) {
+        #ifdef _WIN32
+            if (_mkdir(path) != 0) {
+                print_error_s("Something went wrong trying to create the directory to settings.", HIGH);
+                return ERROR;
+            }
+        #elif defined(__linux__)
+            const unsigned char* paths[10];
+            const unsigned char *p = (const unsigned char *)path;
+            int pth_count = 0;
+            if (*p != '.') {
+                print_warning_s("You're not using relative paths. This will create the folder at root which might cause troubles.");
+            }
+            while (*p != *p+strlen(path)) {
+                while (*p != '\0' && *p != '/') {
+                    p++;
+                }
+                if (*p == '\0') {
+                    continue;
+                }
+                if (pth_count >= 10) {
+                    print_error_s("Your file is nested too deep. Please be sure you're using relative paths.", HIGH);
+                    return ERROR;
+                }
+                paths[pth_count] = p;
+                pth_count++;
+            }
+            for (int i; i < pth_count; ++i) {
+                char* str_start = *paths[i];
+
+            }
+            if (mkdir(path, 0777) !=0) {
+
+                print_error_s("Something went wrong trying to create the directory to settings.", HIGH);
+                return ERROR;
+            }
+        #else
+            print_error_s("We couldn't determine your operating system.", HIGH);
+            return ERROR;
+        #endif
+    }
+    return OK;
+}
 
 /**
- * Create the default settings path (and file).
+ * Create the default settings path.
  * @note This function is heavily dependent on the OS that the code is running on.
  * Therefore, we need to differentiate between Windows and Linux (Codespace OS).
  * @return
  */
 static char *settings_make_default_config_path() {
     const char *default_name = "config.json";
-
 /*
  * https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi
  * https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea
  */
-#ifdef _WIN32 // Development machine compatibility.
+#ifdef _WIN32 // Keeping this to stay compatible in case we need to compile on Windows
     char exe_path[MAX_PATH];
     const DWORD len = GetModuleFileNameA(NULL, exe_path, (DWORD)sizeof(exe_path));
     if (len == 0 || len >= (DWORD)sizeof(exe_path)) { // This should fallback to the relative path or working directory.
@@ -372,7 +440,7 @@ static char *settings_make_default_config_path() {
      */
 #elif defined(__linux__)
     char exe_path[PATH_MAX];
-    ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1); // -1 is needed b.c. readlink does not add \0!
+    const ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1); // -1 is needed b.c. readlink does not add \0!
     if (len <= 0) { // fallback to relative path in case somthing goes wrong. This is the current working directory.
         char *fallback = (char *)malloc(strlen(default_name) + 1);
         if (fallback) memcpy(fallback, default_name, strlen(default_name) + 1);
@@ -388,8 +456,8 @@ static char *settings_make_default_config_path() {
         }
     }
 
-    size_t dir_len = strlen(exe_path);
-    size_t name_len = strlen(default_name);
+    const size_t dir_len = strlen(exe_path);
+    const size_t name_len = strlen(default_name);
 
     char *full = (char *)malloc(dir_len + name_len + 1);
     if (checkNull(full)) return NULL;
