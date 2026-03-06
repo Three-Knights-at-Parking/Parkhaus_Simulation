@@ -186,6 +186,15 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     return 0;
 }
 
+static enum OutputMode apply_mode_select(const int mode_select)
+{
+    if (mode_select == 0) return NONE;
+    if (mode_select == 1) return NORMAL;
+    if (mode_select == 2) return VERBOSE;
+    if (mode_select == 3) return DEBUG;
+    return NORMAL;
+}
+
 static int edit_mode_select(void)
 {
     int32_t choice = 0;
@@ -325,8 +334,8 @@ ui_state config_menu(void) {
         return UI_KONFIG;
     }
     else if (choice == 7) {
-        int mode_select = edit_mode_select();
-        enum OutputMode mode = apply_mode_select(mode_select);
+        const int mode_select = edit_mode_select();
+        const enum OutputMode mode = apply_mode_select(mode_select);
         (void)settings_set_output_mode(p_settings, mode);
         return UI_KONFIG;
     }
