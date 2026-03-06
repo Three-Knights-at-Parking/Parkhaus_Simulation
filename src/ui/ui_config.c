@@ -11,6 +11,35 @@
 #include "../include/types.h"
 
 /* ========================================================================= */
+/* Local helpers                                                             */
+/* ========================================================================= */
+
+static int read_line(char *p_buffer, size_t buffer_len)
+{
+    if (p_buffer == NULL)
+    {
+        return -1;
+    }
+
+    if (fgets(p_buffer, buffer_len, stdin) == NULL)
+    {
+        return -1;
+    }
+
+    /* If the line did not fit, discard the rest. */
+    if (strchr(p_buffer, '\n') == NULL)
+    {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF)
+        {
+            /* discard */
+        }
+    }
+
+    return 0;
+}
+
+/* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
 
