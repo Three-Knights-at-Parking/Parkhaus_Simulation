@@ -186,6 +186,23 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     return 0;
 }
 
+static int edit_mode_select(void)
+{
+    int32_t choice = 0;
+
+    clear_terminal();
+    printf("Select Output Mode:\n");
+    printf("------------------------------------\n");
+    printf("0 = NONE\n");
+    printf("1 = NORMAL\n");
+    printf("2 = VERBOSE\n");
+    printf("3 = DEBUG\n");
+    printf("------------------------------------\n");
+
+    (void)read_int32_in_range("Enter your choice (0 - 3): ", 0, 3, 0, &choice);
+    return (int)choice;
+}
+
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
