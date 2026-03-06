@@ -1,7 +1,9 @@
 #include "utils/RNG.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <utils/SafteyUtils.h>
 
 // Internal helper: draw uniformly in an inclusive unsigned range [min, max].
 static uint32_t rng_range_u32(uint32_t min, uint32_t max) {
@@ -21,19 +23,26 @@ static uint32_t rng_range_u32(uint32_t min, uint32_t max) {
     return min + (uint32_t)offset;
 }
 
-int rng_init(const Settings *p_settings) {
-    uint32_t seed = 0;
+int rng_init(RNG* p_self, const Settings *p_settings)
+{
+    p_self = calloc(1, sizeof(RNG));
+    if (p_self == NULL)
+    {
+        printf("[ERROR] Unable to allocate memory for RNG struct\n");
+        return ERROR;
+    }
 
     // Default seed: current Unix timestamp (seconds).
     if (p_settings == NULL || p_settings->rand_seed == -1) {
-        seed = (uint32_t)time(NULL);
-    } else {
-        seed = (uint32_t)p_settings->rand_seed;
+        p_self->seed = (uint32_t)time(NULL);
+    }
+    else {
+        p_self->seed = (uint32_t)p_settings->rand_seed;
     }
 
     // Initialize C's global RNG state used by rand().
-    srand((unsigned int)seed);
-    return 0;
+    srand((unsigned int)p_self->seed);
+    return OK;
 }
 
 uint32_t rng_next_u32(void) {
