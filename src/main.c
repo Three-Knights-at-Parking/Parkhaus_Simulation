@@ -9,7 +9,7 @@ int main() {
     Settings* p_settings = malloc(sizeof(Settings));
     if (p_settings == NULL) {
         printf("malloc failed");
-        return 1;
+        return ERROR;
     }
 
     if (settings_init(p_settings,
@@ -23,7 +23,7 @@ int main() {
                       1440,
                       -1) != OK)
     {
-        return 1;
+        return ERROR;
     }
 
     /* UI-only defaults until dedicated setters exist */
@@ -33,8 +33,12 @@ int main() {
     settings.max_parking_ticks = 10;
     settings.min_parking_ticks = 1;
 
-    ui_start();
+    ui_start(p_settings);
 
-    (void)delete_settings(&settings);
+    if (delete_settings(p_settings) != OK)
+    {
+        return ERROR;
+    }
+
     return 0;
 }
