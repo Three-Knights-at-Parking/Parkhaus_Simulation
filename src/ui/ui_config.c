@@ -60,7 +60,7 @@ static int read_line(char *p_buffer, const size_t buffer_len)
     return 0;
 }
 
-static int parse_int32(const char *p_text, int32_t *p_out)
+static int parse_long(const char *p_text, long *p_out)
 {
     char *p_end = NULL;
     long value = 0;
@@ -83,7 +83,6 @@ static int parse_int32(const char *p_text, int32_t *p_out)
         return -1;
     }
 
-    /* Go to end of string and check, if users input is confirmed/ending with \n */
     while (*p_end == ' ' || *p_end == '\t')
     {
         p_end++;
@@ -94,12 +93,7 @@ static int parse_int32(const char *p_text, int32_t *p_out)
         return -1;
     }
 
-    if (value < INT32_MIN || value > INT32_MAX)
-    {
-        return -1;
-    }
-
-    *p_out = (int32_t)value;
+    *p_out = value;
     return 0;
 }
 
