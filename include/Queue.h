@@ -16,7 +16,7 @@
      * @param max_size Maximum number of vehicles in the queue. If 0, queue is effectively disabled.
      * @return 0 on success, non-zero on error (e.g. invalid max_size).
      */
-    int queue_init(Queue *p_queue, Simulation p_sim, uint16_t max_size);
+    int queue_init(Queue *p_self, Simulation p_sim, uint16_t max_size);
 
     /**
      * @brief Check if the queue is full.

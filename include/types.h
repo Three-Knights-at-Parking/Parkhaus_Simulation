@@ -12,6 +12,7 @@ typedef void (*SimulationTickFunction)(SimulationObject *p_self, uint32_t curren
 typedef struct Car Car;
 typedef struct Parkhaus Parkhaus;
 typedef struct Settings Settings;
+typedef struct Queue_List Queue_List;
 typedef struct Queue Queue;
 typedef struct Simulation Simulation;
 typedef struct GenericVehicle GenericVehicle;
@@ -85,7 +86,7 @@ struct Parkhaus {
     uint16_t capacity; // Number of total parking spaces.
     uint8_t floors; // Number of floors. This is currently miscellaneous.
     uint32_t capacity_taken; // Number of slots filled.
-    Queue **gate_queues; // array of Queue* with size = num_gates
+    Queue_List **gate_queues; // array of Queue* with size = num_gates
     GenericVehicle *p_parked_head; // linked list of parked vehicles.
     GenericVehicle *p_parked_tail;
 };
@@ -95,6 +96,7 @@ struct Parkhaus {
  * @author Luca Perri
  */
 struct Simulation {
+    SimulationObject base;
     Settings* settings; // The underlying
     uint32_t current_tick; // Current tick time.
     Parkhaus* parkhaus; // The Parkhaus for this Simulation
@@ -108,13 +110,21 @@ struct Simulation {
 struct Queue {
     SimulationObject base; // base object.
     uint16_t capacity; // Number of waiting cars.
-    GenericVehicle *p_head; // first vehicle in queue
-    GenericVehicle *p_tail; // last vehicle in queue
+    GenericVehicle *p_prev; // first vehicle in queue
+    GenericVehicle *p_next; // last vehicle in queue
     uint16_t demand;   // demand assigned to this gate in the current tick
     uint8_t max_size; // maximum size of Queue before no cars should be created anymore.
 };
-//typedef tick_t unit32_t;
-//typedef places_p unit16_t
+/*
+ * Parent for Queue childs as Queue_list for multiple Entry Support
+ * @author Ibach
+ */
+struct Queue_List
+{
+    SimulationObject base;
+    Queue *p_head;
+    Queue *p_tail;
+};
 
 struct Car {
     GenericVehicle base; // base vehicle object
