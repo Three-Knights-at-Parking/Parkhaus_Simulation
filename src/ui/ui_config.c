@@ -339,4 +339,13 @@ ui_state config_menu(void) {
         (void)settings_set_output_mode(p_settings, mode);
         return UI_KONFIG;
     }
+    else if (choice == 8)
+    {
+        float prob = 0.0f;
+        (void)read_float_percent("Enter entry probability per second (0 - 100 %): ", &prob);    //Implementing read_float_percent() in next step
+
+        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, ...) when available */
+        p_settings->entry_probability_perSec_prec = prob;
+
+        return UI_KONFIG;
 }
