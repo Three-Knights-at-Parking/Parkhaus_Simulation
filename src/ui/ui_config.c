@@ -179,53 +179,67 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
     }
 }
 
-static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, const int allow_negative, int32_t *p_out)
+/* ------------------------------------------------------------------------- */
+/* Typed wrappers                                                             */
+/* ------------------------------------------------------------------------- */
+
+static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, int32_t *p_out)
 {
-    char buffer[64];
+    long value = 0;
 
     if (p_out == NULL)
     {
         return -1;
     }
 
-    while (1)
+    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
     {
-        printf("%s", p_prompt);
-
-        if (read_line(buffer, sizeof(buffer)) != 0)
-        {
-            printf("Input error.\n");
-            continue;
-        }
-
-        int32_t value = 0;
-        if (parse_int32(buffer, &value) != 0)
-        {
-            printf("Your input is not a valid integer!\n");
-            printf("Press ENTER and try again...\n");
-            press_enter_to_continue();
-            continue;
-        }
-
-        if (allow_negative == 0 && value < 0)
-        {
-            printf("Negative values are not allowed!\n");
-            printf("Press ENTER and try again...\n");
-            press_enter_to_continue();
-            continue;
-        }
-
-        if (value < min_val || value > max_val)
-        {
-            printf("Value must be between %ld and %ld.\n", (long)min_val, (long)max_val);
-            printf("Press ENTER and try again...\n");
-            press_enter_to_continue();
-            continue;
-        }
-
-        *p_out = value;
-        return 0;
+        return -1;
     }
+
+    if (value < INT32_MIN || value > INT32_MAX)
+    {
+        return -1;
+    }
+
+    *p_out = (int32_t)value;
+    return 0;
+}
+
+static int read_uint16_in_range(const char *p_prompt, uint16_t min_val, uint16_t max_val, uint16_t *p_out)
+{
+    long value = 0;
+
+    if (p_out == NULL)
+    {
+        return -1;
+    }
+
+    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
+    {
+        return -1;
+    }
+
+    *p_out = (uint16_t)value;
+    return 0;
+}
+
+static int read_uint8_in_range(const char *p_prompt, uint8_t min_val, uint8_t max_val, uint8_t *p_out)
+{
+    long value = 0;
+
+    if (p_out == NULL)
+    {
+        return -1;
+    }
+
+    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
+    {
+        return -1;
+    }
+
+    *p_out = (uint8_t)value;
+    return 0;
 }
 
 static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe possible to synthesize function with read_int32_in_range()
