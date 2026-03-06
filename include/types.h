@@ -100,7 +100,6 @@ struct Simulation {
     uint16_t real_equivalent; // Tick equivalent in real time (seconds)
     Parkhaus* parkhaus; // The Parkhaus for this Simulation
     StatList* StatList; // Statistikcontainer fuer Tick- und Gesamtwerte
-    RNG* RNG; //Random Number Generator for this Simulation
 };
 
 /**
@@ -127,6 +126,7 @@ struct Car {
 struct RNG
 {
     uint32_t seed;
+    RNG.rng_range
 };
 
 // --- EXAMPLE OF ANOTHER VEHICLE TYPE ---

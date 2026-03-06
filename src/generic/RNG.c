@@ -23,25 +23,21 @@ static uint32_t rng_range_u32(uint32_t min, uint32_t max) {
     return min + (uint32_t)offset;
 }
 
-int rng_init(RNG* p_self, const Settings *p_settings)
+int rng_init(Settings *p_settings)
 {
-    p_self = calloc(1, sizeof(RNG));
-    if (p_self == NULL)
+    if (p_settings == NULL)
     {
-        printf("[ERROR] Unable to allocate memory for RNG struct\n");
+        printf("No Settings provided\n");
         return ERROR;
     }
 
     // Default seed: current Unix timestamp (seconds).
-    if (p_settings == NULL || p_settings->rand_seed == -1) {
-        p_self->seed = (uint32_t)time(NULL);
-    }
-    else {
-        p_self->seed = (uint32_t)p_settings->rand_seed;
+    if (p_settings->rand_seed == -1) {
+        p_settings->rand_seed = (int32_t)time(NULL);
     }
 
     // Initialize C's global RNG state used by rand().
-    srand((unsigned int)p_self->seed);
+    srand((unsigned int)p_settings->rand_seed);
     return OK;
 }
 
