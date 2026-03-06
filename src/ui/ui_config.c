@@ -426,8 +426,7 @@ ui_state config_menu(void) {
         (void)settings_set_output_mode(p_settings, mode);
         return UI_KONFIG;
     }
-    else if (choice == 8)
-    {
+    else if (choice == 8) {
         float prob = 0.0f;
         (void)read_float_percent("Enter entry probability per second (0 - 100 %): ", &prob);
 
@@ -435,4 +434,21 @@ ui_state config_menu(void) {
         p_settings->entry_probability_perSec_prec = prob;
 
         return UI_KONFIG;
+    }
+    else if (choice == 9)
+    {
+        int32_t value = 0;
+        (void)read_int32_in_range("Enter max ticks (-1/-2/... for day equivalents): ",
+                                  MIN_MAX_TICKS, MAX_MAX_TICKS, 1, &value);
+        (void)settings_set_max_ticks(p_settings, value);
+        return UI_KONFIG;
+    }
+    else if (choice == 10)
+    {
+        int32_t value = 0;
+        (void)read_int32_in_range("Enter random seed (or -1 for default/time): ",
+                                  MIN_SEED, MAX_SEED, 1, &value);
+        (void)settings_set_rand_seed(p_settings, value);
+        return UI_KONFIG;
+    }
 }
