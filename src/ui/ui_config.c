@@ -59,6 +59,49 @@ static int read_line(char *p_buffer, size_t buffer_len)
     return 0;
 }
 
+static int parse_int32(const char *p_text, int32_t *p_out)
+{
+    char *p_end = NULL;
+    long value = 0;
+
+    if (p_text == NULL || p_out == NULL)
+    {
+        return -1;
+    }
+
+    errno = 0;
+    value = strtol(p_text, &p_end, 10);
+
+    if (errno != 0)
+    {
+        return -1;
+    }
+
+    if (p_end == p_text)
+    {
+        return -1;
+    }
+
+    /* Go to end of string and check, if users input is confirmed/ending with \n */
+    while (*p_end == ' ' || *p_end == '\t')
+    {
+        p_end++;
+    }
+
+    if (*p_end != '\0')
+    {
+        return -1;
+    }
+
+    if (value < INT32_MIN || value > INT32_MAX)
+    {
+        return -1;
+    }
+
+    *p_out = (int32_t)value;
+    return 0;
+}
+
 static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, const int allow_negative, int32_t *p_out)
 {
     char buffer[64];
