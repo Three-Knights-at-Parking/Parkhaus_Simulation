@@ -71,7 +71,7 @@ struct GenericVehicle {
     uint32_t created_at_tick; // Tick of creation
     uint32_t park_house_entered; // Entry tick, when the car started parking
     uint32_t park_house_left; // Exit tick, when the car left the parking slot
-	uint32_t leaving_in_ticks;
+	uint32_t leaving_in_ticks; //tick timer until leaving
     uint16_t current_slot; // Currently occupied parking spot, 0 if none.
     uint16_t current_floor; // Currently occupied floor, 0 if none or don't care
 };
