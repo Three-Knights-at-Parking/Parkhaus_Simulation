@@ -174,4 +174,45 @@ ui_state config_menu(void) {
 
         return UI_KONFIG;
     }
+    else if (choice == 2)
+    {
+        int32_t value = 0;
+        (void)read_int32_in_range("Enter capacity per floor: ", MIN_CAPACITY, MAX_CAPACITY, 0, &value);
+        (void)settings_set_size(p_settings, (uint16_t)value);
+        return UI_KONFIG;
+    }
+    else if (choice == 3)
+    {
+        int32_t value = 0;
+        (void)read_int32_in_range("Enter number of floors: ", MIN_FLOORS, MAX_FLOORS, 0, &value);
+        (void)settings_set_floors(p_settings, (uint8_t)value);
+        return UI_KONFIG;
+    }
+    else if (choice == 4)
+    {
+        int32_t value = 0;
+        (void)read_int32_in_range("Enter number of gates: ", MIN_GATES, MAX_GATES, 0, &value);
+        (void)settings_set_gates(p_settings, (uint8_t)value);
+        return UI_KONFIG;
+    }
+    else if (choice == 5)
+    {
+        int32_t value = 0;
+        (void)read_int32_in_range("Enter gate entry time in seconds: ", MIN_GATE_ENTRY_SEC, MAX_GATE_ENTRY_SEC, 0, &value);
+
+        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, ...) when available */
+        p_settings->gate_entry_inSec = (uint16_t)value;
+
+        return UI_KONFIG;
+    }
+    else if (choice == 6)
+    {
+        int32_t value = 0;
+        (void)read_int32_in_range("Enter tick length in seconds: ", MIN_TICK_SEC, MAX_TICK_SEC, 0, &value);
+
+        /* TODO: replace with settings_set_tick_inSec(p_settings, ...) when available */
+        p_settings->tick_inSec = (uint16_t)value;
+
+        return UI_KONFIG;
+    }
 }
