@@ -1,6 +1,7 @@
 #include "Settings.h"
 
 #include <ctype.h>
+#include <errno.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
@@ -11,6 +12,8 @@
  */
 #ifdef _WIN32
 #include <windows.h>
+#include <direct.h>
+#define MKDIR(path) _mkdir(path)
 #endif
 #ifdef ERROR
 #undef ERROR
@@ -25,12 +28,26 @@
 #ifdef __linux__
 #include <unistd.h>
 #include <limits.h>
+#define MKDIR(path) mkdir(path, 0777)
 #endif
 
 #include "utils/SafteyUtils.h"
+#include "json-c/json.h"
+#include "json-c/json_tokener.h"
+#include "json-c/json_object.h"
+#include "stdio.h"
+#include "sys/stat.h"
+
 #define seconds_in_day 86400
 #define SETTINGS_NAME_MAX_CHARS 19
 #define SETTINGS_MAX_SIZE_PARAM 255
+
+static int settings_set_name(Settings *p_settings, const char *name);
+static int settings_set_owned_string(char **p_dest, const char *src);
+static int settings_create_path_to_file(const char* path);
+static char *settings_make_default_config_path();
+static int settings_is_relative_path(const char *path);
+
 
 static int settings_set_name(Settings *p_settings, const char *name) {
     if (checkNull(p_settings) || checkNull(name)) {
@@ -83,11 +100,67 @@ int settings_load_from_file(Settings *p_settings, const char *src_path) {
 }
 
 int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
-    // TODO
+    if (checkNull(p_settings)) {
+        print_error_s("Settings cannot be null.", HIGH);
+        return ERROR;
+    }
+
+    const char *final_path = dest_path;
+    char *allocated_path = NULL;
+
+    if (settings_is_valid_system_path_string(dest_path) != OK) {
+        print_warning_s("dest_path is not a valid path, creating and using default path");
+        allocated_path = settings_make_default_config_path();
+        final_path = allocated_path;
+    }else {
+        if (settings_create_path_to_file(dest_path) != OK) {
+            print_error_s("Something went wrong while creating the path to the settings file. Defaulting.", HIGH);
+            allocated_path = settings_make_default_config_path();
+            final_path = allocated_path;
+        }
+    }
+
+    json_object *obj = json_object_new_object();
+    if (checkNull(obj)) return ERROR;
+
+    json_object_object_add(obj, "name", json_object_new_string(p_settings->name ? p_settings->name : ""));
+    json_object_object_add(obj, "src_path", json_object_new_string(p_settings->src_path ? p_settings->src_path : ""));
+    json_object_object_add(obj, "capacity", json_object_new_int(p_settings->capacity));
+    json_object_object_add(obj, "floors", json_object_new_int(p_settings->floors));
+    json_object_object_add(obj, "gates", json_object_new_int(p_settings->gates));
+    json_object_object_add(obj, "real_equivalent", json_object_new_int(p_settings->real_equivalent));
+    json_object_object_add(obj, "output_mode", json_object_new_int(p_settings->output_mode));
+    json_object_object_add(obj, "max_ticks", json_object_new_int(p_settings->max_ticks));
+    json_object_object_add(obj, "rand_seed", json_object_new_int(p_settings->rand_seed));
+    const int result = json_object_to_file_ext(final_path, obj, JSON_C_TO_STRING_PRETTY);
+
+    json_object_put(obj);
+    free(allocated_path);
+
+    if (result < 0) {
+        print_error_s("Failed to write settings file. Ensure the directory exists.", HIGH);
+        return ERROR;
+    }
+    return OK;
 }
 
-int settings_init(Settings *p_settings, const char *src_path, const char *name, const uint16_t size, const uint8_t floors,
-    const uint8_t gates, const uint16_t real_equivalent, const enum OutputMode output_mode, const int32_t max_ticks, const int32_t rand_seed) {
+int settings_init(Settings *p_settings,
+                  const char *src_path,
+                  const char *name,
+                  uint16_t capacity,
+                  uint8_t floors,
+                  uint8_t gates,
+                  uint16_t real_equivalent,
+                  enum OutputMode output_mode,
+                  int32_t max_ticks,
+                  int32_t rand_seed,
+                  uint16_t gate_entry_inSec,
+                  uint16_t tick_inSec,
+                  uint32_t max_parking_ticks,
+                  uint32_t min_parking_ticks,
+                  uint8_t mode_select,
+                  float entry_probability_perSec_prec,
+                  enum QueueLeavable is_leavable) {
 
     if (checkNull(p_settings) || checkNull(name)  || checkNull(src_path)) {
         print_error_s("Field cannot be null.", HIGH);
@@ -98,7 +171,7 @@ int settings_init(Settings *p_settings, const char *src_path, const char *name, 
 
     if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) return ERROR;
     if (settings_set_gates(p_settings, gates) != OK) return ERROR;
-    if (settings_set_size(p_settings, size) != OK) return ERROR;
+    if (settings_set_size(p_settings, capacity) != OK) return ERROR;
     if (settings_set_floors(p_settings, floors) != OK) return ERROR;
     if (settings_set_max_ticks(p_settings, max_ticks) != OK) return ERROR;
     if (settings_set_rand_seed(p_settings, rand_seed) != OK) return ERROR;
@@ -106,10 +179,14 @@ int settings_init(Settings *p_settings, const char *src_path, const char *name, 
     if (settings_set_name(p_settings, name) != OK) return ERROR;
     if (settings_set_src_path(p_settings, src_path) != OK) return ERROR;
 
-    p_settings->gate_entry_inSec = 1; // FIXME @Maupher
-    p_settings->mode_select = NORMAL; // FIXME Currently hardcoded as not relevant for min requirement.
-    p_settings->entry_probability_perSec_prec = 1.0f;
-    p_settings->is_leavable = NON_LEAVABLE;  // FIXME Currently hardcoded as not relevant for min requirement.
+    p_settings->gate_entry_inSec = gate_entry_inSec;
+    p_settings->tick_inSec = tick_inSec;
+    p_settings->max_parking_ticks = max_parking_ticks;
+    p_settings->min_parking_ticks = min_parking_ticks;
+    p_settings->mode_select = mode_select;
+    p_settings->entry_probability_perSec_prec = entry_probability_perSec_prec;
+    p_settings->is_leavable = is_leavable;
+
     return OK;
 }
 
@@ -248,43 +325,130 @@ int delete_settings(Settings *p_settings) {
     return OK;
 }
 
-int settings_is_valid_path_string(const char *path) {
-    if (checkNull(path)) return 0;
-
-    // reject empty / whitespace-only
+int settings_is_valid_system_path_string(const char *path) {
+    if (checkNull(path)) return ERROR;
     const unsigned char *p = (const unsigned char *)path;
     while (*p != '\0' && isspace(*p)) p++;
-    if (*p == '\0') return 0;
-
-    // reject Windows-illegal characters and control chars
+    if (*p == '\0') return ERROR;
+#ifdef _WIN32 // Keeping this to stay compatible in case we need to compile on Windows
     for (p = (const unsigned char *)path; *p != '\0'; ++p) {
-        if (*p < 32) return 0; // control characters
+        if (*p < 32) {
+            print_error_s("Your path contains invalid characters for Windows.", MEDIUM);
+            return ERROR;
+        }
         switch (*p) {
             case '<': case '>': case '"': case '|': case '?': case '*':
-                return 0;
+                return ERROR;
             default:
                 break;
         }
     }
 
-    return 1;
+    return OK;
+#elif defined(__linux__)
+    for (p = (const unsigned char *)path; *p != '\0'; ++p) {
+        if (*p < 32) {
+            print_error_s("Your path contains invalid characters for Linux.", MEDIUM);
+            return ERROR;
+        }
+    }
+    return OK;
+#    else
+    print_error_s("We couldn't determine your operating system.", HIGH)
+    return ERROR;
+#    endif
+}
+/**
+ * Checks if a path is strictly relative.
+ * Disallows absolute paths on both Linux and Windows.
+ * @param path The path string to evaluate.
+ * @return OK if relative, ERROR if absolute or invalid.
+ */
+static int settings_is_relative_path(const char *path) {
+    if (checkNull(path)) {
+        return ERROR;
+    }
+    const unsigned char *p = (const unsigned char *)path; // skipping leading whitespaces
+    while (*p != '\0' && isspace(*p)) {
+        p++;
+    }
+    if (*p == '\0') {
+        return ERROR;
+    }
+    if (*p == '/' || *p == '\\') { // relative paths need to start with "." or ".."
+        print_warning_s("Absolute paths starting with slashes are not allowed.");
+        return ERROR;
+    }
+#ifdef _WIN32
+    if (isalpha(p[0]) && p[1] == ':') {
+        print_error_s("Absolute paths with drive letters are not allowed.", MEDIUM);
+        return ERROR;
+    }
+#endif
+    return OK;
+}
+/**
+ * Create the path to the settings file, if it doesn't exist yet.
+ * @note This function assumes you have already checked the path is a valid
+ * path with settings_is_valid_system_path_string. It does not check that itself.
+ * @param path The path the settings file needs to be created at.
+ * @return 0 on success, non-zero on error.
+ */
+static int settings_create_path_to_file(const char* path) {
+    if (checkNull(path)) {
+        print_error_s("Path cannot be null.", HIGH);
+        return ERROR;
+    }
+    if (settings_is_relative_path(path) != OK) {
+        print_error_s("Path is not a valid relative path.", MEDIUM);
+        return ERROR;
+    }
+    const size_t len = strlen(path);
+    char *path_copy = (char *)malloc(len + 1);
+    if (checkNull(path_copy)) {
+        print_error_s("Out of memory when allocating path.", HIGH);
+        return ERROR;
+    }
+    memcpy(path_copy, path, len + 1);
+    char *last_slash = strrchr(path_copy, '/');
+    *last_slash = '\0';
+    for (char *p = path_copy + 1; *p; p++) {
+        if (*p == '/' || *p == '\\') {
+            char temp = *p;
+            *p = '\0';
+            if (MKDIR(path_copy) != 0) {
+                if (errno != EEXIST) {
+                    print_error_s("Failed to create intermediate directory.", HIGH);
+                    free(path_copy);
+                    return ERROR;
+                }
+            }
+            *p = temp;
+        }
+    }
+    if (MKDIR(path_copy) != 0 && errno != EEXIST) {
+        print_error_s("Failed to create final directory.", HIGH);
+        free(path_copy);
+        return ERROR;
+    }
+
+    free(path_copy);
+    return OK;
 }
 
-
 /**
- * Create the default settings path (and file).
+ * Create the default settings path.
  * @note This function is heavily dependent on the OS that the code is running on.
  * Therefore, we need to differentiate between Windows and Linux (Codespace OS).
  * @return
  */
 static char *settings_make_default_config_path() {
     const char *default_name = "config.json";
-
 /*
  * https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi
  * https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea
  */
-#ifdef _WIN32 // Development machine compatibility.
+#ifdef _WIN32 // Keeping this to stay compatible in case we need to compile on Windows
     char exe_path[MAX_PATH];
     const DWORD len = GetModuleFileNameA(NULL, exe_path, (DWORD)sizeof(exe_path));
     if (len == 0 || len >= (DWORD)sizeof(exe_path)) { // This should fallback to the relative path or working directory.
@@ -319,7 +483,7 @@ static char *settings_make_default_config_path() {
      */
 #elif defined(__linux__)
     char exe_path[PATH_MAX];
-    ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1); // -1 is needed b.c. readlink does not add \0!
+    const ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1); // -1 is needed b.c. readlink does not add \0!
     if (len <= 0) { // fallback to relative path in case somthing goes wrong. This is the current working directory.
         char *fallback = (char *)malloc(strlen(default_name) + 1);
         if (fallback) memcpy(fallback, default_name, strlen(default_name) + 1);
@@ -335,8 +499,8 @@ static char *settings_make_default_config_path() {
         }
     }
 
-    size_t dir_len = strlen(exe_path);
-    size_t name_len = strlen(default_name);
+    const size_t dir_len = strlen(exe_path);
+    const size_t name_len = strlen(default_name);
 
     char *full = (char *)malloc(dir_len + name_len + 1);
     if (checkNull(full)) return NULL;

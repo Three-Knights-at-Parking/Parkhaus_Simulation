@@ -12,9 +12,10 @@
      * Initialize a Simulation with Settings.
      * @param p_sim Pointer to the Simulation object to initialize.
      * @param p_settings Pointer to the Settings used to configure the Simulation.
+     * @param stats FIXME @Maupher du brauchst hier deine StatList nh?
      * @return 0 on success, non-zero on error.
      */
-    int simulation_init(Simulation *p_sim, const Settings *p_settings, const Stats* stats); //statistik Hinzufügen zu initialisierung?
+    int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatList* stats); //statistik Hinzufügen zu initialisierung?
 
     /**
      * Progress the Simulation by one tick.
