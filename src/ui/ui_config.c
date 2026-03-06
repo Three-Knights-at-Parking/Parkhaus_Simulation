@@ -320,9 +320,9 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     }
 
     size_t len = strlen(p_name);
-    if (len > NAME_MAX_LEN)
+    if (len > SETTINGS_NAME_MAX_LENGTH)
     {
-        len = NAME_MAX_LEN;
+        len = SETTINGS_NAME_MAX_LENGTH;
     }
 
     char *p_buf = (char *)malloc(len + 1U);
@@ -397,8 +397,12 @@ static int edit_mode_select(void)
 /* Screen printing                                                           */
 /* ========================================================================= */
 
-void print_configscreen(const Settings *p_settings)
+int print_configscreen(const Settings *p_settings)
 {
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
     clear_terminal();
 
     printf("====================================\n");
@@ -419,6 +423,8 @@ void print_configscreen(const Settings *p_settings)
     printf("10 Random Seed          : %ld\n", (long)p_settings->rand_seed);
     printf("------------------------------------\n");
     printf("0  Back to Home\n\n");
+
+    return OK;
 }
 
 /* ========================================================================= */
@@ -438,7 +444,11 @@ ui_state config_menu(Settings *p_settings)
         return UI_HOME;
     }
 
-    print_configscreen(p_settings);
+    if (print_configscreen(p_settings) != OK)
+    {
+        printf("Loading configscreen failed. Return to Home.");
+        return UI_HOME;
+    }
 
     while (valid != VALID)
     {

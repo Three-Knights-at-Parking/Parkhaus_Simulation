@@ -81,7 +81,7 @@ void init_settings(Settings *p_settings);
  *
  * @param[in] p_settings The current settings to display.
  */
-void print_configscreen(const Settings *p_settings);
+int print_configscreen(const Settings *p_settings);
 
 /**
  * @brief Validates an integer config value based on range and negativity rule.
