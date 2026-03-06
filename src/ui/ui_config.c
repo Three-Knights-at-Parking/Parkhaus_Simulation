@@ -307,4 +307,10 @@ ui_state config_menu(void) {
 
         return UI_KONFIG;
     }
+    else if (choice == 7) {
+        int mode_select = edit_mode_select();
+        enum OutputMode mode = apply_mode_select(mode_select);
+        (void)settings_set_output_mode(p_settings, mode);
+        return UI_KONFIG;
+    }
 }
