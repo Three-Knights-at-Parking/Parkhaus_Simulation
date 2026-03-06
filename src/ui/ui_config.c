@@ -388,8 +388,8 @@ static int edit_mode_select(void)
     printf("2 = VERBOSE\n");
     printf("3 = DEBUG\n");
     printf("------------------------------------\n");
-    // FIXME Function arguments do not match definition
-    // (void)read_int32_in_range("Enter your choice (0 - 3): ", 0, 3, 0, &choice);
+
+    (void)read_int32_in_range("Enter your choice (0 - 3): ", 0, 3, &choice);
     return (int)choice;
 }
 
