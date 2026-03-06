@@ -186,6 +186,15 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     return 0;
 }
 
+static const char *output_mode_to_string(const enum OutputMode mode)
+{
+    if (mode == NONE) return "NONE";
+    if (mode == NORMAL) return "NORMAL";
+    if (mode == VERBOSE) return "VERBOSE";
+    if (mode == DEBUG) return "DEBUG";
+    return "NORMAL";
+}
+
 static enum OutputMode apply_mode_select(const int mode_select)
 {
     if (mode_select == 0) return NONE;
