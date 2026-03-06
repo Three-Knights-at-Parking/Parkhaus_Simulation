@@ -11,7 +11,11 @@ file(GLOB_RECURSE PARKHAUS_SIMULATION_SOURCES CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
 )
 
-add_executable(Parkhaus_Simulation ${PARKHAUS_SIMULATION_SOURCES})
+add_executable(Parkhaus_Simulation ${PARKHAUS_SIMULATION_SOURCES}
+        include/utils/demand.h
+        include/utils/gate_routing.h
+        src/utils/demand.c
+        src/utils/gate_routing.c)
 
 target_include_directories(Parkhaus_Simulation
         PRIVATE
