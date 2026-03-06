@@ -59,6 +59,55 @@ static int read_line(char *p_buffer, size_t buffer_len)
     return 0;
 }
 
+static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, const int allow_negative, int32_t *p_out)
+{
+    char buffer[64];
+
+    if (p_out == NULL)
+    {
+        return -1;
+    }
+
+    while (1)
+    {
+        printf("%s", p_prompt);
+
+        if (read_line(buffer, sizeof(buffer)) != 0)
+        {
+            printf("Input error.\n");
+            continue;
+        }
+
+        int32_t value = 0;
+        if (parse_int32(buffer, &value) != 0)   //parse_int32() will be implemented in the next step
+        {
+            printf("Your input is not a valid integer!\n");
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
+
+        if (allow_negative == 0 && value < 0)
+        {
+            printf("Negative values are not allowed!\n");
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
+
+        if (value < min_val || value > max_val)
+        {
+            printf("Value must be between %ld and %ld.\n", (long)min_val, (long)max_val);
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
+
+        *p_out = value;
+        return 0;
+    }
+}
+
 static int ui_settings_set_name(Settings *p_settings, const char *p_name)
 {
     /* Settings.c has a private static settings_set_name().
@@ -157,7 +206,7 @@ ui_state config_menu(void) {
         char name_buf[128];
 
         printf("Enter name (max %d chars): ", NAME_MAX_LEN);
-        if (read_line(name_buf, sizeof(name_buf)) != 0 || name_buf[0] == '\0')  //read_line() will be implemented in the next step
+        if (read_line(name_buf, sizeof(name_buf)) != 0 || name_buf[0] == '\0')
         {
             printf("Invalid name.\n");
             printf("Press ENTER and try again...\n");
@@ -165,7 +214,7 @@ ui_state config_menu(void) {
             return UI_KONFIG;
         }
 
-        if (ui_settings_set_name(p_settings, name_buf) != 0)    //ui_settings_set_name() will be implemented in the next step
+        if (ui_settings_set_name(p_settings, name_buf) != 0)
         {
             printf("Failed to set name (out of memory?).\n");
             printf("Press ENTER to continue...\n");
