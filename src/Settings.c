@@ -96,7 +96,72 @@ static int settings_set_owned_string(char **p_dest, const char *src) {
 }
 
 int settings_load_from_file(Settings *p_settings, const char *src_path) {
-    // TODO
+    if (checkNull(p_settings) || checkNull(src_path)) {
+        print_error_s("Fields cannot be null.", HIGH);
+        return ERROR;
+    }
+    json_object *parsed_json = json_object_from_file(src_path);
+    if (checkNull(parsed_json)) {
+        print_error_s("Failed to open or parse settings file. File might not exist or contain invalid JSON.", HIGH);
+        return ERROR;
+    }
+
+    json_object *tmp_obj;
+    // json_object_object_get_ex returns true (1) if the key exists, false (0) if it doesn't.
+    if (json_object_object_get_ex(parsed_json, "name", &tmp_obj)) {
+        settings_set_name(p_settings, json_object_get_string(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "src_path", &tmp_obj)) {
+        settings_set_src_path(p_settings, json_object_get_string(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "capacity", &tmp_obj)) {
+        settings_set_size(p_settings, (uint16_t)json_object_get_int(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "floors", &tmp_obj)) {
+        settings_set_floors(p_settings, (uint8_t)json_object_get_int(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "gates", &tmp_obj)) {
+        settings_set_gates(p_settings, (uint8_t)json_object_get_int(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "real_equivalent", &tmp_obj)) {
+        settings_set_real_equivalent(p_settings, (uint16_t)json_object_get_int(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "output_mode", &tmp_obj)) {
+        settings_set_output_mode(p_settings, (enum OutputMode)json_object_get_int(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "max_ticks", &tmp_obj)) {
+        settings_set_max_ticks(p_settings, (int32_t)json_object_get_int(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "rand_seed", &tmp_obj)) {
+        settings_set_rand_seed(p_settings, (int32_t)json_object_get_int(tmp_obj));
+    }
+    if (json_object_object_get_ex(parsed_json, "gate_entry_inSec", &tmp_obj)) {
+        p_settings->gate_entry_inSec = (uint16_t)json_object_get_int(tmp_obj);
+    }
+    if (json_object_object_get_ex(parsed_json, "tick_inSec", &tmp_obj)) {
+        p_settings->tick_inSec = (uint16_t)json_object_get_int(tmp_obj);
+    }
+    if (json_object_object_get_ex(parsed_json, "max_parking_ticks", &tmp_obj)) {
+        p_settings->max_parking_ticks = (uint32_t)json_object_get_int(tmp_obj);
+    }
+    if (json_object_object_get_ex(parsed_json, "min_parking_ticks", &tmp_obj)) {
+        p_settings->min_parking_ticks = (uint32_t)json_object_get_int(tmp_obj);
+    }
+    if (json_object_object_get_ex(parsed_json, "mode_select", &tmp_obj)) {
+        p_settings->mode_select = (uint8_t)json_object_get_int(tmp_obj);
+    }
+    if (json_object_object_get_ex(parsed_json, "entry_probability_perSec_prec", &tmp_obj)) {
+        p_settings->entry_probability_perSec_prec = (float)json_object_get_double(tmp_obj);
+    }
+    if (json_object_object_get_ex(parsed_json, "is_leavable", &tmp_obj)) {
+        p_settings->is_leavable = (enum QueueLeavable)json_object_get_int(tmp_obj);
+    }
+
+    // json_object_put decrements the reference count and frees memory when it hits 0.
+    // See https://json-c.github.io/json-c/json-c-0.18/doc/html/json__object_8h.html#afabf61f932cd64a4122ca8092452eed5
+    json_object_put(parsed_json);
+
+    return OK;
 }
 
 int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
@@ -125,13 +190,22 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
 
     json_object_object_add(obj, "name", json_object_new_string(p_settings->name ? p_settings->name : ""));
     json_object_object_add(obj, "src_path", json_object_new_string(p_settings->src_path ? p_settings->src_path : ""));
-    json_object_object_add(obj, "capacity", json_object_new_int(p_settings->capacity));
-    json_object_object_add(obj, "floors", json_object_new_int(p_settings->floors));
-    json_object_object_add(obj, "gates", json_object_new_int(p_settings->gates));
-    json_object_object_add(obj, "real_equivalent", json_object_new_int(p_settings->real_equivalent));
-    json_object_object_add(obj, "output_mode", json_object_new_int(p_settings->output_mode));
-    json_object_object_add(obj, "max_ticks", json_object_new_int(p_settings->max_ticks));
-    json_object_object_add(obj, "rand_seed", json_object_new_int(p_settings->rand_seed));
+    json_object_object_add(obj, "capacity", json_object_new_int((int32_t) p_settings->capacity));
+    json_object_object_add(obj, "floors", json_object_new_int((int32_t) p_settings->floors));
+    json_object_object_add(obj, "gates", json_object_new_int((int32_t) p_settings->gates));
+    json_object_object_add(obj, "real_equivalent", json_object_new_int((int32_t) p_settings->real_equivalent));
+    json_object_object_add(obj, "output_mode", json_object_new_int((int32_t) p_settings->output_mode));
+    json_object_object_add(obj, "max_ticks", json_object_new_int((int32_t) p_settings->max_ticks));
+    json_object_object_add(obj, "rand_seed", json_object_new_int((int32_t) p_settings->rand_seed));
+    json_object_object_add(obj, "gate_entry_inSec", json_object_new_int((int32_t) p_settings->gate_entry_inSec));
+    json_object_object_add(obj, "tick_inSec", json_object_new_int((int32_t) p_settings->tick_inSec));
+    json_object_object_add(obj, "max_parking_ticks", json_object_new_int64((int64_t) p_settings->max_parking_ticks));
+    json_object_object_add(obj, "min_parking_ticks", json_object_new_int64((int64_t) p_settings->min_parking_ticks));
+    json_object_object_add(obj, "mode_select", json_object_new_int((int32_t) p_settings->mode_select));
+
+    // JSON-C uses double for floating point numbers
+    json_object_object_add(obj, "entry_probability_perSec_prec", json_object_new_double((double)p_settings->entry_probability_perSec_prec));
+    json_object_object_add(obj, "is_leavable", json_object_new_int((int32_t) p_settings->is_leavable));
     const int result = json_object_to_file_ext(final_path, obj, JSON_C_TO_STRING_PRETTY);
 
     json_object_put(obj);
@@ -326,10 +400,20 @@ int delete_settings(Settings *p_settings) {
 }
 
 int settings_is_valid_system_path_string(const char *path) {
-    if (checkNull(path)) return ERROR;
+    if (checkNull(path)) {
+        print_error_s("Path cannot be null.", HIGH);
+        return ERROR;
+    }
     const unsigned char *p = (const unsigned char *)path;
     while (*p != '\0' && isspace(*p)) p++;
-    if (*p == '\0') return ERROR;
+    if (*p == '\0') {
+        print_error_s("Path can't be an empty space.", HIGH);
+        return ERROR;
+    }
+    if (settings_is_relative_path(path) != OK) {
+        print_error_s("Path is not a valid relative path.", MEDIUM);
+        return ERROR;
+    }
 #ifdef _WIN32 // Keeping this to stay compatible in case we need to compile on Windows
     for (p = (const unsigned char *)path; *p != '\0'; ++p) {
         if (*p < 32) {
@@ -411,6 +495,10 @@ static int settings_create_path_to_file(const char* path) {
     }
     memcpy(path_copy, path, len + 1);
     char *last_slash = strrchr(path_copy, '/');
+    if (last_slash == NULL) {
+        free(path_copy);
+        return OK;
+    }
     *last_slash = '\0';
     for (char *p = path_copy + 1; *p; p++) {
         if (*p == '/' || *p == '\\') {
