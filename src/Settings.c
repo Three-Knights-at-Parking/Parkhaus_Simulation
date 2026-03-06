@@ -140,8 +140,23 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
     return OK;
 }
 
-int settings_init(Settings *p_settings, const char *src_path, const char *name, const uint16_t size, const uint8_t floors,
-    const uint8_t gates, const uint16_t real_equivalent, const enum OutputMode output_mode, const int32_t max_ticks, const int32_t rand_seed) {
+int settings_init(Settings *p_settings,
+                  const char *src_path,
+                  const char *name,
+                  uint16_t capacity,
+                  uint8_t floors,
+                  uint8_t gates,
+                  uint16_t real_equivalent,
+                  enum OutputMode output_mode,
+                  int32_t max_ticks,
+                  int32_t rand_seed,
+                  uint16_t gate_entry_inSec,
+                  uint16_t tick_inSec,
+                  uint32_t max_parking_ticks,
+                  uint32_t min_parking_ticks,
+                  uint8_t mode_select,
+                  float entry_probability_perSec_prec,
+                  enum QueueLeavable is_leavable) {
 
     if (checkNull(p_settings) || checkNull(name)  || checkNull(src_path)) {
         print_error_s("Field cannot be null.", HIGH);
@@ -152,7 +167,7 @@ int settings_init(Settings *p_settings, const char *src_path, const char *name, 
 
     if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) return ERROR;
     if (settings_set_gates(p_settings, gates) != OK) return ERROR;
-    if (settings_set_size(p_settings, size) != OK) return ERROR;
+    if (settings_set_size(p_settings, capacity) != OK) return ERROR;
     if (settings_set_floors(p_settings, floors) != OK) return ERROR;
     if (settings_set_max_ticks(p_settings, max_ticks) != OK) return ERROR;
     if (settings_set_rand_seed(p_settings, rand_seed) != OK) return ERROR;
@@ -160,10 +175,14 @@ int settings_init(Settings *p_settings, const char *src_path, const char *name, 
     if (settings_set_name(p_settings, name) != OK) return ERROR;
     if (settings_set_src_path(p_settings, src_path) != OK) return ERROR;
 
-    p_settings->gate_entry_inSec = 1; // FIXME @Maupher
-    p_settings->mode_select = NORMAL; // FIXME Currently hardcoded as not relevant for min requirement.
-    p_settings->entry_probability_perSec_prec = 1.0f;
-    p_settings->is_leavable = NON_LEAVABLE;  // FIXME Currently hardcoded as not relevant for min requirement.
+    p_settings->gate_entry_inSec = gate_entry_inSec;
+    p_settings->tick_inSec = tick_inSec;
+    p_settings->max_parking_ticks = max_parking_ticks;
+    p_settings->min_parking_ticks = min_parking_ticks;
+    p_settings->mode_select = mode_select;
+    p_settings->entry_probability_perSec_prec = entry_probability_perSec_prec;
+    p_settings->is_leavable = is_leavable;
+
     return OK;
 }
 
