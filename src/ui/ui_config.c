@@ -177,14 +177,14 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
             printf("Input error.\n");
             continue;
         }
-        //FIXME parse_long_value does not even exist!
-        // if (parse_long_value(buffer, &value) != 0)
-        // {
-        //     printf("Your input is not a valid integer!\n");
-        //     printf("Press ENTER and try again...\n");
-        //     press_enter_to_continue();
-        //     continue;
-        // }
+
+        if (parse_long(buffer, &value) != 0)
+         {
+            printf("Your input is not a valid integer!\n");
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+         }
 
         if (value < min_val || value > max_val)
         {
