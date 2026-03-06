@@ -39,6 +39,41 @@ static int read_line(char *p_buffer, size_t buffer_len)
     return 0;
 }
 
+static int ui_settings_set_name(Settings *p_settings, const char *p_name)
+{
+    /* Settings.c has a private static settings_set_name().
+       Until a public setter exists, we replicate the logic here. */
+
+    if (p_settings == NULL || p_name == NULL)
+    {
+        return -1;
+    }
+
+    if (p_name[0] == '\0')
+    {
+        return -1;
+    }
+
+    size_t len = strlen(p_name);
+    if (len > NAME_MAX_LEN)
+    {
+        len = NAME_MAX_LEN;
+    }
+
+    char *p_buf = (char *)malloc(len + 1U);
+    if (p_buf == NULL)
+    {
+        return -1;
+    }
+
+    memcpy(p_buf, p_name, len);
+    p_buf[len] = '\0';
+
+    free(p_settings->name);
+    p_settings->name = p_buf;
+    return 0;
+}
+
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
