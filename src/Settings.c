@@ -37,11 +37,6 @@
 #include "json-c/json_object.h"
 #include "stdio.h"
 #include "sys/stat.h"
-
-#define seconds_in_day 86400
-#define SETTINGS_NAME_MAX_CHARS 19
-#define SETTINGS_MAX_SIZE_PARAM 255
-
 static int settings_set_name(Settings *p_settings, const char *name);
 static int settings_set_owned_string(char **p_dest, const char *src);
 static int settings_create_path_to_file(const char* path);
@@ -327,9 +322,9 @@ int settings_set_real_equivalent(Settings *p_settings, const uint16_t real_equiv
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (real_equivalent < 10) {
+    if (real_equivalent < SETTINGS_MINIMUM_REAL_EQUIVALENT) {
         print_error_s("Real equivalent has to be at least 10 seconds, defaulting to 10 seconds.", LOW);
-        p_settings->real_equivalent = 10;
+        p_settings->real_equivalent = SETTINGS_MINIMUM_REAL_EQUIVALENT;
         return OK;
     }
     p_settings->real_equivalent = real_equivalent;
@@ -356,14 +351,14 @@ int settings_set_max_ticks(Settings *p_settings, const int32_t max_ticks) {
         return ERROR;
     }
 
-    if (max_ticks < -356 || max_ticks > 2147483647) {
-        p_settings->max_ticks = (int32_t)(seconds_in_day / (p_settings->real_equivalent ? p_settings->real_equivalent : 10));
+    if (max_ticks < SETTINGS_MAXIMUM_DAY_TICKS || max_ticks > SETTINGS_MAXIMUM_TICKS) {
+        p_settings->max_ticks = (int32_t)(SECONDS_IN_DAY / (p_settings->real_equivalent ? p_settings->real_equivalent : 10));
         print_warning_s("Invalid max ticks, setting to default (one day equivalent).");
         return UNKNOWN;
     }
 
     if (max_ticks < -1) {
-        p_settings->max_ticks = (int32_t)(seconds_in_day * (-max_ticks) / p_settings->real_equivalent);
+        p_settings->max_ticks = (int32_t)(SECONDS_IN_DAY * (-max_ticks) / p_settings->real_equivalent);
     } else {
         p_settings->max_ticks = max_ticks;
     }
@@ -384,7 +379,28 @@ int settings_set_rand_seed(Settings *p_settings, const int32_t rand_seed) {
 }
 
 int settings_to_parkhaus(const Settings *p_settings, Parkhaus *p_parkhaus) {
-    // TODO
+    if (checkNull(p_settings) || checkNull(p_parkhaus)) {
+        print_error_s("Settings or Parkhaus pointer cannot be null.", HIGH);
+        return ERROR;
+    }
+    const char *default_name = SETTINGS_DEFAULT_NAME;
+    const char *name_to_use = (p_settings->name != NULL && p_settings->name[0] != '\0')
+                              ? p_settings->name
+                              : default_name;
+
+    strncpy(p_parkhaus->name, name_to_use, sizeof(p_parkhaus->name) - 1);
+    p_parkhaus->name[sizeof(p_parkhaus->name) - 1] = '\0';
+    p_parkhaus->capacity = p_settings->capacity * p_settings->floors;
+    p_parkhaus->floors = p_settings->floors;
+    p_parkhaus->capacity_taken = 0;
+    p_parkhaus->gate_queues = NULL;
+    p_parkhaus->p_parked_head = NULL;
+    p_parkhaus->p_parked_tail = NULL;
+    p_parkhaus->base.type = PARKHAUS;
+    p_parkhaus->base.tick = NULL;
+    p_parkhaus->base.id = 0;
+
+    return OK;
 }
 
 int delete_settings(Settings *p_settings) {
