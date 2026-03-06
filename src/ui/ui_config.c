@@ -7,7 +7,7 @@
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_config.h"
 
-#include "../include/Settings.h"
+#include "../include/utils/Settings.h"
 #include "../include/types.h"
 
 /* ========================================================================= */
@@ -62,5 +62,32 @@ ui_state config_menu(void) {
     {
         choice = user_input();
         valid = validate_user_input(choice, CONFIG_MAX_VALID_NUMBER);
+    }
+
+    if (choice == 0)
+    {
+        return UI_HOME;
+    }
+    else if (choice == 1)
+    {
+        char name_buf[128];
+
+        printf("Enter name (max %d chars): ", NAME_MAX_LEN);
+        if (read_line(name_buf, sizeof(name_buf)) != 0 || name_buf[0] == '\0')  //read_line() will be implemented in the next step
+        {
+            printf("Invalid name.\n");
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            return UI_KONFIG;
+        }
+
+        if (ui_settings_set_name(p_settings, name_buf) != 0)    //ui_settings_set_name() will be implemented in the next step
+        {
+            printf("Failed to set name (out of memory?).\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
+        return UI_KONFIG;
     }
 }
