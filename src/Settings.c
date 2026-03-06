@@ -1,6 +1,7 @@
 #include "Settings.h"
 
 #include <ctype.h>
+#include <errno.h>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
@@ -12,6 +13,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <direct.h>
+#define MKDIR(path) _mkdir(path)
 #endif
 #ifdef ERROR
 #undef ERROR
@@ -26,6 +28,7 @@
 #ifdef __linux__
 #include <unistd.h>
 #include <limits.h>
+#define MKDIR(path) mkdir(path, 0777)
 #endif
 
 #include "utils/SafteyUtils.h"
@@ -43,6 +46,7 @@ static int settings_set_name(Settings *p_settings, const char *name);
 static int settings_set_owned_string(char **p_dest, const char *src);
 static int settings_create_path_to_file(const char* path);
 static char *settings_make_default_config_path();
+static int settings_is_relative_path(const char *path);
 
 
 static int settings_set_name(Settings *p_settings, const char *name) {
@@ -354,7 +358,35 @@ int settings_is_valid_system_path_string(const char *path) {
     return ERROR;
 #    endif
 }
-
+/**
+ * Checks if a path is strictly relative.
+ * Disallows absolute paths on both Linux and Windows.
+ * @param path The path string to evaluate.
+ * @return OK if relative, ERROR if absolute or invalid.
+ */
+static int settings_is_relative_path(const char *path) {
+    if (checkNull(path)) {
+        return ERROR;
+    }
+    const unsigned char *p = (const unsigned char *)path; // skipping leading whitespaces
+    while (*p != '\0' && isspace(*p)) {
+        p++;
+    }
+    if (*p == '\0') {
+        return ERROR;
+    }
+    if (*p == '/' || *p == '\\') { // relative paths need to start with "." or ".."
+        print_warning_s("Absolute paths starting with slashes are not allowed.");
+        return ERROR;
+    }
+#ifdef _WIN32
+    if (isalpha(p[0]) && p[1] == ':') {
+        print_error_s("Absolute paths with drive letters are not allowed.", MEDIUM);
+        return ERROR;
+    }
+#endif
+    return OK;
+}
 /**
  * Create the path to the settings file, if it doesn't exist yet.
  * @note This function assumes you have already checked the path is a valid
@@ -367,48 +399,40 @@ static int settings_create_path_to_file(const char* path) {
         print_error_s("Path cannot be null.", HIGH);
         return ERROR;
     }
-    struct stat buffer;
-    if (stat(path, &buffer) != 0 && !(S_ISDIR(buffer.st_mode))) {
-        #ifdef _WIN32
-            if (_mkdir(path) != 0) {
-                print_error_s("Something went wrong trying to create the directory to settings.", HIGH);
-                return ERROR;
-            }
-        #elif defined(__linux__)
-            const unsigned char* paths[10];
-            const unsigned char *p = (const unsigned char *)path;
-            int pth_count = 0;
-            if (*p != '.') {
-                print_warning_s("You're not using relative paths. This will create the folder at root which might cause troubles.");
-            }
-            while (*p != *p+strlen(path)) {
-                while (*p != '\0' && *p != '/') {
-                    p++;
-                }
-                if (*p == '\0') {
-                    continue;
-                }
-                if (pth_count >= 10) {
-                    print_error_s("Your file is nested too deep. Please be sure you're using relative paths.", HIGH);
+    if (settings_is_relative_path(path) != OK) {
+        print_error_s("Path is not a valid relative path.", MEDIUM);
+        return ERROR;
+    }
+    const size_t len = strlen(path);
+    char *path_copy = (char *)malloc(len + 1);
+    if (checkNull(path_copy)) {
+        print_error_s("Out of memory when allocating path.", HIGH);
+        return ERROR;
+    }
+    memcpy(path_copy, path, len + 1);
+    char *last_slash = strrchr(path_copy, '/');
+    *last_slash = '\0';
+    for (char *p = path_copy + 1; *p; p++) {
+        if (*p == '/' || *p == '\\') {
+            char temp = *p;
+            *p = '\0';
+            if (MKDIR(path_copy) != 0) {
+                if (errno != EEXIST) {
+                    print_error_s("Failed to create intermediate directory.", HIGH);
+                    free(path_copy);
                     return ERROR;
                 }
-                paths[pth_count] = p;
-                pth_count++;
             }
-            for (int i; i < pth_count; ++i) {
-                char* str_start = *paths[i];
-
-            }
-            if (mkdir(path, 0777) !=0) {
-
-                print_error_s("Something went wrong trying to create the directory to settings.", HIGH);
-                return ERROR;
-            }
-        #else
-            print_error_s("We couldn't determine your operating system.", HIGH);
-            return ERROR;
-        #endif
+            *p = temp;
+        }
     }
+    if (MKDIR(path_copy) != 0 && errno != EEXIST) {
+        print_error_s("Failed to create final directory.", HIGH);
+        free(path_copy);
+        return ERROR;
+    }
+
+    free(path_copy);
     return OK;
 }
 
