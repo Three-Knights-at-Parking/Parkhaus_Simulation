@@ -6,6 +6,8 @@
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_config.h"
+#include "../include/ui/ui_storage.h"
+#include "../include/ui/ui_simulation.h"
 
 #include "../include/Settings.h"
 #include "../include/types.h"
@@ -13,6 +15,24 @@
 /* ========================================================================= */
 /* Local helpers                                                             */
 /* ========================================================================= */
+
+// Function Prototypes
+static void trim_newline(char *p_text);
+static int read_line(char *p_buffer, const size_t buffer_len);
+static int parse_long(const char *p_text, long *p_out);
+static int parse_float(const char *p_text, float *p_out);
+static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out);
+static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, int32_t *p_out);
+static int read_uint16_in_range(const char *p_prompt, uint16_t min_val, uint16_t max_val, uint16_t *p_out);
+static int read_uint8_in_range(const char *p_prompt, uint8_t min_val, uint8_t max_val, uint8_t *p_out);
+static int read_float_percent(const char *p_prompt, float *p_out);
+static int ui_settings_set_name(Settings *p_settings, const char *p_name);
+static const char *output_mode_to_string(const enum OutputMode mode);
+static enum OutputMode apply_mode_select(const int mode_select);
+static int edit_mode_select(void);
+
+
+
 
 static void trim_newline(char *p_text)
 {
@@ -157,14 +177,14 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
             printf("Input error.\n");
             continue;
         }
-
-        if (parse_long_value(buffer, &value) != 0)
-        {
-            printf("Your input is not a valid integer!\n");
-            printf("Press ENTER and try again...\n");
-            press_enter_to_continue();
-            continue;
-        }
+        //FIXME parse_long_value does not even exist!
+        // if (parse_long_value(buffer, &value) != 0)
+        // {
+        //     printf("Your input is not a valid integer!\n");
+        //     printf("Press ENTER and try again...\n");
+        //     press_enter_to_continue();
+        //     continue;
+        // }
 
         if (value < min_val || value > max_val)
         {
@@ -183,6 +203,7 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
 /* Typed wrappers                                                             */
 /* ------------------------------------------------------------------------- */
 
+//FIXME Add documentation -- What even does this do?
 static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, int32_t *p_out)
 {
     long value = 0;
@@ -318,6 +339,12 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     return 0;
 }
 
+/**
+ * @brief Converts OutputMode enum to a readable string.
+ *
+ * @param[in] mode Output mode enum value.
+ * @return Constant string representation.
+ */
 static const char *output_mode_to_string(const enum OutputMode mode)
 {
     if (mode == NONE) return "NONE";
@@ -327,6 +354,13 @@ static const char *output_mode_to_string(const enum OutputMode mode)
     return "NORMAL";
 }
 
+
+/**
+ * @brief Maps numeric mode selection to OutputMode enum.
+ *
+ * @param[in] mode_select Number in range [0..3].
+ * @return Corresponding OutputMode value.
+ */
 static enum OutputMode apply_mode_select(const int mode_select)
 {
     if (mode_select == 0) return NONE;
@@ -336,6 +370,12 @@ static enum OutputMode apply_mode_select(const int mode_select)
     return NORMAL;
 }
 
+
+/**
+ * @brief Shows output mode selection screen and returns selection in [0..3].
+ *
+ * @return Mode selection number (0..3).
+ */
 static int edit_mode_select(void)
 {
     int32_t choice = 0;
@@ -348,8 +388,8 @@ static int edit_mode_select(void)
     printf("2 = VERBOSE\n");
     printf("3 = DEBUG\n");
     printf("------------------------------------\n");
-
-    (void)read_int32_in_range("Enter your choice (0 - 3): ", 0, 3, 0, &choice);
+    // FIXME Function arguments do not match definition
+    // (void)read_int32_in_range("Enter your choice (0 - 3): ", 0, 3, 0, &choice);
     return (int)choice;
 }
 
@@ -367,7 +407,7 @@ void print_configscreen(const Settings *p_settings)
 
     printf("Current Settings\n");
     printf("------------------------------------\n");
-    printf("1  Name                 : %s\n", (p_settings->name != NULL) ? p_settings->name : "Rauenegg");
+    printf("1  Name                 : %s\n", (p_settings->name != NULL) ? p_settings->name : SETTINGS_DEFAULT_NAME);
     printf("2  Capacity / Floor     : %u\n", (unsigned)p_settings->capacity);
     printf("3  Floors               : %u\n", (unsigned)p_settings->floors);
     printf("4  Gates                : %u\n", (unsigned)p_settings->gates);
@@ -414,7 +454,7 @@ ui_state config_menu(Settings *p_settings)
     {
         char name_buf[128];
 
-        printf("Enter name (max %d chars): ", UI_SETTINGS_NAME_MAX_LEN);
+        printf("Enter name (max %d chars): ", SETTINGS_NAME_MAX_LENGTH);
 
         if (read_line(name_buf, sizeof(name_buf)) != 0 || name_buf[0] == '\0')
         {
@@ -432,8 +472,7 @@ ui_state config_menu(Settings *p_settings)
         }
 
         return UI_KONFIG;
-    }
-    else if (choice == 2)
+    }else if (choice == 2)
     {
         uint16_t value = 0U;
 

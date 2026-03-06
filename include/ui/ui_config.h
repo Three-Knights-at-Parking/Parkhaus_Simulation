@@ -135,30 +135,6 @@ float edit_float_setting_percent(void);
  * @return A validated string (pseudocode: returned string ownership depends on your C impl).
  */
 char *edit_string_setting(int max_len);
-
-/**
- * @brief Shows output mode selection screen and returns selection in [0..3].
- *
- * @return Mode selection number (0..3).
- */
-int edit_mode_select(void);
-
-/**
- * @brief Maps numeric mode selection to OutputMode enum.
- *
- * @param[in] mode_select Number in range [0..3].
- * @return Corresponding OutputMode value.
- */
-enum OutputMode apply_mode_select(int mode_select);
-
-/**
- * @brief Converts OutputMode enum to a readable string.
- *
- * @param[in] mode Output mode enum value.
- * @return Constant string representation.
- */
-const char *output_mode_to_string(enum OutputMode mode);
-
 /**
  * @brief Handles the configuration menu interaction.
  *

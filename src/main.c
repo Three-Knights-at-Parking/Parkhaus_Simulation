@@ -12,26 +12,28 @@ int main() {
         return ERROR;
     }
 
-    if (settings_init(p_settings,
-                      "config.json",
-                      "Rauenegg",
-                      100,
-                      1,
-                      1,
-                      60,
-                      NORMAL,
-                      1440,
-                      -1) != OK)
+    if (settings_init(
+        p_settings,
+                      SETTINGS_DEFAULT_PATH,
+                      SETTINGS_DEFAULT_NAME,
+                      SETTINGS_DEFAULT_CAPACITY,
+                      SETTINGS_DEFAULT_FLOORS,
+                      SETTINGS_DEFAULT_GATES,
+                      SETTINGS_DEFAULT_REAL_EQUIVALENT,
+                      SETTINGS_DEFAULT_OUTPUT_MODE,
+                      SETTINGS_DEFAULT_MAX_TICKS,
+                      SETTINGS_DEFAULT_RAND_SEED,
+                      SETTINGS_DEFAULT_GATE_ENTRY_SEC,
+                      SETTINGS_DEFAULT_TICK_SEC,
+                      SETTINGS_DEFAULT_MAX_PARKING_TICKS,
+                      SETTINGS_DEFAULT_MIN_PARKING_TICKS,
+                      SETTINGS_DEFAULT_MODE_SELECT,
+                      SETTINGS_DEFAULT_ENTRY_PROB,
+                      SETTINGS_DEFAULT_IS_LEAVABLE
+        ) != OK)
     {
         return ERROR;
     }
-
-    /* UI-only defaults until dedicated setters exist */
-    settings.gate_entry_inSec = 5;
-    settings.tick_inSec = 10;
-    settings.entry_probability_perSec_prec = 75.0f;
-    settings.max_parking_ticks = 10;
-    settings.min_parking_ticks = 1;
 
     ui_start(p_settings);
 

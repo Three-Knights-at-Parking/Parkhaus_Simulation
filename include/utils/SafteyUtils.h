@@ -1,6 +1,5 @@
 #ifndef TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SAFTEYUTILS_H
 #define TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SAFTEYUTILS_H
-#include "../types.h"
 enum Severity{LOW, MEDIUM, HIGH};
 #define print_error_s(msg, severity) print_error_s_internal(msg, severity, __func__)
 #define print_warning_s(msg) print_warning_s_internal(msg, __func__)
