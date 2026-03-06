@@ -5,7 +5,7 @@
 #include "../include/Settings.h"
 
 int main() {
-
+    /* Temporary Solution */
     Settings* p_settings = malloc(sizeof(Settings));
     if (p_settings == NULL) {
         printf("malloc failed");
