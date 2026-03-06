@@ -36,6 +36,7 @@ int rng_init(Settings *p_settings)
         p_settings->rand_seed = (int32_t)time(NULL);
     }
 
+
     // Initialize C's global RNG state used by rand().
     srand((unsigned int)p_settings->rand_seed);
     return OK;

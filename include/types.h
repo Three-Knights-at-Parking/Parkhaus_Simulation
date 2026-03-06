@@ -126,7 +126,6 @@ struct Car {
 struct RNG
 {
     uint32_t seed;
-    RNG.rng_range
 };
 
 // --- EXAMPLE OF ANOTHER VEHICLE TYPE ---
