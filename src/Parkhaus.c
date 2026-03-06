@@ -1,10 +1,12 @@
 #include "Parkhaus.h"
 
+#include <stdlib.h>
+
 int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_gate_queues) {
     if (p_parkhaus == NULL || p_settings == NULL || p_gate_queues == NULL) {
         return ERROR;
     }
-
+    p_parkhaus->name = p_settings->name;
     p_parkhaus->capacity = p_settings->capacity;
     p_parkhaus->floors = p_settings->floors;
     p_parkhaus->capacity_taken = 0;
@@ -14,11 +16,9 @@ int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_ga
     return OK;
 }
 
-void parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick) {
-    (void) p_self;
-    (void) p_settings;
-    (void) p_StatList;
-    (void) current_tick;
+int parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick) {
+    if (p_self == NULL || p_settings == NULL || p_StatList == NULL) {return ERROR;}
+
 }
 
 int parkhaus_park_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {

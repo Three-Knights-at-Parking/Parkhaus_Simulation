@@ -86,7 +86,7 @@ struct Parkhaus {
     uint16_t capacity; // Number of total parking spaces.
     uint8_t floors; // Number of floors. This is currently miscellaneous.
     uint32_t capacity_taken; // Number of slots filled.
-    Queue_List **gate_queues; // array of Queue* with size = num_gates
+    Queue **gate_queues; // array of Queue* with size = num_gates
     GenericVehicle *p_parked_head; // linked list of parked vehicles.
     GenericVehicle *p_parked_tail;
 };
@@ -148,7 +148,7 @@ struct RNG
 
 struct Settings {
     char* src_path; // Relative path to settings file, if any. Settings takes ownership of the string.
-    char* name; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
+    char* name[20]; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
     uint16_t capacity; // Total parking spots per floor ##UI##
     uint8_t floors; // Number of floors. This is currently miscellaneous ##UI##
     uint8_t gates; // Number of gates. This will affect queue time. ##UI##
