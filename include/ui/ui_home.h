@@ -41,6 +41,6 @@ void print_homescreen(void);
  *
  * @return Next UI state depending on user selection.
  */
-ui_state home_menu(void);
+ui_state home_menu(Settings *p_settings);
 
 #endif /* UI_HOME_H */

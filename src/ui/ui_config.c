@@ -331,7 +331,7 @@ void print_configscreen(const Settings *p_settings)
 /* Config menu                                                               */
 /* ========================================================================= */
 
-ui_state config_menu(void) {
+ui_state config_menu(Settings *p_settings) {
     //Settings *p_settings = ui_get_settings(); //p_settings will be probably given as a parameter
 
     if (p_settings == NULL)
