@@ -25,8 +25,8 @@ int main() {
                       SETTINGS_DEFAULT_RAND_SEED,
                       SETTINGS_DEFAULT_GATE_ENTRY_SEC,
                       SETTINGS_DEFAULT_TICK_SEC,
-                      SETTINGS_DEFAULT_MAX_PARKING_TICKS,
-                      SETTINGS_DEFAULT_MIN_PARKING_TICKS,
+                      SETTINGS_DEFAULT_MAXIMUM_PARKING_TICKS,
+                      SETTINGS_DEFAULT_MINIMUM_PARKING_TICKS,
                       SETTINGS_DEFAULT_MODE_SELECT,
                       SETTINGS_DEFAULT_ENTRY_PROB,
                       SETTINGS_DEFAULT_IS_LEAVABLE
