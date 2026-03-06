@@ -134,6 +134,51 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
     return 0;
 }
 
+/* ------------------------------------------------------------------------- */
+/* Generic integer input helper                                              */
+/* ------------------------------------------------------------------------- */
+
+static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out)
+{
+    char buffer[64];
+    long value = 0;
+
+    if (p_out == NULL)
+    {
+        return -1;
+    }
+
+    while (1)
+    {
+        printf("%s", p_prompt);
+
+        if (read_line(buffer, sizeof(buffer)) != 0)
+        {
+            printf("Input error.\n");
+            continue;
+        }
+
+        if (parse_long_value(buffer, &value) != 0)
+        {
+            printf("Your input is not a valid integer!\n");
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
+
+        if (value < min_val || value > max_val)
+        {
+            printf("Value must be between %ld and %ld.\n", min_val, max_val);
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
+
+        *p_out = value;
+        return 0;
+    }
+}
+
 static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, const int allow_negative, int32_t *p_out)
 {
     char buffer[64];
