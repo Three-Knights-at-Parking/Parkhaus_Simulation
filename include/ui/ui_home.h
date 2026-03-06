@@ -1,8 +1,8 @@
-#ifndef HOME_H
-#define HOME_H
+#ifndef UI_HOME_H
+#define UI_HOME_H
 
 /**
- * @file home.h
+ * @file ui_home.h
  * @brief Home menu UI (main navigation screen).
  *
  * The Home menu is the central navigation point of the application.
@@ -10,28 +10,37 @@
  * - Simulation menu
  * - Configuration menu
  * - Storage menu
- * - Exit
+ * - Exit the application
  */
 
 #include "ui.h"
 
 /**
- * @brief Maximum valid menu number on the Home screen (valid range: 0..HOME_MAX_VALID_NUMBER).
+ * @brief Maximum valid menu number on the Home screen.
+ *
+ * Valid input range:
+ * 0 .. HOME_MAX_VALID_NUMBER
  */
 #define HOME_MAX_VALID_NUMBER (3)
 
 /**
  * @brief Prints the Home menu screen.
+ *
+ * Clears the terminal and prints the available navigation options.
  */
 void print_homescreen(void);
 
 /**
  * @brief Handles user interaction in the Home menu.
  *
- * Reads and validates the user input and returns the next UI state.
+ * This function:
+ * - prints the home screen
+ * - reads the user input
+ * - validates the selection
+ * - returns the next UI state
  *
  * @return Next UI state depending on user selection.
  */
-ui_state home_menu(void);
+ui_state home_menu(Settings *p_settings);
 
-#endif /* HOME_H */
+#endif /* UI_HOME_H */
