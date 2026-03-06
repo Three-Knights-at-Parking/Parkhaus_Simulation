@@ -151,6 +151,47 @@ static int read_int32_in_range(const char *p_prompt, const int32_t min_val, cons
     }
 }
 
+static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe possible to synthesize function with read_int32_in_range()
+{
+    char buffer[64];
+
+    if (p_out == NULL)
+    {
+        return -1;
+    }
+
+    while (1)
+    {
+        printf("%s", p_prompt);
+
+        if (read_line(buffer, sizeof(buffer)) != 0)
+        {
+            printf("Input error.\n");
+            continue;
+        }
+
+        float value = 0.0f;
+        if (parse_float(buffer, &value) != 0)       //Implementing parse_float() in next step
+        {
+            printf("Your input is not a valid number!\n");
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
+
+        if (value < MIN_PROB_PERCENT || value > MAX_PROB_PERCENT)
+        {
+            printf("Probability must be between %.1f and %.1f percent.\n", MIN_PROB_PERCENT, MAX_PROB_PERCENT);
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
+
+        *p_out = value;
+        return 0;
+    }
+}
+
 static int ui_settings_set_name(Settings *p_settings, const char *p_name)
 {
     /* Settings.c has a private static settings_set_name().
@@ -351,7 +392,7 @@ ui_state config_menu(void) {
     else if (choice == 8)
     {
         float prob = 0.0f;
-        (void)read_float_percent("Enter entry probability per second (0 - 100 %): ", &prob);    //Implementing read_float_percent() in next step
+        (void)read_float_percent("Enter entry probability per second (0 - 100 %): ", &prob);
 
         /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, ...) when available */
         p_settings->entry_probability_perSec_prec = prob;
