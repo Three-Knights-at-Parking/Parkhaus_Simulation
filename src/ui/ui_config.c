@@ -22,9 +22,6 @@ static int read_line(char *p_buffer, const size_t buffer_len);
 static int parse_long(const char *p_text, long *p_out);
 static int parse_float(const char *p_text, float *p_out);
 static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out);
-static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, int32_t *p_out);
-static int read_uint16_in_range(const char *p_prompt, uint16_t min_val, uint16_t max_val, uint16_t *p_out);
-static int read_uint8_in_range(const char *p_prompt, uint8_t min_val, uint8_t max_val, uint8_t *p_out);
 static int read_float_percent(const char *p_prompt, float *p_out);
 static int ui_settings_set_name(Settings *p_settings, const char *p_name);
 static const char *output_mode_to_string(const enum OutputMode mode);
@@ -154,10 +151,6 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
     return 0;
 }
 
-/* ------------------------------------------------------------------------- */
-/* Generic integer input helper                                              */
-/* ------------------------------------------------------------------------- */
-
 static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out)
 {
     char buffer[64];
@@ -179,12 +172,12 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
         }
 
         if (parse_long(buffer, &value) != 0)
-         {
+        {
             printf("Your input is not a valid integer!\n");
             printf("Press ENTER and try again...\n");
             press_enter_to_continue();
             continue;
-         }
+        }
 
         if (value < min_val || value > max_val)
         {
@@ -197,70 +190,6 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
         *p_out = value;
         return 0;
     }
-}
-
-/* ------------------------------------------------------------------------- */
-/* Typed wrappers                                                             */
-/* ------------------------------------------------------------------------- */
-
-//FIXME Add documentation -- What even does this do?
-static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, int32_t *p_out)
-{
-    long value = 0;
-
-    if (p_out == NULL)
-    {
-        return -1;
-    }
-
-    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
-    {
-        return -1;
-    }
-
-    if (value < INT32_MIN || value > INT32_MAX)
-    {
-        return -1;
-    }
-
-    *p_out = (int32_t)value;
-    return 0;
-}
-
-static int read_uint16_in_range(const char *p_prompt, uint16_t min_val, uint16_t max_val, uint16_t *p_out)
-{
-    long value = 0;
-
-    if (p_out == NULL)
-    {
-        return -1;
-    }
-
-    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
-    {
-        return -1;
-    }
-
-    *p_out = (uint16_t)value;
-    return 0;
-}
-
-static int read_uint8_in_range(const char *p_prompt, uint8_t min_val, uint8_t max_val, uint8_t *p_out)
-{
-    long value = 0;
-
-    if (p_out == NULL)
-    {
-        return -1;
-    }
-
-    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
-    {
-        return -1;
-    }
-
-    *p_out = (uint8_t)value;
-    return 0;
 }
 
 static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe possible to synthesize function with read_int32_in_range()
@@ -283,7 +212,7 @@ static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe 
         }
 
         float value = 0.0f;
-        if (parse_float(buffer, &value) != 0)       //Implementing parse_float() in next step
+        if (parse_float(buffer, &value) != 0)
         {
             printf("Your input is not a valid number!\n");
             printf("Press ENTER and try again...\n");
@@ -446,7 +375,9 @@ ui_state config_menu(Settings *p_settings)
 
     if (print_configscreen(p_settings) != OK)
     {
-        printf("Loading configscreen failed. Return to Home.");
+        printf("Loading config screen failed. Return to Home.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
         return UI_HOME;
     }
 
@@ -482,68 +413,67 @@ ui_state config_menu(Settings *p_settings)
         }
 
         return UI_KONFIG;
-    }else if (choice == 2)
+    }
+    else if (choice == 2)
     {
-        uint16_t value = 0U;
+        long value = 0;
 
-        (void)read_uint16_in_range("Enter capacity per floor: ",
-                                   (uint16_t)MIN_CAPACITY,
-                                   (uint16_t)MAX_CAPACITY,
-                                   &value);
+        (void)read_long_in_range("Enter capacity per floor: ",
+                                 (long)MIN_CAPACITY,
+                                 (long)MAX_CAPACITY,
+                                 &value);
 
-        (void)settings_set_size(p_settings, value);
+        (void)settings_set_size(p_settings, (uint16_t)value);
         return UI_KONFIG;
     }
     else if (choice == 3)
     {
-        uint8_t value = 0U;
+        long value = 0;
 
-        (void)read_uint8_in_range("Enter number of floors: ",
-                                  (uint8_t)MIN_FLOORS,
-                                  (uint8_t)MAX_FLOORS,
-                                  &value);
+        (void)read_long_in_range("Enter number of floors: ",
+                                 (long)MIN_FLOORS,
+                                 (long)MAX_FLOORS,
+                                 &value);
 
-        (void)settings_set_floors(p_settings, value);
+        (void)settings_set_floors(p_settings, (uint8_t)value);
         return UI_KONFIG;
     }
     else if (choice == 4)
     {
-        uint8_t value = 0U;
+        long value = 0;
 
-        (void)read_uint8_in_range("Enter number of gates: ",
-                                  (uint8_t)MIN_GATES,
-                                  (uint8_t)MAX_GATES,
-                                  &value);
+        (void)read_long_in_range("Enter number of gates: ",
+                                 (long)MIN_GATES,
+                                 (long)MAX_GATES,
+                                 &value);
 
-        (void)settings_set_gates(p_settings, value);
+        (void)settings_set_gates(p_settings, (uint8_t)value);
         return UI_KONFIG;
     }
     else if (choice == 5)
     {
-        uint16_t value = 0U;
+        long value = 0;
 
-        (void)read_uint16_in_range("Enter gate entry time in seconds: ",
-                                   (uint16_t)MIN_GATE_ENTRY_SEC,
-                                   (uint16_t)MAX_GATE_ENTRY_SEC,
-                                   &value);
+        (void)read_long_in_range("Enter gate entry time in seconds: ",
+                                 (long)MIN_GATE_ENTRY_SEC,
+                                 (long)MAX_GATE_ENTRY_SEC,
+                                 &value);
 
-        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, value) when available */
-        p_settings->gate_entry_inSec = value;
-
+        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, ...) when available */
+        p_settings->gate_entry_inSec = (uint16_t)value;
         return UI_KONFIG;
     }
     else if (choice == 6)
     {
-        uint16_t value = 0U;
+        long value = 0;
 
-        (void)read_uint16_in_range("Enter tick length in seconds: ",
-                                   (uint16_t)MIN_TICK_SEC,
-                                   (uint16_t)MAX_TICK_SEC,
-                                   &value);
+        (void)read_long_in_range("Enter tick length in seconds: ",
+                                 (long)MIN_TICK_SEC,
+                                 (long)MAX_TICK_SEC,
+                                 &value);
 
-        /* TODO: replace with settings_set_tick_inSec(p_settings, value) when available */
-        p_settings->tick_inSec = value;
-
+        /* TODO: replace with settings_set_tick_inSec(p_settings, ...) when available */
+        p_settings->tick_inSec = (uint16_t)value;
         return UI_KONFIG;
     }
     else if (choice == 7)
@@ -560,33 +490,32 @@ ui_state config_menu(Settings *p_settings)
 
         (void)read_float_percent("Enter entry probability per second (0 - 100 %%): ", &prob);
 
-        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, prob) when available */
+        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, ...) when available */
         p_settings->entry_probability_perSec_prec = prob;
-
         return UI_KONFIG;
     }
     else if (choice == 9)
     {
-        int32_t value = 0;
+        long value = 0;
 
-        (void)read_int32_in_range("Enter max ticks (-1/-2/... for day equivalents): ",
-                                  MIN_MAX_TICKS,
-                                  MAX_MAX_TICKS,
-                                  &value);
+        (void)read_long_in_range("Enter max ticks (-1/-2/... for day equivalents): ",
+                                 (long)MIN_MAX_TICKS,
+                                 (long)MAX_MAX_TICKS,
+                                 &value);
 
-        (void)settings_set_max_ticks(p_settings, value);
+        (void)settings_set_max_ticks(p_settings, (int32_t)value);
         return UI_KONFIG;
     }
-    else if (choice == 10)
+    else
     {
-        int32_t value = 0;
+        long value = 0;
 
-        (void)read_int32_in_range("Enter random seed (or -1 for default/time): ",
-                                  MIN_SEED,
-                                  MAX_SEED,
-                                  &value);
+        (void)read_long_in_range("Enter random seed (or -1 for default/time): ",
+                                 (long)MIN_SEED,
+                                 (long)MAX_SEED,
+                                 &value);
 
-        (void)settings_set_rand_seed(p_settings, value);
+        (void)settings_set_rand_seed(p_settings, (int32_t)value);
         return UI_KONFIG;
     }
 }
