@@ -385,8 +385,10 @@ void print_configscreen(const Settings *p_settings)
 /* Config menu                                                               */
 /* ========================================================================= */
 
-ui_state config_menu(Settings *p_settings) {
-    //Settings *p_settings = ui_get_settings(); //p_settings will be probably given as a parameter
+ui_state config_menu(Settings *p_settings)
+{
+    int choice = 0;
+    validation_flag valid = INVALID;
 
     if (p_settings == NULL)
     {
@@ -397,9 +399,6 @@ ui_state config_menu(Settings *p_settings) {
     }
 
     print_configscreen(p_settings);
-
-    int choice = 0;
-    validation_flag valid = INVALID;
 
     while (valid != VALID)
     {
@@ -415,7 +414,8 @@ ui_state config_menu(Settings *p_settings) {
     {
         char name_buf[128];
 
-        printf("Enter name (max %d chars): ", NAME_MAX_LEN);
+        printf("Enter name (max %d chars): ", UI_SETTINGS_NAME_MAX_LEN);
+
         if (read_line(name_buf, sizeof(name_buf)) != 0 || name_buf[0] == '\0')
         {
             printf("Invalid name.\n");
@@ -435,56 +435,83 @@ ui_state config_menu(Settings *p_settings) {
     }
     else if (choice == 2)
     {
-        int32_t value = 0;
-        (void)read_int32_in_range("Enter capacity per floor: ", MIN_CAPACITY, MAX_CAPACITY, 0, &value);
-        (void)settings_set_size(p_settings, (uint16_t)value);
+        uint16_t value = 0U;
+
+        (void)read_uint16_in_range("Enter capacity per floor: ",
+                                   (uint16_t)MIN_CAPACITY,
+                                   (uint16_t)MAX_CAPACITY,
+                                   &value);
+
+        (void)settings_set_size(p_settings, value);
         return UI_KONFIG;
     }
     else if (choice == 3)
     {
-        int32_t value = 0;
-        (void)read_int32_in_range("Enter number of floors: ", MIN_FLOORS, MAX_FLOORS, 0, &value);
-        (void)settings_set_floors(p_settings, (uint8_t)value);
+        uint8_t value = 0U;
+
+        (void)read_uint8_in_range("Enter number of floors: ",
+                                  (uint8_t)MIN_FLOORS,
+                                  (uint8_t)MAX_FLOORS,
+                                  &value);
+
+        (void)settings_set_floors(p_settings, value);
         return UI_KONFIG;
     }
     else if (choice == 4)
     {
-        int32_t value = 0;
-        (void)read_int32_in_range("Enter number of gates: ", MIN_GATES, MAX_GATES, 0, &value);
-        (void)settings_set_gates(p_settings, (uint8_t)value);
+        uint8_t value = 0U;
+
+        (void)read_uint8_in_range("Enter number of gates: ",
+                                  (uint8_t)MIN_GATES,
+                                  (uint8_t)MAX_GATES,
+                                  &value);
+
+        (void)settings_set_gates(p_settings, value);
         return UI_KONFIG;
     }
     else if (choice == 5)
     {
-        int32_t value = 0;
-        (void)read_int32_in_range("Enter gate entry time in seconds: ", MIN_GATE_ENTRY_SEC, MAX_GATE_ENTRY_SEC, 0, &value);
+        uint16_t value = 0U;
 
-        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, ...) when available */
-        p_settings->gate_entry_inSec = (uint16_t)value;
+        (void)read_uint16_in_range("Enter gate entry time in seconds: ",
+                                   (uint16_t)MIN_GATE_ENTRY_SEC,
+                                   (uint16_t)MAX_GATE_ENTRY_SEC,
+                                   &value);
+
+        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, value) when available */
+        p_settings->gate_entry_inSec = value;
 
         return UI_KONFIG;
     }
     else if (choice == 6)
     {
-        int32_t value = 0;
-        (void)read_int32_in_range("Enter tick length in seconds: ", MIN_TICK_SEC, MAX_TICK_SEC, 0, &value);
+        uint16_t value = 0U;
 
-        /* TODO: replace with settings_set_tick_inSec(p_settings, ...) when available */
-        p_settings->tick_inSec = (uint16_t)value;
+        (void)read_uint16_in_range("Enter tick length in seconds: ",
+                                   (uint16_t)MIN_TICK_SEC,
+                                   (uint16_t)MAX_TICK_SEC,
+                                   &value);
+
+        /* TODO: replace with settings_set_tick_inSec(p_settings, value) when available */
+        p_settings->tick_inSec = value;
 
         return UI_KONFIG;
     }
-    else if (choice == 7) {
-        const int mode_select = edit_mode_select();
-        const enum OutputMode mode = apply_mode_select(mode_select);
+    else if (choice == 7)
+    {
+        int mode_select = edit_mode_select();
+        enum OutputMode mode = apply_mode_select(mode_select);
+
         (void)settings_set_output_mode(p_settings, mode);
         return UI_KONFIG;
     }
-    else if (choice == 8) {
+    else if (choice == 8)
+    {
         float prob = 0.0f;
-        (void)read_float_percent("Enter entry probability per second (0 - 100 %): ", &prob);
 
-        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, ...) when available */
+        (void)read_float_percent("Enter entry probability per second (0 - 100 %%): ", &prob);
+
+        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, prob) when available */
         p_settings->entry_probability_perSec_prec = prob;
 
         return UI_KONFIG;
@@ -492,16 +519,24 @@ ui_state config_menu(Settings *p_settings) {
     else if (choice == 9)
     {
         int32_t value = 0;
+
         (void)read_int32_in_range("Enter max ticks (-1/-2/... for day equivalents): ",
-                                  MIN_MAX_TICKS, MAX_MAX_TICKS, 1, &value);
+                                  MIN_MAX_TICKS,
+                                  MAX_MAX_TICKS,
+                                  &value);
+
         (void)settings_set_max_ticks(p_settings, value);
         return UI_KONFIG;
     }
     else if (choice == 10)
     {
         int32_t value = 0;
+
         (void)read_int32_in_range("Enter random seed (or -1 for default/time): ",
-                                  MIN_SEED, MAX_SEED, 1, &value);
+                                  MIN_SEED,
+                                  MAX_SEED,
+                                  &value);
+
         (void)settings_set_rand_seed(p_settings, value);
         return UI_KONFIG;
     }
