@@ -23,7 +23,7 @@
 #define CONFIG_MAX_VALID_NUMBER (10)
 
 /* Name input constraints */
-#define NAME_MAX_LEN (64)
+#define NAME_MAX_LEN (19)
 
 /* Probability is configured in percent. */
 #define MIN_PROB_PERCENT (0.0f)
