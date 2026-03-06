@@ -13,6 +13,8 @@
 
 #include <stdint.h>
 
+#include "Settings.h"
+
 /**
  * @brief UI state identifiers for the main UI state machine.
  */
@@ -90,6 +92,6 @@ ui_state welcome_message(void);
  *
  * @return UI_EXIT when the application should terminate.
  */
-ui_state ui_start(void);
+ui_state ui_start(Settings* p_settings);
 
 #endif /* UI_H */
