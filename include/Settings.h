@@ -135,4 +135,12 @@
      */
     int delete_settings(Settings *p_settings);
 
+    /**
+     * Check if the string is a valid path that we can write the settings to.
+     * @param path String representing the path (relative format)
+     * @return 0 if valid, non_zero if invalid
+     */
+    int settings_is_valid_path_string(const char *path);
+
+
     #endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SETTINGS_H

@@ -28,9 +28,18 @@
 #endif
 
 #include "utils/SafteyUtils.h"
+#include "json-c/json.h"
+#include "json-c/json_tokener.h"
+#include "json-c/json_object.h"
+
 #define seconds_in_day 86400
 #define SETTINGS_NAME_MAX_CHARS 19
 #define SETTINGS_MAX_SIZE_PARAM 255
+
+static int settings_set_name(Settings *p_settings, const char *name);
+static int settings_set_owned_string(char **p_dest, const char *src);
+static char *settings_make_default_config_path();
+
 
 static int settings_set_name(Settings *p_settings, const char *name) {
     if (checkNull(p_settings) || checkNull(name)) {
@@ -83,7 +92,42 @@ int settings_load_from_file(Settings *p_settings, const char *src_path) {
 }
 
 int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
-    // TODO
+    if (checkNull(p_settings)) {
+        print_error_s("Settings cannot be null.", HIGH);
+        return ERROR;
+    }
+
+    const char *final_path = dest_path;
+    char *allocated_path = NULL;
+
+    if (settings_is_valid_path_string(dest_path) == ERROR) {
+        print_warning_s("dest_path is not a valid path, creating and using default path");
+        allocated_path = settings_make_default_config_path();
+        final_path = allocated_path;
+    }
+
+    json_object *jobj = json_object_new_object();
+    if (checkNull(jobj)) return ERROR;
+
+    json_object_object_add(jobj, "name", json_object_new_string(p_settings->name ? p_settings->name : ""));
+    json_object_object_add(jobj, "src_path", json_object_new_string(p_settings->src_path ? p_settings->src_path : ""));
+    json_object_object_add(jobj, "capacity", json_object_new_int(p_settings->capacity));
+    json_object_object_add(jobj, "floors", json_object_new_int(p_settings->floors));
+    json_object_object_add(jobj, "gates", json_object_new_int(p_settings->gates));
+    json_object_object_add(jobj, "real_equivalent", json_object_new_int(p_settings->real_equivalent));
+    json_object_object_add(jobj, "output_mode", json_object_new_int(p_settings->output_mode));
+    json_object_object_add(jobj, "max_ticks", json_object_new_int(p_settings->max_ticks));
+    json_object_object_add(jobj, "rand_seed", json_object_new_int(p_settings->rand_seed));
+    const int result = json_object_to_file_ext(final_path, jobj, JSON_C_TO_STRING_PRETTY);
+
+    json_object_put(jobj);
+    free(allocated_path);
+
+    if (result < 0) {
+        print_error_s("Failed to write settings file. Ensure the directory exists.", HIGH);
+        return ERROR;
+    }
+    return OK;
 }
 
 int settings_init(Settings *p_settings, const char *src_path, const char *name, const uint16_t size, const uint8_t floors,
@@ -249,25 +293,34 @@ int delete_settings(Settings *p_settings) {
 }
 
 int settings_is_valid_path_string(const char *path) {
-    if (checkNull(path)) return 0;
+    if (checkNull(path)) return ERROR;
+    if (checkEmptyString(path)) return ERROR;
 
-    // reject empty / whitespace-only
     const unsigned char *p = (const unsigned char *)path;
     while (*p != '\0' && isspace(*p)) p++;
-    if (*p == '\0') return 0;
-
-    // reject Windows-illegal characters and control chars
+    if (*p == '\0') return ERROR;
+#ifdef _WIN32
     for (p = (const unsigned char *)path; *p != '\0'; ++p) {
-        if (*p < 32) return 0; // control characters
+        if (*p < 32) {
+            print_error_s("Your path contains invalid charactes", MEDIUM);
+            return ERROR;
+        }
         switch (*p) {
             case '<': case '>': case '"': case '|': case '?': case '*':
-                return 0;
+                return ERROR;
             default:
                 break;
         }
     }
 
-    return 1;
+    return OK;
+#elif defined(__linux__)
+
+    return OK;
+#    else
+    print_error_s("We couldn't determine your operating system.")
+    return ERROR;
+#    endif
 }
 
 
