@@ -14,7 +14,6 @@
 
 #include "ui.h"
 #include "../../include/types.h"
-#include "config.h"
 
 /* Max valid menu number in simulation menu (valid range: 0..SIMULATION_MAX_VALID_NUMBER). */
 #define SIMULATION_MAX_VALID_NUMBER (2)

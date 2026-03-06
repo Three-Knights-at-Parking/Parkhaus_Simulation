@@ -30,8 +30,8 @@
      * @brief Initialize a new Settings Object.
      * @param p_settings Pointer to the Settings object to initialize.
      * @param src_path The RELATIVE PATH to the config file. This can't be empty.
-     * @param name The name of this parking complex. Will default to Rauenegg and cut off at 20 characters.
-     * @param size 16-bit Integer representing the parking slots per floor. It's a good idea to make this a power of 2.
+     * @param name The name of the parking complex. Will default to Rauenegg and cut off at 20 characters.
+     * @param capacity 16-bit Integer representing the parking slots per floor. It's a good idea to make this a power of 2.
      * @param floors 8-bit Integer representing the number of floors. Default is 1 if empty.
      * @param gates 8-bit Integer representing the number of gates. Default is 1 if empty.
      * @param real_equivalent 16-bit Integer representing the realtime equivalent of one tick
@@ -40,18 +40,32 @@
      * @param max_ticks Signed 32-bit integer representing the max amount of ticks to simulate.
      *                  -(n) for n-days equivalent (Simulate n days).
      * @param rand_seed The random seed to use for this simulation. -1 if you want to use your current UTC timestamp.
+     * @param gate_entry_inSec Time needed for an vehicle to enter the parkhouse
+     * @param tick_inSec Time in seconds of one Tick
+     * @param max_parking_ticks maximum of Ticks a car is allowed to Park
+     * @param min_parking_ticks minimum of Ticks a car will park
+     * @param mode_select 0 = none / 1 = normal / 2 = verbose / 3 = Error
+     * @param entry_probability_perSec_prec probability of a Car entering per second
+     * @param is_leavable Determines if vehicles can leave the queue early at any positions.
      * @return 0 on success, non-zero if parameters are invalid.
      */
     int settings_init(Settings *p_settings,
                       const char *src_path,
                       const char *name,
-                      uint16_t size,
+                      uint16_t capacity,
                       uint8_t floors,
                       uint8_t gates,
                       uint16_t real_equivalent,
                       enum OutputMode output_mode,
                       int32_t max_ticks,
-                      int32_t rand_seed);
+                      int32_t rand_seed,
+                      uint16_t gate_entry_inSec,
+                      uint16_t tick_inSec,
+                      uint32_t max_parking_ticks,
+                      uint32_t min_parking_ticks,
+                      uint8_t mode_select,
+                      float entry_probability_perSec_prec,
+                      enum QueueLeavable is_leavable);
 
     /**
      * @brief Set a path to a config file to read from.
@@ -134,5 +148,13 @@
      * @return 0 on success, non-zero on error.
      */
     int delete_settings(Settings *p_settings);
+
+    /**
+     * Check if the string is a valid path that we can write the settings to.
+     * @param path String representing the path (relative format)
+     * @return 0 if valid, non_zero if invalid
+     */
+    int settings_is_valid_system_path_string(const char *path);
+
 
     #endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SETTINGS_H
