@@ -108,10 +108,9 @@ struct Simulation {
  * @author Luca Perri
  */
 struct Queue {
-    SimulationObject base; // base object.
     uint16_t capacity; // Number of waiting cars.
-    GenericVehicle *p_prev; // first vehicle in queue
-    GenericVehicle *p_next; // last vehicle in queue
+    GenericVehicle *p_head; // first vehicle in queue
+    GenericVehicle *p_tail; // last vehicle in queue
     uint16_t demand;   // demand assigned to this gate in the current tick
     uint8_t max_size; // maximum size of Queue before no cars should be created anymore.
 };
@@ -119,12 +118,12 @@ struct Queue {
  * Parent for Queue childs as Queue_list for multiple Entry Support
  * @author Ibach
  */
-struct Queue_List
-{
-    SimulationObject base;
-    Queue *p_head;
-    Queue *p_tail;
-};
+// struct Queue_List
+// {
+//     SimulationObject base;
+//     Queue *p_head;
+//     Queue *p_tail;
+// };
 
 struct Car {
     GenericVehicle base; // base vehicle object

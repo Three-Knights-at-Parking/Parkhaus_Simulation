@@ -1,5 +1,7 @@
 #include "Simulation.h"
 
+#include <stdlib.h>
+
 #include "utils/SafteyUtils.h"
 #include "utils/RNG.h"
 #include "Queue.h"
@@ -8,6 +10,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
     checkNull(p_sim);
     checkNull(p_settings);
     checkNull(stats);
+
 
 
     p_sim->settings = (Settings *) p_settings;
@@ -19,8 +22,14 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
       return ERROR;
     };
 
+    Queue *Gate_Queues = malloc(p_sim->settings->gates);
 
-    queue_init()
+    for (int i = 0; i < p_sim->settings->gates; i++)
+    {
+        queue_init(&Gate_Queues[i], -1);
+    }
+
+
 
 
 

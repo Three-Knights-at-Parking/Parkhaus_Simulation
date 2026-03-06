@@ -1,19 +1,27 @@
 #include "Queue.h"
 
 #include <stdlib.h>
+#include "utils/SafteyUtils.h"
 
 #define DEFAULT_MAX_QUEUE_LENGTH 10
 
-int queue_init(Queue *p_self, Simulation p_sim, uint16_t max_size) {
-    if (p_self == NULL) {
-        return ERROR;
-    }
-    p_self->base = p_sim.base;
+int queue_init(Queue *p_self, uint16_t max_size) {
+    if (p_self == NULL ) {print_warning("queue_init(): no pointer"); return ERROR;}
+
     p_self->capacity = 0;
-    p_self->p_prev = NULL;
-    p_self->p_next = NULL;
+    p_self->p_head = NULL;
+    p_self->p_tail = NULL;
     p_self->demand = 0;
-    p_self->max_size = DEFAULT_MAX_QUEUE_LENGTH;
+
+    if (max_size <= 0)
+    {
+        p_self->max_size = DEFAULT_MAX_QUEUE_LENGTH;
+    }
+    else
+    {
+        p_self->max_size = max_size;
+    }
+
     return OK;
 }
 
