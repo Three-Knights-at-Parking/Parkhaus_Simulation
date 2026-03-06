@@ -6,6 +6,7 @@
 #define TEIL1_PARKHAUS_SIMULATION_PLANNUNG_DEMAND_H
 
 #include "../types.h"
+#include "utils/RNG.h"
 
 /*
  * Demand module
@@ -14,6 +15,6 @@
  * OUTPUT: returns total demand as unsigned integer
  */
 
-uint16_t Demand_GenerateTotalPerTick(const Settings *p_settings, uint32_t current_tick, const rng* rng);
+uint16_t demand_generate_total_perTick(const Settings *p_settings, uint32_t current_tick, const rng* rng);
 
 #endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_DEMAND_H
