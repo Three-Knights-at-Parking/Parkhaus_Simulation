@@ -14,6 +14,25 @@
 /* Local helpers                                                             */
 /* ========================================================================= */
 
+static void trim_newline(char *p_text)
+{
+    if (p_text == NULL)
+    {
+        return;
+    }
+
+    const size_t len = strlen(p_text);
+    if (len == 0U)
+    {
+        return;
+    }
+
+    if (p_text[len - 1U] == '\n')
+    {
+        p_text[len - 1U] = '\0';
+    }
+}
+
 static int read_line(char *p_buffer, size_t buffer_len)
 {
     if (p_buffer == NULL)
@@ -36,6 +55,7 @@ static int read_line(char *p_buffer, size_t buffer_len)
         }
     }
 
+    trim_newline(p_buffer);
     return 0;
 }
 
