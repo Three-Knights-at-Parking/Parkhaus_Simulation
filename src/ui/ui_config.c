@@ -283,7 +283,6 @@ static const char *output_mode_to_string(const enum OutputMode mode)
     return "NORMAL";
 }
 
-
 /**
  * @brief Maps numeric mode selection to OutputMode enum.
  *
@@ -393,7 +392,7 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 1)
     {
-        char name_buf[128];
+        char name_buf[20];
 
         printf("Enter name (max %d chars): ", SETTINGS_NAME_MAX_LENGTH);
 
@@ -419,8 +418,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter capacity per floor: ",
-                                 (long)MIN_CAPACITY,
-                                 (long)MAX_CAPACITY,
+                                 SETTINGS_MINIMUM_CAPACITY,
+                                 SETTINGS_MAXIMUM_CAPACITY,
                                  &value);
 
         (void)settings_set_size(p_settings, (uint16_t)value);
@@ -431,8 +430,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter number of floors: ",
-                                 (long)MIN_FLOORS,
-                                 (long)MAX_FLOORS,
+                                 SETTINGS_MINIMUM_FLOORS,
+                                 SETTINGS_MAXIMUM_FLOORS,
                                  &value);
 
         (void)settings_set_floors(p_settings, (uint8_t)value);
@@ -443,8 +442,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter number of gates: ",
-                                 (long)MIN_GATES,
-                                 (long)MAX_GATES,
+                                 SETTINGS_MINIMUM_GATES,
+                                 SETTINGS_MAXIMUM_GATES,
                                  &value);
 
         (void)settings_set_gates(p_settings, (uint8_t)value);
@@ -455,8 +454,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter gate entry time in seconds: ",
-                                 (long)MIN_GATE_ENTRY_SEC,
-                                 (long)MAX_GATE_ENTRY_SEC,
+                                 SETTINGS_MINIMUM_GATE_ENTRY_SEC,
+                                 SETTINGS_MAXIMUM_GATE_ENTRY_SEC,
                                  &value);
 
         /* TODO: replace with settings_set_gate_entry_inSec(p_settings, ...) when available */
@@ -468,8 +467,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter tick length in seconds: ",
-                                 (long)MIN_TICK_SEC,
-                                 (long)MAX_TICK_SEC,
+                                 (long)MIN_TICK_SEC,    //Is missing in Settings.h
+                                 (long)MAX_TICK_SEC,    //Is missing in Settings.h
                                  &value);
 
         /* TODO: replace with settings_set_tick_inSec(p_settings, ...) when available */
@@ -478,8 +477,8 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 7)
     {
-        int mode_select = edit_mode_select();
-        enum OutputMode mode = apply_mode_select(mode_select);
+        const int mode_select = edit_mode_select();
+        const enum OutputMode mode = apply_mode_select(mode_select);
 
         (void)settings_set_output_mode(p_settings, mode);
         return UI_KONFIG;
@@ -488,7 +487,7 @@ ui_state config_menu(Settings *p_settings)
     {
         float prob = 0.0f;
 
-        (void)read_float_percent("Enter entry probability per second (0 - 100 %%): ", &prob);
+        (void)read_float_percent("Enter entry probability per second (0.0 - 100.0 %): ", &prob);
 
         /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, ...) when available */
         p_settings->entry_probability_perSec_prec = prob;
@@ -499,8 +498,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter max ticks (-1/-2/... for day equivalents): ",
-                                 (long)MIN_MAX_TICKS,
-                                 (long)MAX_MAX_TICKS,
+                                 SETTINGS_MAXIMUM_DAY_TICKS,
+                                 SETTINGS_MAXIMUM_TICKS,
                                  &value);
 
         (void)settings_set_max_ticks(p_settings, (int32_t)value);
@@ -511,8 +510,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter random seed (or -1 for default/time): ",
-                                 (long)MIN_SEED,
-                                 (long)MAX_SEED,
+                                 SETTINGS_DEFAULT_RAND_SEED,
+                                 MAX_SEED,  //Missing in Settings.h
                                  &value);
 
         (void)settings_set_rand_seed(p_settings, (int32_t)value);

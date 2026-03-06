@@ -22,30 +22,14 @@
 /* Maximum valid menu number in Config menu (valid range: 0..CONFIG_MAX_VALID_NUMBER). */
 #define CONFIG_MAX_VALID_NUMBER (10)
 
-/* Name input constraints */
-#define NAME_MAX_LEN (19)
-
 /* Probability is configured in percent. */
 #define MIN_PROB_PERCENT (0.0f)
 #define MAX_PROB_PERCENT (100.0f)
 
 /* Allowed ranges for settings (min/max). */
-#define MIN_CAPACITY          (1)
-#define MIN_FLOORS            (1)
-#define MIN_GATES             (1)
-#define MIN_GATE_ENTRY_SEC    (1)
 #define MIN_TICK_SEC          (1)
-#define MIN_REAL_EQUIV_SEC    (10)
-#define MIN_MAX_TICKS         (-365)
-#define MIN_SEED              (-1)
 
-#define MAX_CAPACITY          (200)
-#define MAX_FLOORS            (10)
-#define MAX_GATES             (6)
-#define MAX_GATE_ENTRY_SEC    (120)
 #define MAX_TICK_SEC          (86400)
-#define MAX_REAL_EQUIV_SEC    (86400)
-#define MAX_MAX_TICKS         (100)
 #define MAX_SEED              (2147483647)
 
 /**
