@@ -7,7 +7,7 @@
 #include <math.h>
 
 
-uint16_t demand_generate_total_perTick(const Settings *p_settings, uint32_t current_tick, const rng* rng)
+uint16_t demand_generate_total_perTick(const Settings *p_settings, uint32_t current_tick, const)
 {
 
 
