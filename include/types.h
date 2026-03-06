@@ -97,7 +97,6 @@ struct Parkhaus {
 struct Simulation {
     Settings* settings; // The underlying
     uint32_t current_tick; // Current tick time.
-    uint16_t real_equivalent; // Tick equivalent in real time (seconds)
     Parkhaus* parkhaus; // The Parkhaus for this Simulation
     StatList* StatList; // Statistikcontainer fuer Tick- und Gesamtwerte
 };
