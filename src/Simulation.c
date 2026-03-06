@@ -7,13 +7,13 @@
 #include "utils/RNG.h"
 #include "Queue.h"
 
-int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatList *stats) {
+int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatList *p_StatList) {
     checkNull(p_sim);
     checkNull(p_settings);
     checkNull(stats);
 
     p_sim->settings = (Settings *) p_settings;
-    p_sim->StatList = (StatList *) stats;
+    p_sim->StatList = (StatList *) p_StatList;
     p_sim->current_tick = 0;
 
     int status = OK;
