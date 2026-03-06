@@ -29,7 +29,7 @@
      *
      * @author Luca Perri
      */
-    void parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick);
+    int parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick);
 
     /**
      * @brief Try to park a vehicle in this Parkhaus.
