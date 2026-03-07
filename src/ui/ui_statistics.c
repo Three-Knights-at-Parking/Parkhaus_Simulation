@@ -5,6 +5,23 @@
 #include "../include/types.h"
 
 /* ========================================================================= */
+/* Local helper function prototypes                                          */
+/* ========================================================================= */
+
+static int clamp_int(int value, int min_val, int max_val);
+static void repeat_char(char ch, int count);
+static float format_float_1(float value);
+static float format_float_2(float value);
+static void build_occupancy_bar(float taken_percent);
+static const char *derive_status_text(const StatsTick *p_stats_tick);
+static float calc_util_percent(const StatsTick *p_stats_tick);
+static double calc_avg_queue_wait_entered(const StatsTick *p_stats_tick);
+static void ui_statistics_print_header_normal(void);
+static void ui_statistics_print_header_verbose(void);
+static void ui_statistics_print_tick_normal(const StatsTick *p_stats_tick);
+static void ui_statistics_print_tick_verbose(const StatsTick *p_stats_tick);
+
+/* ========================================================================= */
 /* Helper functions                                                          */
 /* ========================================================================= */
 
