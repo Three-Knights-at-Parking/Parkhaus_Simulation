@@ -71,11 +71,11 @@ int queue_enqueue(Queue *p_queue, GenericVehicle *p_vehicle) {
     return OK;
 }
 
-GenericVehicle *queue_dequeue(Queue *p_queue) {
+int queue_dequeue(Queue *p_queue) {
     GenericVehicle *p_first;
 
     if (p_queue == NULL || queue_is_empty(p_queue)) {
-        return NULL;
+        return ERROR;
     }
 
     p_first = p_queue->p_head;
@@ -90,7 +90,7 @@ GenericVehicle *queue_dequeue(Queue *p_queue) {
         p_queue->capacity--;
     }
 
-    return p_first;
+    return OK;
 }
 
 //Done

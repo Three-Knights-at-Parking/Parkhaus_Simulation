@@ -53,7 +53,7 @@
      * @param p_queue Pointer to the Queue.
      * @return Pointer to the dequeued Vehicle, or NULL if the queue is empty.
      */
-    GenericVehicle *queue_dequeue(Queue *p_queue);
+    int queue_dequeue(Queue *p_queue);
 
     /**
      * @brief Get the next vehicle in the queue (FIFO) without removing it.
