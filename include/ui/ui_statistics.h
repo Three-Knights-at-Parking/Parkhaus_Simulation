@@ -38,9 +38,9 @@ void ui_statistics_print_tick(const StatsTick *p_stats_tick, const Settings *p_s
 /**
  * @brief Prints the final aggregated simulation summary.
  *
- * @param[in] p_summary  Aggregated summary statistics (may be NULL).
+ * @param[in] p_stats_summary  Aggregated summary statistics (may be NULL).
  * @param[in] p_settings Settings containing the selected output mode.
  */
-void ui_statistics_print_final(const StatsSummary *p_summary, const Settings *p_settings);
+void ui_statistics_print_final(const StatsSummary *p_stats_summary, const Settings *p_settings);
 
 #endif /* UI_STATISTICS_H */

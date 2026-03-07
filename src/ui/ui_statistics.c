@@ -266,3 +266,77 @@ void ui_statistics_print_tick(const StatsTick *p_stats_tick,
                (unsigned)p_stats_tick->blocker_full_active);
     }
 }
+
+/* ========================================================================= */
+/* Final / End statistics                                                    */
+/* ========================================================================= */
+
+void ui_statistics_print_final(const StatsSummary *p_stats_summary,
+                               const Settings *p_settings)
+{
+    if (p_settings == NULL)
+    {
+        return;
+    }
+
+    if (p_settings->output_mode == NONE)
+    {
+        return;
+    }
+
+    if (p_stats_summary == NULL)
+    {
+        printf("No summary statistics available.\n");
+        return;
+    }
+
+    printf("\n");
+    printf("======================================================================\n");
+    printf("                       SIMULATION SUMMARY\n");
+    printf("======================================================================\n");
+
+    printf("Total ticks            : %lu\n",
+           (unsigned long)p_stats_summary->total_ticks);
+    printf("Avg utilization (%%)    : %.2f\n",
+           format_float_2(p_stats_summary->capacity_taken_percent_avg));
+    printf("Peak utilization (%%)   : %.2f at tick %lu\n",
+           format_float_2(p_stats_summary->capacity_taken_percent_peak),
+           (unsigned long)p_stats_summary->capacity_taken_peak_tick);
+    printf("First FULL tick        : %ld\n",
+           (long)p_stats_summary->first_full_tick);
+    printf("FULL ticks             : %lu\n",
+           (unsigned long)p_stats_summary->full_ticks);
+
+    printf("Arrivals total         : %llu\n",
+           (unsigned long long)p_stats_summary->arrivals_total);
+    printf("Entered total          : %llu\n",
+           (unsigned long long)p_stats_summary->entered_total);
+    printf("Departed total         : %llu\n",
+           (unsigned long long)p_stats_summary->departed_total);
+
+    printf("Queue avg length       : %.2f\n",
+           format_float_2(p_stats_summary->queue_length_avg));
+    printf("Queue peak             : %u at tick %lu\n",
+           (unsigned)p_stats_summary->queue_length_peak,
+           (unsigned long)p_stats_summary->queue_length_peak_tick);
+    printf("Queue rejections total : %llu\n",
+           (unsigned long long)p_stats_summary->queue_rejections_total);
+    printf("Avg queue wait (ticks) : %lu\n",
+           (unsigned long)p_stats_summary->queue_wait_avg_ticks);
+    printf("Max queue wait (ticks) : %lu\n",
+           (unsigned long)p_stats_summary->queue_wait_max_ticks);
+
+    printf("Avg parking duration   : %u ticks\n",
+           (unsigned)p_stats_summary->parking_duration_avg_ticks);
+
+    printf("Blocker FULL ratio (%%) : %.2f\n",
+           format_float_2(p_stats_summary->blocker_full_ratio_percent));
+
+    printf("Bad parking total      : %llu\n",
+           (unsigned long long)p_stats_summary->bad_parking_cases_total);
+    printf("Bad parking share (%%)  : %.2f\n",
+           format_float_2(p_stats_summary->bad_parking_share_percent));
+
+    printf("======================================================================\n");
+    printf("\n");
+}
