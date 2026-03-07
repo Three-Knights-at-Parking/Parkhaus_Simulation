@@ -104,13 +104,10 @@ int simulation_start(Simulation *p_sim) {
 
 void simulation_end(Simulation *p_sim) {
 
-    }
 
 }
 
 int free_simulation(Simulation *p_sim) {
-
-    }
 
     return OK;
 }
