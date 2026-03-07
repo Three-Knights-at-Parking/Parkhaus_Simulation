@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_config.h"
@@ -76,14 +75,12 @@ static int print_simulation_statistics(const Settings *p_settings,
         return ERROR;
     }
 
-    /* Implement in ui_statistics.c */
     ui_statistics_print_header(p_settings);
 
     p_current_tick = p_stat_list->p_tick_head;
 
     while (p_current_tick != NULL)
     {
-        /* Implement in ui_statistics.c */
         ui_statistics_print_tick(p_current_tick, p_settings);
 
         /* Optional later:
@@ -95,7 +92,6 @@ static int print_simulation_statistics(const Settings *p_settings,
     /* Requires StatsSummary integration into StatList, e.g. p_summary */
     if (p_stat_list->p_summary != NULL)
     {
-        /* Implement in ui_statistics.c */
         ui_statistics_print_final(p_stat_list->p_summary, p_settings);
     }
     else
