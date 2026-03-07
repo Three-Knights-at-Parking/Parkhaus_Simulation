@@ -19,9 +19,45 @@ static int print_simulation_statistics(const Settings *p_settings);
 static StatList *pStatList = NULL;
 static StatsSummary *pStatsSummary = NULL;
 
-void print_simulationscreen(const Settings *p_settings) {
-    printf("Simulation Screen (Stub)\n");
+/* ========================================================================= */
+/* Screen printing                                                           */
+/* ========================================================================= */
+
+int print_simulationscreen(const Settings *p_settings)
+{
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("          SIMULATION MENU\n");
+    printf("====================================\n\n");
+
+    printf("Current Settings\n");
+    printf("------------------------------------\n");
+    printf("Name                 : %s\n",
+           (p_settings->name != NULL) ? p_settings->name : SETTINGS_DEFAULT_NAME);
+    printf("Capacity / Floor     : %u\n", (unsigned)p_settings->capacity);
+    printf("Floors               : %u\n", (unsigned)p_settings->floors);
+    printf("Gates                : %u\n", (unsigned)p_settings->gates);
+    printf("Gate Entry Time (sec): %u\n", (unsigned)p_settings->gate_entry_inSec);
+    printf("Tick Length (sec)    : %u\n", (unsigned)p_settings->tick_inSec);
+    printf("Output Mode          : %s\n", output_mode_to_string(p_settings->output_mode));
+    printf("Entry Prob / Sec (%%)  : %.2f\n", p_settings->entry_probability_perSec_prec);
+    printf("Max Ticks            : %ld\n", (long)p_settings->max_ticks);
+    printf("Random Seed          : %ld\n", (long)p_settings->rand_seed);
+    printf("------------------------------------\n\n");
+
+    printf("1 Start Simulation\n");
+    printf("2 Go to Configuration\n");
+    printf("0 Back to Home\n\n");
+
+    return OK;
 }
+
 
 void post_simulation_prompt(const char *p_sim_output_path) {
     printf("Post Simulation Prompt (Stub)\n");
