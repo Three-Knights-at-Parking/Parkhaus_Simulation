@@ -33,6 +33,16 @@ static void repeat_char(const char ch, const int count)
     }
 }
 
+static float format_float_1(const float value)
+{
+    return (float)((int)(value * 10.0f + 0.5f)) / 10.0f;
+}
+
+static float format_float_2(const float value)
+{
+    return (float)((int)(value * 100.0f + 0.5f)) / 100.0f;
+}
+
 static void build_occupancy_bar(const float taken_percent)
 {
     int filled = 0;
