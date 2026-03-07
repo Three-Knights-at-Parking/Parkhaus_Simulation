@@ -92,6 +92,6 @@ ui_state welcome_message(void);
  *
  * @return UI_EXIT when the application should terminate.
  */
-ui_state ui_start(Settings* p_settings);
+ui_state ui_start(Settings *p_settings, Simulation *p_simulation);
 
 #endif /* UI_H */

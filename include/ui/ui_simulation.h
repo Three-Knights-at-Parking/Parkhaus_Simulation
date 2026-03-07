@@ -42,9 +42,10 @@ void post_simulation_prompt(const char *p_sim_output_path);
  * on the selected output_mode.
  *
  * @param[in] p_settings Current settings used to start the simulation.
+ * @param p_simulation
  * @return Next UI state depending on user selection.
  */
-ui_state simulation_menu(const Settings *p_settings);
+ui_state simulation_menu(const Settings *p_settings, const Simulation *p_simulation);
 
 /**
  * @brief Starts the simulation (implemented by simulation/data layer).
