@@ -1,5 +1,20 @@
-#include "../include/ui/ui_simulation.h"
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "../include/ui/ui.h"
+#include "../include/ui/ui_config.h"
+#include "../include/ui/ui_simulation.h"
+#include "../include/ui/ui_statistics.h"
+
+#include "../include/simulation.h"
+#include "../include/types.h"
+
+/* ========================================================================= */
+/* Global handover storage (owned by simulation/data layer)                  */
+/* ========================================================================= */
+
+static StatList *pStatList = NULL;
+static StatsSummary *pStatsSummary = NULL;
 
 void print_simulationscreen(const Settings *p_settings) {
     printf("Simulation Screen (Stub)\n");
