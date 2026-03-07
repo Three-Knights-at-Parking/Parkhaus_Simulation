@@ -101,7 +101,11 @@ static int print_simulation_statistics(const Settings *p_settings,
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation) {
+ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
+{
+    int choice = 0;
+    validation_flag valid = INVALID;
+
     if (p_settings == NULL || p_simulation == NULL)
     {
         printf("Internal error: Settings or Simulation not available.\n");
@@ -117,9 +121,6 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation) {
         press_enter_to_continue();
         return UI_HOME;
     }
-
-    int choice = 0;
-    validation_flag valid = INVALID;
 
     while (valid != VALID)
     {
@@ -150,6 +151,9 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation) {
         if (print_simulation_statistics(p_settings, p_simulation) != OK)
         {
             printf("Failed to print simulation statistics.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+            return UI_SIMULATION;
         }
 
         printf("Simulation finished.\n");
@@ -157,9 +161,16 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation) {
         press_enter_to_continue();
 
         return UI_SIMULATION;
-
-        /* Defensive fallback */
-        return UI_SIMULATION;
     }
-}
+    else if (choice == 2)
+    {
+        return UI_KONFIG;
+    }
+    else if (choice == 0)
+    {
+        return UI_HOME;
+    }
 
+    /* Defensive fallback */
+    return UI_SIMULATION;
+}
