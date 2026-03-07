@@ -23,6 +23,16 @@ static int clamp_int(const int value, const int min_val, const int max_val)
     return value;
 }
 
+static void repeat_char(const char ch, const int count)
+{
+    int i = 0;
+
+    for (i = 0; i < count; i++)
+    {
+        putchar(ch);
+    }
+}
+
 static void build_occupancy_bar(const float taken_percent)
 {
     int filled = 0;
