@@ -10,7 +10,49 @@
 #include "../include/types.h"
 
 //Function prototypes
-static int print_simulation_statistics(const Settings *p_settings);
+static int print_simulation_statistics(const Settings *p_settings, const Simulation *p_simulation);
+
+/* ========================================================================= */
+/* Local helper functions                                                    */
+/* ========================================================================= */
+
+static int print_simulation_statistics(const Settings *p_settings,
+                                       const Simulation *p_simulation)
+{
+    StatsTick *p_current_tick = NULL;
+    StatList *p_stat_list = NULL;
+
+    if (p_settings == NULL || p_simulation == NULL)
+    {
+        return ERROR;
+    }
+
+    p_stat_list = p_simulation->StatList;
+    if (p_stat_list == NULL)
+    {
+        return ERROR;
+    }
+
+    ui_statistics_print_header(p_settings);         //Is going to be implemented in ui_statistics.c
+
+    p_current_tick = p_stat_list->p_tick_head;
+    while (p_current_tick != NULL)          //Maybe the user should be getting each next StatTick displayed by pressing ENTER to continue
+    {
+        ui_statistics_print_tick(p_current_tick, p_settings);       //Is going to be implemented in ui_statistics.c
+        p_current_tick = p_current_tick->p_next;
+    }
+
+    if (p_stat_list->p_summary != NULL)     //For this StatsSummary has to be integrated into StatsList
+    {
+        ui_statistics_print_final(p_stat_list->p_summary, p_settings);      //Is going to be implemented in ui_statistics.c
+    }
+    else
+    {
+        printf("Warning: No summary received.\n");
+    }
+
+    return OK;
+}
 
 /* ========================================================================= */
 /* Screen printing                                                           */
