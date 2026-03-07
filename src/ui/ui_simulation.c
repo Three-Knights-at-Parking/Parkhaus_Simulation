@@ -9,6 +9,9 @@
 #include "../include/simulation.h"
 #include "../include/types.h"
 
+//Function prototypes
+static int print_simulation_statistics(const Settings *p_settings);
+
 /* ========================================================================= */
 /* Global handover storage (owned by simulation/data layer)                  */
 /* ========================================================================= */
