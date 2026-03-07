@@ -93,12 +93,9 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation) {
         valid = validate_user_input(choice, SIMULATION_MAX_VALID_NUMBER);
     }
 
-    if (choice == 1) {
+    if (choice == 1)
+    {
         printf("Starting simulation...\n");
-
-        /* Reset handover pointers before each new run. */
-        pStatList = NULL;
-        pStatsSummary = NULL;
 
         if (simulation_start(p_simulation) != OK)
         {
@@ -107,7 +104,25 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation) {
             press_enter_to_continue();
             return UI_SIMULATION;
         }
-    }
+
+        if (p_simulation->StatList == NULL)
+        {
+            printf("Error: No simulation data received from backend.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+            return UI_SIMULATION;
+        }
+
+        if (print_simulation_statistics(p_settings, p_simulation) != OK)
+        {
+            printf("Failed to print simulation statistics.\n");
+        }
+
+        printf("Simulation finished.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+
+        return UI_SIMULATION;
 
     /* Defensive fallback */
     return UI_SIMULATION;
