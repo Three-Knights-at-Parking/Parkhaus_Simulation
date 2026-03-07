@@ -30,7 +30,6 @@ static int edit_mode_select(void);
 
 
 
-
 static int trim_newline(char *p_text)
 {
     if (p_text == NULL)
@@ -119,7 +118,7 @@ static int parse_long(const char *p_text, long *p_out)
     return OK;
 }
 
-static int parse_float(const char *p_text, float *p_out)    //Maybe possible to synthesize with other parsing functions
+static int parse_float(const char *p_text, float *p_out)
 {
     char *p_end = NULL;
     float value = 0.0f;
@@ -156,7 +155,7 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
     return OK;
 }
 
-static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out)
+static int read_long_in_range(const char *p_prompt, const long min_val, const long max_val, long *p_out)
 {
     char buffer[64];
     long value = 0;
@@ -197,7 +196,7 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
     }
 }
 
-static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe possible to synthesize function with read_int32_in_range()
+static int read_float_percent(const char *p_prompt, float *p_out)
 {
     char buffer[64];
 
@@ -259,7 +258,7 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
         len = SETTINGS_NAME_MAX_LENGTH;
     }
 
-    char *p_buf = (char *)malloc(len + 1U);
+    char *p_buf = malloc(len + 1U);
     if (p_buf == NULL)
     {
         return ERROR;
@@ -427,7 +426,10 @@ ui_state config_menu(Settings *p_settings)
                                  SETTINGS_MAXIMUM_CAPACITY,
                                  &value);
 
-        (void)settings_set_size(p_settings, (uint16_t)value);
+        if (settings_set_size(p_settings, (uint16_t)value) != OK)
+        {
+            printf("Failed to set capacity (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 3)
@@ -439,7 +441,10 @@ ui_state config_menu(Settings *p_settings)
                                  SETTINGS_MAXIMUM_FLOORS,
                                  &value);
 
-        (void)settings_set_floors(p_settings, (uint8_t)value);
+        if (settings_set_floors(p_settings, (uint8_t)value) != OK)
+        {
+            printf("Failed to set floors (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 4)
@@ -451,7 +456,10 @@ ui_state config_menu(Settings *p_settings)
                                  SETTINGS_MAXIMUM_GATES,
                                  &value);
 
-        (void)settings_set_gates(p_settings, (uint8_t)value);
+        if (settings_set_gates(p_settings, (uint8_t)value) != OK)
+        {
+            printf("Failed to set gates (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 5)
@@ -485,7 +493,10 @@ ui_state config_menu(Settings *p_settings)
         const int mode_select = edit_mode_select();
         const enum OutputMode mode = apply_mode_select(mode_select);
 
-        (void)settings_set_output_mode(p_settings, mode);
+        if (settings_set_output_mode(p_settings, mode) != OK)
+        {
+            printf("Failed to set output mode (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 8)
@@ -507,7 +518,10 @@ ui_state config_menu(Settings *p_settings)
                                  SETTINGS_MAXIMUM_TICKS,
                                  &value);
 
-        (void)settings_set_max_ticks(p_settings, (int32_t)value);
+        if (settings_set_max_ticks(p_settings, (int32_t)value) != OK)
+        {
+            printf("Failed to set max ticks (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else
@@ -519,7 +533,10 @@ ui_state config_menu(Settings *p_settings)
                                  MAX_SEED,  //Missing in Settings.h
                                  &value);
 
-        (void)settings_set_rand_seed(p_settings, (int32_t)value);
+        if (settings_set_rand_seed(p_settings, (int32_t)value) != OK)
+        {
+            printf("Failed to set random seed (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
 }
