@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdint.h>
 
 #include "../include/ui/ui_statistics.h"
 #include "../include/types.h"
@@ -8,11 +7,11 @@
 /* Local helper function prototypes                                          */
 /* ========================================================================= */
 
-static int clamp_int(int value, int min_val, int max_val);
-static void repeat_char(char ch, int count);
-static float format_float_1(float value);
-static float format_float_2(float value);
-static void build_occupancy_bar(float taken_percent);
+static int clamp_int(const int value, const int min_val, const int max_val);
+static void repeat_char(const char ch, const int count);
+static float format_float_1(const float value);
+static float format_float_2(const float value);
+static void build_occupancy_bar(const float taken_percent);
 static const char *derive_status_text(const StatsTick *p_stats_tick);
 static float calc_util_percent(const StatsTick *p_stats_tick);
 static double calc_avg_queue_wait_entered(const StatsTick *p_stats_tick);
@@ -106,7 +105,7 @@ static float calc_util_percent(const StatsTick *p_stats_tick)
            (float)p_stats_tick->capacity_total;
 }
 
-/* Calculates average queue wait time for vehicles that entered (in Ticks) */
+/* Calculates average queue wait time for vehicles that entered (in ticks). */
 static double calc_avg_queue_wait_entered(const StatsTick *p_stats_tick)
 {
     if (p_stats_tick == NULL)
@@ -219,14 +218,14 @@ static void ui_statistics_print_tick_normal(const StatsTick *p_stats_tick)
 
 static void ui_statistics_print_tick_verbose(const StatsTick *p_stats_tick)
 {
+    const char *p_status_text = NULL;
+    float util_percent = 0.0f;
+    double avg_wait = 0.0;
+
     if (p_stats_tick == NULL)
     {
         return;
     }
-
-    const char *p_status_text = NULL;
-    float util_percent = 0.0f;
-    double avg_wait = 0.0;
 
     p_status_text = derive_status_text(p_stats_tick);
     util_percent = calc_util_percent(p_stats_tick);
@@ -287,7 +286,7 @@ void ui_statistics_print_tick(const StatsTick *p_stats_tick,
 
     ui_statistics_print_tick_normal(p_stats_tick);
 
-    if (p_settings->output_mode == DEBUG)       //Needs to be more specified, what DEBUG mode means
+    if (p_settings->output_mode == DEBUG)
     {
         printf("DEBUG: blocker_full_active=%u\n",
                (unsigned)p_stats_tick->blocker_full_active);
