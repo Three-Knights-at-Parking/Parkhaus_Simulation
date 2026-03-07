@@ -8,6 +8,21 @@
 /* Helper functions                                                          */
 /* ========================================================================= */
 
+static void build_occupancy_bar(const float taken_percent)
+{
+    int filled = 0;
+    int empty = 0;
+
+    filled = (int)((taken_percent / 100.0f) * (float)UI_STATS_BAR_WIDTH + 0.5f);
+    filled = clamp_int(filled, 0, UI_STATS_BAR_WIDTH);
+    empty = UI_STATS_BAR_WIDTH - filled;
+
+    putchar('[');
+    repeat_char('#', filled);
+    repeat_char('-', empty);
+    putchar(']');
+}
+
 static const char *derive_status_text(const StatsTick *p_stats_tick)
 {
     if (p_stats_tick == NULL)
@@ -126,7 +141,7 @@ static void ui_statistics_print_tick_normal(const StatsTick *p_stats_tick)
 
     p_status_text = derive_status_text(p_stats_tick);
     util_percent = calc_util_percent(p_stats_tick);
-    avg_wait = calc_avg_queue_wait_entered(p_stats_tick);       //Will be implemented in next step
+    avg_wait = calc_avg_queue_wait_entered(p_stats_tick);
 
     printf("+--------------------------------------------------------------------+\n");
     printf("| Tick: %lu   Status: %s\n",
