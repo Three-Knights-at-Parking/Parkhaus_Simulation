@@ -17,7 +17,7 @@
 /* ========================================================================= */
 
 // Function Prototypes
-static void trim_newline(char *p_text);
+static int trim_newline(char *p_text);
 static int read_line(char *p_buffer, const size_t buffer_len);
 static int parse_long(const char *p_text, long *p_out);
 static int parse_float(const char *p_text, float *p_out);
@@ -31,36 +31,37 @@ static int edit_mode_select(void);
 
 
 
-static void trim_newline(char *p_text)
+static int trim_newline(char *p_text)
 {
     if (p_text == NULL)
     {
-        return;
+        return ERROR;
     }
 
     const size_t len = strlen(p_text);
 
     if (len == 0U)
     {
-        return;
+        return ERROR;
     }
 
     if (p_text[len - 1U] == '\n')
     {
         p_text[len - 1U] = '\0';
     }
+    return OK;
 }
 
 static int read_line(char *p_buffer, const size_t buffer_len)
 {
     if (p_buffer == NULL || buffer_len == 0U)
     {
-        return -1;
+        return ERROR;
     }
 
     if (fgets(p_buffer, buffer_len, stdin) == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     if (strchr(p_buffer, '\n') == NULL)
@@ -73,8 +74,12 @@ static int read_line(char *p_buffer, const size_t buffer_len)
         }
     }
 
-    trim_newline(p_buffer);
-    return 0;
+    if (trim_newline(p_buffer) != OK)
+    {
+        return ERROR;
+    }
+
+    return OK;
 }
 
 static int parse_long(const char *p_text, long *p_out)
@@ -84,7 +89,7 @@ static int parse_long(const char *p_text, long *p_out)
 
     if (p_text == NULL || p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     errno = 0;
@@ -92,12 +97,12 @@ static int parse_long(const char *p_text, long *p_out)
 
     if (errno != 0)
     {
-        return -1;
+        return ERROR;
     }
 
     if (p_end == p_text)
     {
-        return -1;
+        return ERROR;
     }
 
     while (*p_end == ' ' || *p_end == '\t')
@@ -107,11 +112,11 @@ static int parse_long(const char *p_text, long *p_out)
 
     if (*p_end != '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     *p_out = value;
-    return 0;
+    return OK;
 }
 
 static int parse_float(const char *p_text, float *p_out)    //Maybe possible to synthesize with other parsing functions
@@ -121,7 +126,7 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
 
     if (p_text == NULL || p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     errno = 0;
@@ -129,12 +134,12 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
 
     if (errno != 0)
     {
-        return -1;
+        return ERROR;
     }
 
     if (p_end == p_text)
     {
-        return -1;
+        return ERROR;
     }
 
     while (*p_end == ' ' || *p_end == '\t')
@@ -144,11 +149,11 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
 
     if (*p_end != '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     *p_out = value;
-    return 0;
+    return OK;
 }
 
 static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out)
@@ -158,20 +163,20 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
 
     if (p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     while (1)
     {
         printf("%s", p_prompt);
 
-        if (read_line(buffer, sizeof(buffer)) != 0)
+        if (read_line(buffer, sizeof(buffer)) != OK)
         {
             printf("Input error.\n");
             continue;
         }
 
-        if (parse_long(buffer, &value) != 0)
+        if (parse_long(buffer, &value) != OK)
         {
             printf("Your input is not a valid integer!\n");
             printf("Press ENTER and try again...\n");
@@ -188,7 +193,7 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
         }
 
         *p_out = value;
-        return 0;
+        return OK;
     }
 }
 
@@ -198,21 +203,21 @@ static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe 
 
     if (p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     while (1)
     {
         printf("%s", p_prompt);
 
-        if (read_line(buffer, sizeof(buffer)) != 0)
+        if (read_line(buffer, sizeof(buffer)) != OK)
         {
             printf("Input error.\n");
             continue;
         }
 
         float value = 0.0f;
-        if (parse_float(buffer, &value) != 0)
+        if (parse_float(buffer, &value) != OK)
         {
             printf("Your input is not a valid number!\n");
             printf("Press ENTER and try again...\n");
@@ -229,7 +234,7 @@ static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe 
         }
 
         *p_out = value;
-        return 0;
+        return OK;
     }
 }
 
@@ -240,12 +245,12 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
 
     if (p_settings == NULL || p_name == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     if (p_name[0] == '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     size_t len = strlen(p_name);
@@ -257,7 +262,7 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     char *p_buf = (char *)malloc(len + 1U);
     if (p_buf == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     memcpy(p_buf, p_name, len);
@@ -265,7 +270,7 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
 
     free(p_settings->name);
     p_settings->name = p_buf;
-    return 0;
+    return OK;
 }
 
 /**
@@ -306,7 +311,7 @@ static enum OutputMode apply_mode_select(const int mode_select)
  */
 static int edit_mode_select(void)
 {
-    int32_t choice = 0;
+    long choice = 0;
 
     clear_terminal();
     printf("Select Output Mode:\n");
@@ -317,7 +322,7 @@ static int edit_mode_select(void)
     printf("3 = DEBUG\n");
     printf("------------------------------------\n");
 
-    (void)read_int32_in_range("Enter your choice (0 - 3): ", 0, 3, &choice);
+    (void) read_long_in_range("Enter your choice (0 - 3): ", 0, 3, &choice);
     return (int)choice;
 }
 
@@ -396,7 +401,7 @@ ui_state config_menu(Settings *p_settings)
 
         printf("Enter name (max %d chars): ", SETTINGS_NAME_MAX_LENGTH);
 
-        if (read_line(name_buf, sizeof(name_buf)) != 0 || name_buf[0] == '\0')
+        if (read_line(name_buf, sizeof(name_buf)) != OK || name_buf[0] == '\0')
         {
             printf("Invalid name.\n");
             printf("Press ENTER and try again...\n");
@@ -404,7 +409,7 @@ ui_state config_menu(Settings *p_settings)
             return UI_KONFIG;
         }
 
-        if (ui_settings_set_name(p_settings, name_buf) != 0)
+        if (ui_settings_set_name(p_settings, name_buf) != OK)
         {
             printf("Failed to set name (out of memory?).\n");
             printf("Press ENTER to continue...\n");
@@ -467,8 +472,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter tick length in seconds: ",
-                                 (long)MIN_TICK_SEC,    //Is missing in Settings.h
-                                 (long)MAX_TICK_SEC,    //Is missing in Settings.h
+                                 MIN_TICK_SEC,    //Is missing in Settings.h
+                                 MAX_TICK_SEC,    //Is missing in Settings.h
                                  &value);
 
         /* TODO: replace with settings_set_tick_inSec(p_settings, ...) when available */
