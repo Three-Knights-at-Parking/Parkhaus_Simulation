@@ -13,7 +13,8 @@
 /* Function prototypes                                                       */
 /* ========================================================================= */
 
-static int print_simulation_statistics(Settings *p_settings, Simulation *p_simulation);
+static int print_simulation_statistics(const Settings *p_settings,
+                                       const Simulation *p_simulation);
 
 /* ========================================================================= */
 /* Screen printing                                                           */
@@ -58,7 +59,8 @@ int print_simulationscreen(const Settings *p_settings)
 /* Local helper functions                                                    */
 /* ========================================================================= */
 
-static int print_simulation_statistics(Settings *p_settings, Simulation *p_simulation)
+static int print_simulation_statistics(const Settings *p_settings,
+                                       const Simulation *p_simulation)
 {
     StatsTick *p_current_tick = NULL;
     StatList *p_stat_list = NULL;
