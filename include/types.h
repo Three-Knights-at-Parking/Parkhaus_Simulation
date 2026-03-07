@@ -12,12 +12,14 @@ typedef void (*SimulationTickFunction)(SimulationObject *p_self, uint32_t curren
 typedef struct Car Car;
 typedef struct Parkhaus Parkhaus;
 typedef struct Settings Settings;
+typedef struct Queue_List Queue_List;
 typedef struct Queue Queue;
 typedef struct Simulation Simulation;
 typedef struct GenericVehicle GenericVehicle;
 typedef struct StatsTick StatsTick;
 typedef struct StatsSummary StatsSummary;
 typedef struct StatList StatList;
+typedef struct RNG RNG;
 
 
 /**
@@ -49,6 +51,10 @@ enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};
 
 enum MinimumSpace{ Bike_Space = 1, Car_Space = 2 };
 
+//important Backup defines
+#define DEFAULT_MAX_QUEUE_LENGTH 10 //standard limit für Queue length
+#define BAD_PARKING_CHANCE_PERCENT 2 // 2/100 -> annahme das 2% aller Fahrzeuge schlecht Parken
+
 
 /**
  * Polymorphic base for anything that has a tick.
@@ -69,7 +75,7 @@ struct GenericVehicle {
     uint32_t created_at_tick; // Tick of creation
     uint32_t park_house_entered; // Entry tick, when the car started parking
     uint32_t park_house_left; // Exit tick, when the car left the parking slot
-	uint32_t leaving_in_ticks;
+	uint32_t leaving_in_ticks; //tick timer until leaving
     uint16_t current_slot; // Currently occupied parking spot, 0 if none.
     uint16_t current_floor; // Currently occupied floor, 0 if none or don't care
 };
@@ -94,9 +100,9 @@ struct Parkhaus {
  * @author Luca Perri
  */
 struct Simulation {
+    SimulationObject base;
     Settings* settings; // The underlying
     uint32_t current_tick; // Current tick time.
-    uint16_t real_equivalent; // Tick equivalent in real time (seconds)
     Parkhaus* parkhaus; // The Parkhaus for this Simulation
     StatList* StatList; // Statistikcontainer fuer Tick- und Gesamtwerte
 };
@@ -106,20 +112,32 @@ struct Simulation {
  * @author Luca Perri
  */
 struct Queue {
-    SimulationObject base; // base object.
     uint16_t capacity; // Number of waiting cars.
     GenericVehicle *p_head; // first vehicle in queue
     GenericVehicle *p_tail; // last vehicle in queue
     uint16_t demand;   // demand assigned to this gate in the current tick
     uint8_t max_size; // maximum size of Queue before no cars should be created anymore.
 };
-//typedef tick_t unit32_t;
-//typedef places_p unit16_t
+/*
+ * Parent for Queue childs as Queue_list for multiple Entry Support
+ * @author Ibach
+ */
+// struct Queue_List
+// {
+//     SimulationObject base;
+//     Queue *p_head;
+//     Queue *p_tail;
+// };
 
 struct Car {
     GenericVehicle base; // base vehicle object
     uint8_t minimum_spaces; // How many spaces this vehicle needs at least.
     uint8_t spaces_needed; // How many spaces this vehicle needs
+};
+
+struct RNG
+{
+    uint32_t seed;
 };
 
 // --- EXAMPLE OF ANOTHER VEHICLE TYPE ---
@@ -134,7 +152,7 @@ struct Car {
 
 struct Settings {
     char* src_path; // Relative path to settings file, if any. Settings takes ownership of the string.
-    char* name; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
+    char* name[20]; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
     uint16_t capacity; // Total parking spots per floor ##UI##
     uint8_t floors; // Number of floors. This is currently miscellaneous ##UI##
     uint8_t gates; // Number of gates. This will affect queue time. ##UI##
@@ -205,7 +223,6 @@ struct StatsTick {
  * @author: ibach
  */
 struct StatsSummary {
-    SimulationObject base;
     uint32_t total_ticks; /**< Number of evaluated ticks. */
 
     /* 1) Utilization & capacity */
