@@ -56,6 +56,13 @@
     GenericVehicle *queue_dequeue(Queue *p_queue);
 
     /**
+     * @brief Get the next vehicle in the queue (FIFO) without removing it.
+     * @param p_queue Pointer to the Queue.
+     * @return Pointer to the next Vehicle, or NULL if the queue is empty.
+     */
+    GenericVehicle *queue_get_next(const Queue *p_queue);
+
+    /**
      * @brief Remove a specific vehicle from the queue (e.g. timeout / max tick reached).
      *        This will free the memory related to this vehicle.
      * @param p_queue Pointer to the Queue.

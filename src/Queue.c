@@ -93,6 +93,15 @@ GenericVehicle *queue_dequeue(Queue *p_queue) {
     return p_first;
 }
 
+//Done
+GenericVehicle *queue_get_next(const Queue *p_queue) {
+    if (p_queue == NULL || queue_is_empty(p_queue)) {
+        return NULL;
+    }
+
+    return p_queue->p_head;
+}
+
 int queue_remove(Queue *p_queue, GenericVehicle *p_target) {
     GenericVehicle *p_prev = NULL;
     GenericVehicle *p_cur;
