@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "utils/SafteyUtils.h"
 
-#define DEFAULT_MAX_QUEUE_LENGTH 10
 
 int queue_init(Queue *p_self, uint16_t max_size) {
     if (p_self == NULL ) {print_warning("queue_init(): no pointer"); return ERROR;}
