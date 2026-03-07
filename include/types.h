@@ -53,7 +53,7 @@ enum MinimumSpace{ Bike_Space = 1, Car_Space = 2 };
 
 //important Backup defines
 #define DEFAULT_MAX_QUEUE_LENGTH 10 //standard limit für Queue length
-#define BAD_PARKING_CHANCE_PERCENT 2 //annahme das 2% aller Fahrzeuge schlecht Parken
+#define BAD_PARKING_CHANCE_PERCENT 2 // 2/100 -> annahme das 2% aller Fahrzeuge schlecht Parken
 
 
 /**
