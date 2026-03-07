@@ -121,7 +121,7 @@
      * @brief Removes a vehicle from the garage and frees the space.
      * @author Simon Ibach
      */
-    int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle **pp_vehicle_list_head, GenericVehicle *p_vehicle);
+    int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle **pp_vehicle_list_head, GenericVehicle *p_vehicle, uint32_t current_tick);
 
     /**
      * @brief Creates a queue structure for multiple gates.
