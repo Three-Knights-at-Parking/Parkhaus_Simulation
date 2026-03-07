@@ -9,7 +9,10 @@
 #include "../include/simulation.h"
 #include "../include/types.h"
 
-//Function prototypes
+/* ========================================================================= */
+/* Function prototypes                                                       */
+/* ========================================================================= */
+
 static int print_simulation_statistics(Settings *p_settings, Simulation *p_simulation);
 
 /* ========================================================================= */
