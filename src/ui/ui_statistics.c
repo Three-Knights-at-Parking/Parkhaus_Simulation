@@ -189,3 +189,52 @@ static void ui_statistics_print_tick_normal(const StatsTick *p_stats_tick)
     printf("| Avg Queue Wait (entered): %.2f ticks\n", avg_wait);
     printf("+--------------------------------------------------------------------+\n");
 }
+
+static void ui_statistics_print_tick_verbose(const StatsTick *p_stats_tick)
+{
+    if (p_stats_tick == NULL)
+    {
+        return;
+    }
+
+    const char *p_status_text = NULL;
+    float util_percent = 0.0f;
+    double avg_wait = 0.0;
+
+    p_status_text = derive_status_text(p_stats_tick);
+    util_percent = calc_util_percent(p_stats_tick);
+    avg_wait = calc_avg_queue_wait_entered(p_stats_tick);
+
+    printf("----------------------------------------------------------------------\n");
+    printf("Tick = %lu | Status = %s\n",
+           (unsigned long)p_stats_tick->current_tick,
+           p_status_text);
+
+    printf("Capacity: total=%u | taken=%u | free=%u | util%%=%.2f\n",
+           (unsigned)p_stats_tick->capacity_total,
+           (unsigned)p_stats_tick->capacity_taken,
+           (unsigned)p_stats_tick->capacity_free,
+           format_float_2(util_percent));
+
+    printf("Flow (tick): arrivals=%u | enqueued=%u | entered=%u | departed=%u\n",
+           (unsigned)p_stats_tick->arrivals_generated,
+           (unsigned)p_stats_tick->enqueued,
+           (unsigned)p_stats_tick->entered,
+           (unsigned)p_stats_tick->departed);
+
+    printf("Queue: lenEnd=%u | rejections=%lu | waitSumEnteredTicks=%llu | "
+           "waitCountEntered=%lu | avgWaitEntered=%.2f\n",
+           (unsigned)p_stats_tick->queue_length_end,
+           (unsigned long)p_stats_tick->queue_rejections,
+           (unsigned long long)p_stats_tick->queue_wait_entered_sum_ticks,
+           (unsigned long)p_stats_tick->queue_wait_entered_count,
+           avg_wait);
+
+    printf("Parking: durSumDepartedTicks=%llu | durCountDeparted=%lu\n",
+           (unsigned long long)p_stats_tick->parking_duration_departed_sum_ticks,
+           (unsigned long)p_stats_tick->parking_duration_departed_count);
+
+    printf("Quality/Blocker: blocker_full_active=%u | bad_parking_cases=%u\n",
+           (unsigned)p_stats_tick->blocker_full_active,
+           (unsigned)p_stats_tick->bad_parking_cases);
+}
