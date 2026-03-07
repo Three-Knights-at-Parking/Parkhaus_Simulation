@@ -23,6 +23,21 @@ static const char *derive_status_text(const StatsTick *p_stats_tick)
     return "OK";
 }
 
+static float calc_util_percent(const StatsTick *p_stats_tick)
+{
+    if (p_stats_tick == NULL)
+    {
+        return 0.0f;
+    }
+
+    if (p_stats_tick->capacity_total == 0U)
+    {
+        return 0.0f;
+    }
+
+    return ((float)p_stats_tick->capacity_taken * 100.0f) /
+           (float)p_stats_tick->capacity_total;
+}
 
 /* ========================================================================= */
 /* Header / Legend                                                           */
