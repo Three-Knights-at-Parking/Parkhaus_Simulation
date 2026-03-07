@@ -238,3 +238,31 @@ static void ui_statistics_print_tick_verbose(const StatsTick *p_stats_tick)
            (unsigned)p_stats_tick->blocker_full_active,
            (unsigned)p_stats_tick->bad_parking_cases);
 }
+
+void ui_statistics_print_tick(const StatsTick *p_stats_tick,
+                              const Settings *p_settings)
+{
+    if (p_stats_tick == NULL || p_settings == NULL)
+    {
+        return;
+    }
+
+    if (p_settings->output_mode == NONE)
+    {
+        return;
+    }
+
+    if (p_settings->output_mode == VERBOSE)
+    {
+        ui_statistics_print_tick_verbose(p_stats_tick);
+        return;
+    }
+
+    ui_statistics_print_tick_normal(p_stats_tick);
+
+    if (p_settings->output_mode == DEBUG)       //Needs to be more specified, what DEBUG mode means
+    {
+        printf("DEBUG: blocker_full_active=%u\n",
+               (unsigned)p_stats_tick->blocker_full_active);
+    }
+}

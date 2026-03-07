@@ -30,10 +30,10 @@ void ui_statistics_print_header(const Settings *p_settings);
 /**
  * @brief Prints a single tick statistics block depending on output mode.
  *
- * @param[in] p_tick     Tick snapshot to print.
+ * @param[in] p_stats_tick     Tick snapshot to print.
  * @param[in] p_settings Settings containing the selected output mode.
  */
-void ui_statistics_print_tick(const StatsTick *p_tick, const Settings *p_settings);
+void ui_statistics_print_tick(const StatsTick *p_stats_tick, const Settings *p_settings);
 
 /**
  * @brief Prints the final aggregated simulation summary.
