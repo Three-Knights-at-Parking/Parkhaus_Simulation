@@ -5,6 +5,26 @@
 #include "../include/types.h"
 
 /* ========================================================================= */
+/* Helper functions                                                          */
+/* ========================================================================= */
+
+static const char *derive_status_text(const StatsTick *p_stats_tick)
+{
+    if (p_stats_tick == NULL)
+    {
+        return "UNKNOWN";
+    }
+
+    if (p_stats_tick->capacity_free == 0U)
+    {
+        return "FULL";
+    }
+
+    return "OK";
+}
+
+
+/* ========================================================================= */
 /* Header / Legend                                                           */
 /* ========================================================================= */
 
