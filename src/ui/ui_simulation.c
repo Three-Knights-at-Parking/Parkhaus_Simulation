@@ -13,13 +13,6 @@
 static int print_simulation_statistics(const Settings *p_settings);
 
 /* ========================================================================= */
-/* Global handover storage (owned by simulation/data layer)                  */
-/* ========================================================================= */
-
-static StatList *pStatList = NULL;
-static StatsSummary *pStatsSummary = NULL;
-
-/* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
 
