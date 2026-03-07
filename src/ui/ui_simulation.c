@@ -51,11 +51,6 @@ int print_simulationscreen(const Settings *p_settings)
     return OK;
 }
 
-
-void post_simulation_prompt(const char *p_sim_output_path) {
-    printf("Post Simulation Prompt (Stub)\n");
-}
-
 /* ========================================================================= */
 /* Local helper functions                                                    */
 /* ========================================================================= */
