@@ -8,6 +8,21 @@
 /* Helper functions                                                          */
 /* ========================================================================= */
 
+static int clamp_int(const int value, const int min_val, const int max_val)
+{
+    if (value < min_val)
+    {
+        return min_val;
+    }
+
+    if (value > max_val)
+    {
+        return max_val;
+    }
+
+    return value;
+}
+
 static void build_occupancy_bar(const float taken_percent)
 {
     int filled = 0;
