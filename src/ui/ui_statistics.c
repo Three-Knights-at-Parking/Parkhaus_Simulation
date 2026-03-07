@@ -34,3 +34,25 @@ static void ui_statistics_print_header_verbose(void)
     printf("======================================================================\n");
     printf("\n");
 }
+
+void ui_statistics_print_header(const Settings *p_settings)
+{
+    if (p_settings == NULL)
+    {
+        return;
+    }
+
+    if (p_settings->output_mode == NONE)
+    {
+        return;
+    }
+
+    if (p_settings->output_mode == VERBOSE)
+    {
+        ui_statistics_print_header_verbose();
+    }
+    else
+    {
+        ui_statistics_print_header_normal();
+    }
+}
