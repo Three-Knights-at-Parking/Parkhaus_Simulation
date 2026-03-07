@@ -67,12 +67,7 @@ void post_simulation_prompt(const char *p_sim_output_path) {
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
-{
-    int choice = 0;
-    int sim_status = ERROR;
-    validation_flag valid = INVALID;
-
+ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation) {
     if (p_settings == NULL || p_simulation == NULL)
     {
         printf("Internal error: Settings or Simulation not available.\n");
@@ -89,15 +84,30 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
         return UI_HOME;
     }
 
+    int choice = 0;
+    validation_flag valid = INVALID;
+
     while (valid != VALID)
     {
         choice = user_input();
         valid = validate_user_input(choice, SIMULATION_MAX_VALID_NUMBER);
     }
 
-    if (choice == 1)
-    {
+    if (choice == 1) {
         printf("Starting simulation...\n");
+
+        /* Reset handover pointers before each new run. */
+        pStatList = NULL;
+        pStatsSummary = NULL;
+
+        if (simulation_start(p_simulation) != OK)
+        {
+            printf("Simulation execution failed.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+            return UI_SIMULATION;
+        }
+    }
 
     /* Defensive fallback */
     return UI_SIMULATION;
