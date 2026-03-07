@@ -48,6 +48,13 @@
 /* ========================================================================= */
 /* Public interface                                                          */
 /* ========================================================================= */
+/**
+ * @brief Converts OutputMode enum to a readable string.
+ *
+ * @param[in] mode Output mode enum value.
+ * @return Constant string representation.
+ */
+const char *output_mode_to_string(enum OutputMode mode);
 
 /**
  * @brief Prints the configuration screen including current settings.
