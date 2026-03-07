@@ -56,3 +56,44 @@ void ui_statistics_print_header(const Settings *p_settings)
         ui_statistics_print_header_normal();
     }
 }
+
+/* ========================================================================= */
+/* Tick output                                                               */
+/* ========================================================================= */
+
+static void ui_statistics_print_tick_normal(const StatsTick *p_stats_tick)
+{
+    const char *p_status_text = NULL;
+    float util_percent = 0.0f;
+    double avg_wait = 0.0;
+
+    if (p_stats_tick == NULL)
+    {
+        return;
+    }
+
+    p_status_text = derive_status_text(p_stats_tick);           //Will be implemented in next step
+    util_percent = calc_util_percent(p_stats_tick);             //Will be implemented in next step
+    avg_wait = calc_avg_queue_wait_entered(p_stats_tick);       //Will be implemented in next step
+
+    printf("+--------------------------------------------------------------------+\n");
+    printf("| Tick: %lu   Status: %s\n",
+           (unsigned long)p_stats_tick->current_tick,
+           p_status_text);
+
+    printf("| OCC : %u/%u   ",
+           (unsigned)p_stats_tick->capacity_taken,
+           (unsigned)p_stats_tick->capacity_total);
+    build_occupancy_bar(util_percent);
+    printf("  %.1f%%\n", format_float_1(util_percent));
+
+    printf("| Queue: %u | Arrivals: %u | In: %u | Out: %u | Rej: %lu\n",
+           (unsigned)p_stats_tick->queue_length_end,
+           (unsigned)p_stats_tick->arrivals_generated,
+           (unsigned)p_stats_tick->entered,
+           (unsigned)p_stats_tick->departed,
+           (unsigned long)p_stats_tick->queue_rejections);
+
+    printf("| Avg Queue Wait (entered): %.2f ticks\n", avg_wait);
+    printf("+--------------------------------------------------------------------+\n");
+}
