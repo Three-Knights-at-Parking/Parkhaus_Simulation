@@ -26,7 +26,7 @@
  *
  * @param[in] p_settings Current settings to display.
  */
-void print_simulationscreen(const Settings *p_settings);
+int print_simulationscreen(const Settings *p_settings);
 
 /**
  * @brief Post-simulation user prompt that offers jumping to the storage folder.
