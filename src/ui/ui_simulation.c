@@ -63,9 +63,63 @@ void post_simulation_prompt(const char *p_sim_output_path) {
     printf("Post Simulation Prompt (Stub)\n");
 }
 
-ui_state simulation_menu(Settings *p_settings) {
-    printf("Simulation Menu (Stub)\n");
-    return UI_HOME;
+/* ========================================================================= */
+/* Menu logic                                                                */
+/* ========================================================================= */
+
+/**
+ * @brief Handles user interaction in the simulation menu.
+ *
+ * Workflow:
+ * - print simulation screen
+ * - validate user choice
+ * - optionally start simulation
+ * - print statistics if available
+ *
+ * @param[in] p_settings Pointer to active settings.
+ * @return Next UI state.
+ */
+ui_state simulation_menu(const Settings *p_settings)
+{
+    int choice = 0;
+    validation_flag valid = INVALID;
+
+    if (p_settings == NULL)
+    {
+        printf("Internal error: Settings not available.\n");
+        printf("Press ENTER to return...\n");
+        press_enter_to_continue();
+        return UI_HOME;
+    }
+
+    if (print_simulationscreen(p_settings) != OK)
+    {
+        printf("Loading simulation screen failed.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return UI_HOME;
+    }
+
+    while (valid != VALID)
+    {
+        choice = user_input();
+        valid = validate_user_input(choice, SIMULATION_MAX_VALID_NUMBER);
+    }
+
+    if (choice == 1)
+    {
+        Simulation sim;
+        int sim_status = ERROR;
+
+        printf("Starting simulation...\n");
+
+        /* Reset handover pointers before each new run. */
+        pStatList = NULL;
+        pStatsSummary = NULL;
+
+
+    /* Defensive fallback */
+    return UI_SIMULATION;
 }
 
 char *start_simulation(Settings *p_settings) {
