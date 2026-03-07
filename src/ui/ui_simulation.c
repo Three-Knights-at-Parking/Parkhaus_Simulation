@@ -60,8 +60,7 @@ void post_simulation_prompt(const char *p_sim_output_path) {
 /* Local helper functions                                                    */
 /* ========================================================================= */
 
-static int print_simulation_statistics(const Settings *p_settings,
-                                       const Simulation *p_simulation)
+static int print_simulation_statistics(Settings *p_settings, Simulation *p_simulation)
 {
     StatsTick *p_current_tick = NULL;
     StatList *p_stat_list = NULL;
@@ -77,18 +76,27 @@ static int print_simulation_statistics(const Settings *p_settings,
         return ERROR;
     }
 
-    ui_statistics_print_header(p_settings);         //Is going to be implemented in ui_statistics.c
+    /* Implement in ui_statistics.c */
+    ui_statistics_print_header(p_settings);
 
     p_current_tick = p_stat_list->p_tick_head;
-    while (p_current_tick != NULL)          //Maybe the user should be getting each next StatTick displayed by pressing ENTER to continue
+
+    while (p_current_tick != NULL)
     {
-        ui_statistics_print_tick(p_current_tick, p_settings);       //Is going to be implemented in ui_statistics.c
+        /* Implement in ui_statistics.c */
+        ui_statistics_print_tick(p_current_tick, p_settings);
+
+        /* Optional later:
+           press_enter_to_continue();
+           if you want one tick per ENTER */
         p_current_tick = p_current_tick->p_next;
     }
 
-    if (p_stat_list->p_summary != NULL)     //For this StatsSummary has to be integrated into StatsList
+    /* Requires StatsSummary integration into StatList, e.g. p_summary */
+    if (p_stat_list->p_summary != NULL)
     {
-        ui_statistics_print_final(p_stat_list->p_summary, p_settings);      //Is going to be implemented in ui_statistics.c
+        /* Implement in ui_statistics.c */
+        ui_statistics_print_final(p_stat_list->p_summary, p_settings);
     }
     else
     {
@@ -96,6 +104,7 @@ static int print_simulation_statistics(const Settings *p_settings,
     }
 
     return OK;
+}
 
 /* ========================================================================= */
 /* Menu logic                                                                */
