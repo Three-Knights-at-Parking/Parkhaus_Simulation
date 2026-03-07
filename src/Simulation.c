@@ -75,7 +75,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
     }
 
     //initialisierung von Statistik List Objekt
-
+    p_StatList =
 
 
 
