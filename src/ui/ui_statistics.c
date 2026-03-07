@@ -39,6 +39,23 @@ static float calc_util_percent(const StatsTick *p_stats_tick)
            (float)p_stats_tick->capacity_total;
 }
 
+/* Calculates average queue wait time for vehicles that entered (in Ticks) */
+static double calc_avg_queue_wait_entered(const StatsTick *p_stats_tick)
+{
+    if (p_stats_tick == NULL)
+    {
+        return 0.0;
+    }
+
+    if (p_stats_tick->queue_wait_entered_count == 0U)
+    {
+        return 0.0;
+    }
+
+    return (double)p_stats_tick->queue_wait_entered_sum_ticks /
+           (double)p_stats_tick->queue_wait_entered_count;
+}
+
 /* ========================================================================= */
 /* Header / Legend                                                           */
 /* ========================================================================= */
@@ -107,8 +124,8 @@ static void ui_statistics_print_tick_normal(const StatsTick *p_stats_tick)
         return;
     }
 
-    p_status_text = derive_status_text(p_stats_tick);           //Will be implemented in next step
-    util_percent = calc_util_percent(p_stats_tick);             //Will be implemented in next step
+    p_status_text = derive_status_text(p_stats_tick);
+    util_percent = calc_util_percent(p_stats_tick);
     avg_wait = calc_avg_queue_wait_entered(p_stats_tick);       //Will be implemented in next step
 
     printf("+--------------------------------------------------------------------+\n");
