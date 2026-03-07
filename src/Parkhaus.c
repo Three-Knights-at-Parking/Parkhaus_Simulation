@@ -419,6 +419,7 @@ int park_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
     else{
         if (p_parkhaus->p_parked_tail == NULL)
         {
+            p_parkhaus->p_parked_head->p_next = p_vehicle;
             p_parkhaus->p_parked_tail = p_vehicle;
         }
         else
@@ -439,7 +440,7 @@ int park_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
 }
 
 uint16_t get_open_space(const Parkhaus *p_parkhouse) {
-    if (p_parkhouse == NULL || p_parkhouse->capacity_taken >= p_parkhouse->capacity) {
+    if (p_parkhouse == NULL || p_parkhouse->capacity_taken > p_parkhouse->capacity) {
         print_error("get_open_space: pointer issue OR capacity_taken > capacity");
         return ERROR;
     }
