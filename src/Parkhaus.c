@@ -522,7 +522,6 @@ void parkhaus_free(Parkhaus *p_parkhaus) {
     if (p_parkhaus == NULL) {
         return;
     }
-
     p_parkhaus->p_parked_head = NULL;
     p_parkhaus->p_parked_tail = NULL;
     p_parkhaus->gate_queues = NULL;

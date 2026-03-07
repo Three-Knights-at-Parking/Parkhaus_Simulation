@@ -10,7 +10,7 @@
 int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatList *p_StatList) {
     checkNull(p_sim);
     checkNull(p_settings);
-    checkNull(stats);
+    // checkNull(stats); FXIME
 
     p_sim->settings = (Settings *) p_settings;
     p_sim->StatList = (StatList *) p_StatList;
@@ -75,24 +75,20 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
     }
 
     //initialisierung von Statistik List Objekt
-    p_StatList =
-
-
-
-
-
-
-
-
-
+    //p_StatList =
 
     return OK;
 }
 
 int simulation_tick(Simulation *p_sim) {
-
-
+    if (checkNull(p_sim)) {
+        return UNKNOWN;
+    }
     p_sim->current_tick++;
+    p_sim->parkhaus->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
+    for (int i = 0; i < p_sim->settings->gates-1; i++) {
+        queue_tick(&p_sim->parkhaus->gate_queues[i]->base, p_sim->current_tick);
+    }
     return OK;
 }
 
@@ -108,7 +104,12 @@ void simulation_end(Simulation *p_sim) {
 }
 
 int free_simulation(Simulation *p_sim) {
-
+    if (checkNull(p_sim)) {
+        return UNKNOWN;
+    }
+    parkhaus_free(p_sim->parkhaus);
+    free(p_sim->parkhaus);
+    free(p_sim);
     return OK;
 }
 
