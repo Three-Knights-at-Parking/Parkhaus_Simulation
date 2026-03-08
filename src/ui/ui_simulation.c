@@ -9,12 +9,6 @@
 #include "../include/types.h"
 #include "utils/SafteyUtils.h"
 
-/* ========================================================================= */
-/* Function prototypes                                                       */
-/* ========================================================================= */
-
-static int print_simulation_statistics(const Settings *p_settings,
-                                       const Simulation *p_simulation);
 
 /* ========================================================================= */
 /* Screen printing                                                           */
@@ -55,54 +49,6 @@ int print_simulationscreen(const Settings *p_settings)
 }
 
 /* ========================================================================= */
-/* Local helper functions                                                    */
-/* ========================================================================= */
-
-static int print_simulation_statistics(const Settings *p_settings,
-                                       const Simulation *p_simulation)
-{
-    StatsTick *p_current_tick = NULL;
-    StatList *p_stat_list = NULL;
-
-    if (p_settings == NULL || p_simulation == NULL)
-    {
-        return ERROR;
-    }
-
-    p_stat_list = p_simulation->StatList;
-    if (p_stat_list == NULL)
-    {
-        return ERROR;
-    }
-
-    ui_statistics_print_header(p_settings);
-
-    p_current_tick = p_stat_list->p_tick_head;
-
-    while (p_current_tick != NULL)
-    {
-        ui_statistics_print_tick(p_current_tick, p_settings);
-
-        /* Optional later:
-           press_enter_to_continue();
-           if you want one tick per ENTER */
-        p_current_tick = p_current_tick->p_next;
-    }
-
-    /* Requires StatsSummary integration into StatList, e.g. p_summary */
-    // if (p_stat_list->p_summary != NULL)
-    // {
-    //     ui_statistics_print_final(p_stat_list->p_summary, p_settings);
-    // }
-    // else
-    // {
-    //     printf("Warning: No summary received.\n");
-    // }
-
-    return OK;
-}
-
-/* ========================================================================= */
 /* Menu logic                                                                */
 /* ========================================================================= */
 
@@ -137,25 +83,11 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
     {
         printf("Starting simulation...\n");
 
+        ui_statistics_print_header(p_settings);
+
         if (simulation_start(p_simulation) != OK)
         {
             printf("Simulation execution failed.\n");
-            printf("Press ENTER to continue...\n");
-            press_enter_to_continue();
-            return UI_SIMULATION;
-        }
-
-        if (p_simulation->StatList == NULL)
-        {
-            printf("Error: No simulation data received from backend.\n");
-            printf("Press ENTER to continue...\n");
-            press_enter_to_continue();
-            return UI_SIMULATION;
-        }
-
-        if (print_simulation_statistics(p_settings, p_simulation) != OK)
-        {
-            printf("Failed to print simulation statistics.\n");
             printf("Press ENTER to continue...\n");
             press_enter_to_continue();
             return UI_SIMULATION;
@@ -181,14 +113,14 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
 }
 
 /* ========================================================================= */
-/* Hand-over functions                                                       */
+/* Statistics-print functions - used by Backend                                */
 /* ========================================================================= */
-/*void print_StatsTick_backend(Settings *p_settings, StatsTick *p_stat_stats_tick) {
-    if (print_simulation_statistics(p_settings, p_stat_stats_tick) != OK)
-    {
-        printf("Failed to print simulation statistics.\n");
-        printf("Press ENTER to continue...\n");
-        press_enter_to_continue();
-        return UI_SIMULATION;
-    }
-}*/
+void print_StatsTick_backend(const Settings *p_settings, const StatsTick *p_current_tick)
+{
+    ui_statistics_print_tick(p_current_tick, p_settings);
+}
+
+void print_final_stats_backend(const StatsSummary *p_stats_summary, const Settings *p_settings)
+{
+    ui_statistics_print_final(p_stats_summary, p_settings);
+}
