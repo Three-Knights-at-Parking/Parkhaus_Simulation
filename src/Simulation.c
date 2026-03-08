@@ -25,7 +25,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
     }
 
     //erstellen der Queues
-    Queue *Gate_Queues = malloc(sizeof(p_sim->settings->gates));
+    Queue* Gate_Queues = calloc(p_sim->settings->gates, sizeof(Queue));
 
     if (Gate_Queues == NULL)
     {
@@ -37,6 +37,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
             j = j + 1;
         }
         print_error("Gate Queues allocation failed");
+        free(Gate_Queues); // Fixing memory leak
         return ERROR;
     }
     //initialisierung der Queues
@@ -95,6 +96,10 @@ int simulation_tick(Simulation *p_sim) {
 
 
     p_sim->current_tick++;
+    p_sim->parkhaus->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
+    for (int i = 0; i < p_sim->settings->gates-1; i++) {
+        queue_tick(&p_sim->parkhaus->gate_queues[i]->base, p_sim->current_tick);
+    }
     return OK;
 }
 
@@ -110,7 +115,12 @@ void simulation_end(Simulation *p_sim) {
 }
 
 int free_simulation(Simulation *p_sim) {
-
+    if (checkNull(p_sim)) {
+        return UNKNOWN;
+    }
+    parkhouse_free(p_sim->parkhaus);
+    free(p_sim->parkhaus);
+    free(p_sim);
     return OK;
 }
 

@@ -112,6 +112,7 @@ struct Simulation {
  * @author Luca Perri
  */
 struct Queue {
+    SimulationObject base;
     uint16_t capacity; // Number of waiting cars.
     GenericVehicle *p_head; // first vehicle in queue
     GenericVehicle *p_tail; // last vehicle in queue

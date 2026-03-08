@@ -17,53 +17,49 @@
 /* ========================================================================= */
 
 // Function Prototypes
-static void trim_newline(char *p_text);
+static int trim_newline(char *p_text);
 static int read_line(char *p_buffer, const size_t buffer_len);
 static int parse_long(const char *p_text, long *p_out);
 static int parse_float(const char *p_text, float *p_out);
 static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out);
-static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, int32_t *p_out);
-static int read_uint16_in_range(const char *p_prompt, uint16_t min_val, uint16_t max_val, uint16_t *p_out);
-static int read_uint8_in_range(const char *p_prompt, uint8_t min_val, uint8_t max_val, uint8_t *p_out);
 static int read_float_percent(const char *p_prompt, float *p_out);
 static int ui_settings_set_name(Settings *p_settings, const char *p_name);
-static const char *output_mode_to_string(const enum OutputMode mode);
 static enum OutputMode apply_mode_select(const int mode_select);
 static int edit_mode_select(void);
 
 
 
-
-static void trim_newline(char *p_text)
+static int trim_newline(char *p_text)
 {
     if (p_text == NULL)
     {
-        return;
+        return ERROR;
     }
 
     const size_t len = strlen(p_text);
 
     if (len == 0U)
     {
-        return;
+        return ERROR;
     }
 
     if (p_text[len - 1U] == '\n')
     {
         p_text[len - 1U] = '\0';
     }
+    return OK;
 }
 
 static int read_line(char *p_buffer, const size_t buffer_len)
 {
     if (p_buffer == NULL || buffer_len == 0U)
     {
-        return -1;
+        return ERROR;
     }
 
     if (fgets(p_buffer, buffer_len, stdin) == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     if (strchr(p_buffer, '\n') == NULL)
@@ -76,8 +72,12 @@ static int read_line(char *p_buffer, const size_t buffer_len)
         }
     }
 
-    trim_newline(p_buffer);
-    return 0;
+    if (trim_newline(p_buffer) != OK)
+    {
+        return ERROR;
+    }
+
+    return OK;
 }
 
 static int parse_long(const char *p_text, long *p_out)
@@ -87,7 +87,7 @@ static int parse_long(const char *p_text, long *p_out)
 
     if (p_text == NULL || p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     errno = 0;
@@ -95,12 +95,12 @@ static int parse_long(const char *p_text, long *p_out)
 
     if (errno != 0)
     {
-        return -1;
+        return ERROR;
     }
 
     if (p_end == p_text)
     {
-        return -1;
+        return ERROR;
     }
 
     while (*p_end == ' ' || *p_end == '\t')
@@ -110,21 +110,21 @@ static int parse_long(const char *p_text, long *p_out)
 
     if (*p_end != '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     *p_out = value;
-    return 0;
+    return OK;
 }
 
-static int parse_float(const char *p_text, float *p_out)    //Maybe possible to synthesize with other parsing functions
+static int parse_float(const char *p_text, float *p_out)
 {
     char *p_end = NULL;
     float value = 0.0f;
 
     if (p_text == NULL || p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     errno = 0;
@@ -132,12 +132,12 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
 
     if (errno != 0)
     {
-        return -1;
+        return ERROR;
     }
 
     if (p_end == p_text)
     {
-        return -1;
+        return ERROR;
     }
 
     while (*p_end == ' ' || *p_end == '\t')
@@ -147,44 +147,40 @@ static int parse_float(const char *p_text, float *p_out)    //Maybe possible to 
 
     if (*p_end != '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     *p_out = value;
-    return 0;
+    return OK;
 }
 
-/* ------------------------------------------------------------------------- */
-/* Generic integer input helper                                              */
-/* ------------------------------------------------------------------------- */
-
-static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out)
+static int read_long_in_range(const char *p_prompt, const long min_val, const long max_val, long *p_out)
 {
     char buffer[64];
     long value = 0;
 
     if (p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     while (1)
     {
         printf("%s", p_prompt);
 
-        if (read_line(buffer, sizeof(buffer)) != 0)
+        if (read_line(buffer, sizeof(buffer)) != OK)
         {
             printf("Input error.\n");
             continue;
         }
-        //FIXME parse_long_value does not even exist!
-        // if (parse_long_value(buffer, &value) != 0)
-        // {
-        //     printf("Your input is not a valid integer!\n");
-        //     printf("Press ENTER and try again...\n");
-        //     press_enter_to_continue();
-        //     continue;
-        // }
+
+        if (parse_long(buffer, &value) != OK)
+        {
+            printf("Your input is not a valid integer!\n");
+            printf("Press ENTER and try again...\n");
+            press_enter_to_continue();
+            continue;
+        }
 
         if (value < min_val || value > max_val)
         {
@@ -195,95 +191,31 @@ static int read_long_in_range(const char *p_prompt, long min_val, long max_val, 
         }
 
         *p_out = value;
-        return 0;
+        return OK;
     }
 }
 
-/* ------------------------------------------------------------------------- */
-/* Typed wrappers                                                             */
-/* ------------------------------------------------------------------------- */
-
-//FIXME Add documentation -- What even does this do?
-static int read_int32_in_range(const char *p_prompt, const int32_t min_val, const int32_t max_val, int32_t *p_out)
-{
-    long value = 0;
-
-    if (p_out == NULL)
-    {
-        return -1;
-    }
-
-    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
-    {
-        return -1;
-    }
-
-    if (value < INT32_MIN || value > INT32_MAX)
-    {
-        return -1;
-    }
-
-    *p_out = (int32_t)value;
-    return 0;
-}
-
-static int read_uint16_in_range(const char *p_prompt, uint16_t min_val, uint16_t max_val, uint16_t *p_out)
-{
-    long value = 0;
-
-    if (p_out == NULL)
-    {
-        return -1;
-    }
-
-    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
-    {
-        return -1;
-    }
-
-    *p_out = (uint16_t)value;
-    return 0;
-}
-
-static int read_uint8_in_range(const char *p_prompt, uint8_t min_val, uint8_t max_val, uint8_t *p_out)
-{
-    long value = 0;
-
-    if (p_out == NULL)
-    {
-        return -1;
-    }
-
-    if (read_long_in_range(p_prompt, (long)min_val, (long)max_val, &value) != 0)
-    {
-        return -1;
-    }
-
-    *p_out = (uint8_t)value;
-    return 0;
-}
-
-static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe possible to synthesize function with read_int32_in_range()
+static int read_float_percent(const char *p_prompt, float *p_out)
 {
     char buffer[64];
 
     if (p_out == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     while (1)
     {
         printf("%s", p_prompt);
 
-        if (read_line(buffer, sizeof(buffer)) != 0)
+        if (read_line(buffer, sizeof(buffer)) != OK)
         {
             printf("Input error.\n");
             continue;
         }
 
         float value = 0.0f;
-        if (parse_float(buffer, &value) != 0)       //Implementing parse_float() in next step
+        if (parse_float(buffer, &value) != OK)
         {
             printf("Your input is not a valid number!\n");
             printf("Press ENTER and try again...\n");
@@ -300,7 +232,7 @@ static int read_float_percent(const char *p_prompt, float *p_out)       //Maybe 
         }
 
         *p_out = value;
-        return 0;
+        return OK;
     }
 }
 
@@ -311,32 +243,32 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
 
     if (p_settings == NULL || p_name == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     if (p_name[0] == '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     size_t len = strlen(p_name);
-    if (len > NAME_MAX_LEN)
+    if (len > SETTINGS_NAME_MAX_LENGTH)
     {
-        len = NAME_MAX_LEN;
+        len = SETTINGS_NAME_MAX_LENGTH;
     }
 
-    char *p_buf = (char *)malloc(len + 1U);
+    char *p_buf = malloc(len + 1U);
     if (p_buf == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     memcpy(p_buf, p_name, len);
     p_buf[len] = '\0';
 
     free(p_settings->name);
-    p_settings->name = p_buf;
-    return 0;
+    *p_settings->name = p_buf;
+    return OK;
 }
 
 /**
@@ -345,7 +277,7 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
  * @param[in] mode Output mode enum value.
  * @return Constant string representation.
  */
-static const char *output_mode_to_string(const enum OutputMode mode)
+const char *output_mode_to_string(const enum OutputMode mode)
 {
     if (mode == NONE) return "NONE";
     if (mode == NORMAL) return "NORMAL";
@@ -353,7 +285,6 @@ static const char *output_mode_to_string(const enum OutputMode mode)
     if (mode == DEBUG) return "DEBUG";
     return "NORMAL";
 }
-
 
 /**
  * @brief Maps numeric mode selection to OutputMode enum.
@@ -378,7 +309,7 @@ static enum OutputMode apply_mode_select(const int mode_select)
  */
 static int edit_mode_select(void)
 {
-    int32_t choice = 0;
+    long choice = 0;
 
     clear_terminal();
     printf("Select Output Mode:\n");
@@ -388,8 +319,8 @@ static int edit_mode_select(void)
     printf("2 = VERBOSE\n");
     printf("3 = DEBUG\n");
     printf("------------------------------------\n");
-    // FIXME Function arguments do not match definition
-    // (void)read_int32_in_range("Enter your choice (0 - 3): ", 0, 3, 0, &choice);
+
+    (void) read_long_in_range("Enter your choice (0 - 3): ", 0, 3, &choice);
     return (int)choice;
 }
 
@@ -397,8 +328,12 @@ static int edit_mode_select(void)
 /* Screen printing                                                           */
 /* ========================================================================= */
 
-void print_configscreen(const Settings *p_settings)
+int print_configscreen(const Settings *p_settings)
 {
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
     clear_terminal();
 
     printf("====================================\n");
@@ -419,6 +354,8 @@ void print_configscreen(const Settings *p_settings)
     printf("10 Random Seed          : %ld\n", (long)p_settings->rand_seed);
     printf("------------------------------------\n");
     printf("0  Back to Home\n\n");
+
+    return OK;
 }
 
 /* ========================================================================= */
@@ -438,7 +375,13 @@ ui_state config_menu(Settings *p_settings)
         return UI_HOME;
     }
 
-    print_configscreen(p_settings);
+    if (print_configscreen(p_settings) != OK)
+    {
+        printf("Loading config screen failed. Return to Home.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return UI_HOME;
+    }
 
     while (valid != VALID)
     {
@@ -452,11 +395,11 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 1)
     {
-        char name_buf[128];
+        char name_buf[20];
 
         printf("Enter name (max %d chars): ", SETTINGS_NAME_MAX_LENGTH);
 
-        if (read_line(name_buf, sizeof(name_buf)) != 0 || name_buf[0] == '\0')
+        if (read_line(name_buf, sizeof(name_buf)) != OK || name_buf[0] == '\0')
         {
             printf("Invalid name.\n");
             printf("Press ENTER and try again...\n");
@@ -464,7 +407,7 @@ ui_state config_menu(Settings *p_settings)
             return UI_KONFIG;
         }
 
-        if (ui_settings_set_name(p_settings, name_buf) != 0)
+        if (ui_settings_set_name(p_settings, name_buf) != OK)
         {
             printf("Failed to set name (out of memory?).\n");
             printf("Press ENTER to continue...\n");
@@ -472,111 +415,127 @@ ui_state config_menu(Settings *p_settings)
         }
 
         return UI_KONFIG;
-    }else if (choice == 2)
+    }
+    else if (choice == 2)
     {
-        uint16_t value = 0U;
+        long value = 0;
 
-        (void)read_uint16_in_range("Enter capacity per floor: ",
-                                   (uint16_t)MIN_CAPACITY,
-                                   (uint16_t)MAX_CAPACITY,
-                                   &value);
+        (void)read_long_in_range("Enter capacity per floor: ",
+                                 SETTINGS_MINIMUM_CAPACITY,
+                                 SETTINGS_MAXIMUM_CAPACITY,
+                                 &value);
 
-        (void)settings_set_size(p_settings, value);
+        if (settings_set_size(p_settings, (uint16_t)value) != OK)
+        {
+            printf("Failed to set capacity (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 3)
     {
-        uint8_t value = 0U;
+        long value = 0;
 
-        (void)read_uint8_in_range("Enter number of floors: ",
-                                  (uint8_t)MIN_FLOORS,
-                                  (uint8_t)MAX_FLOORS,
-                                  &value);
+        (void)read_long_in_range("Enter number of floors: ",
+                                 SETTINGS_MINIMUM_FLOORS,
+                                 SETTINGS_MAXIMUM_FLOORS,
+                                 &value);
 
-        (void)settings_set_floors(p_settings, value);
+        if (settings_set_floors(p_settings, (uint8_t)value) != OK)
+        {
+            printf("Failed to set floors (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 4)
     {
-        uint8_t value = 0U;
+        long value = 0;
 
-        (void)read_uint8_in_range("Enter number of gates: ",
-                                  (uint8_t)MIN_GATES,
-                                  (uint8_t)MAX_GATES,
-                                  &value);
+        (void)read_long_in_range("Enter number of gates: ",
+                                 SETTINGS_MINIMUM_GATES,
+                                 SETTINGS_MAXIMUM_GATES,
+                                 &value);
 
-        (void)settings_set_gates(p_settings, value);
+        if (settings_set_gates(p_settings, (uint8_t)value) != OK)
+        {
+            printf("Failed to set gates (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 5)
     {
-        uint16_t value = 0U;
+        long value = 0;
 
-        (void)read_uint16_in_range("Enter gate entry time in seconds: ",
-                                   (uint16_t)MIN_GATE_ENTRY_SEC,
-                                   (uint16_t)MAX_GATE_ENTRY_SEC,
-                                   &value);
+        (void)read_long_in_range("Enter gate entry time in seconds: ",
+                                 SETTINGS_MINIMUM_GATE_ENTRY_SEC,
+                                 SETTINGS_MAXIMUM_GATE_ENTRY_SEC,
+                                 &value);
 
-        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, value) when available */
-        p_settings->gate_entry_inSec = value;
-
+        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, ...) when available */
+        p_settings->gate_entry_inSec = (uint16_t)value;
         return UI_KONFIG;
     }
     else if (choice == 6)
     {
-        uint16_t value = 0U;
+        long value = 0;
 
-        (void)read_uint16_in_range("Enter tick length in seconds: ",
-                                   (uint16_t)MIN_TICK_SEC,
-                                   (uint16_t)MAX_TICK_SEC,
-                                   &value);
+        (void)read_long_in_range("Enter tick length in seconds: ",
+                                 MIN_TICK_SEC,    //Is missing in Settings.h
+                                 MAX_TICK_SEC,    //Is missing in Settings.h
+                                 &value);
 
-        /* TODO: replace with settings_set_tick_inSec(p_settings, value) when available */
-        p_settings->tick_inSec = value;
-
+        /* TODO: replace with settings_set_tick_inSec(p_settings, ...) when available */
+        p_settings->tick_inSec = (uint16_t)value;
         return UI_KONFIG;
     }
     else if (choice == 7)
     {
-        int mode_select = edit_mode_select();
-        enum OutputMode mode = apply_mode_select(mode_select);
+        const int mode_select = edit_mode_select();
+        const enum OutputMode mode = apply_mode_select(mode_select);
 
-        (void)settings_set_output_mode(p_settings, mode);
+        if (settings_set_output_mode(p_settings, mode) != OK)
+        {
+            printf("Failed to set output mode (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
     else if (choice == 8)
     {
         float prob = 0.0f;
 
-        (void)read_float_percent("Enter entry probability per second (0 - 100 %%): ", &prob);
+        (void)read_float_percent("Enter entry probability per second (0.0 - 100.0 %): ", &prob);
 
-        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, prob) when available */
+        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, ...) when available */
         p_settings->entry_probability_perSec_prec = prob;
-
         return UI_KONFIG;
     }
     else if (choice == 9)
     {
-        int32_t value = 0;
+        long value = 0;
 
-        (void)read_int32_in_range("Enter max ticks (-1/-2/... for day equivalents): ",
-                                  MIN_MAX_TICKS,
-                                  MAX_MAX_TICKS,
-                                  &value);
+        (void)read_long_in_range("Enter max ticks (-1/-2/... for day equivalents): ",
+                                 SETTINGS_MAXIMUM_DAY_TICKS,
+                                 SETTINGS_MAXIMUM_TICKS,
+                                 &value);
 
-        (void)settings_set_max_ticks(p_settings, value);
+        if (settings_set_max_ticks(p_settings, (int32_t)value) != OK)
+        {
+            printf("Failed to set max ticks (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
-    else if (choice == 10)
+    else
     {
-        int32_t value = 0;
+        long value = 0;
 
-        (void)read_int32_in_range("Enter random seed (or -1 for default/time): ",
-                                  MIN_SEED,
-                                  MAX_SEED,
-                                  &value);
+        (void)read_long_in_range("Enter random seed (or -1 for default/time): ",
+                                 SETTINGS_DEFAULT_RAND_SEED,
+                                 MAX_SEED,  //Missing in Settings.h
+                                 &value);
 
-        (void)settings_set_rand_seed(p_settings, value);
+        if (settings_set_rand_seed(p_settings, (int32_t)value) != OK)
+        {
+            printf("Failed to set random seed (out of memory?).\n");
+        }
         return UI_KONFIG;
     }
 }

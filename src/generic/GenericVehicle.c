@@ -11,7 +11,7 @@ void generic_vehicle_init(GenericVehicle *p_vehicle,
         return;
     }
 
-    p_vehicle->base.id = 0; //FIXME ID generator
+    p_vehicle->base.id = 0;
     p_vehicle->base.type = type;
     p_vehicle->base.tick = tick_function;
 

@@ -1,83 +1,61 @@
-#ifndef SIMULATION_H
-#define SIMULATION_H
+#ifndef UI_SIMULATION_H
+#define UI_SIMULATION_H
 
 /**
- * @file simulation.h
- * @brief Simulation menu UI and interface to start the simulation (data layer).
+ * @file ui_simulation.h
+ * @brief Simulation menu UI for starting and displaying simulations.
  *
- * This module provides:
- * - Printing the simulation menu
- * - Starting a simulation run via the simulation/data layer
- * - Receiving statistics pointers via "handover" callbacks
- * - Iterating through the tick statistics list and printing them via ui_statistics
+ * This module is responsible for:
+ * - printing the simulation menu and current settings
+ * - starting the simulation backend
+ * - printing tick statistics and final summary
+ * - returning the next UI state
  */
 
 #include "ui.h"
-#include "../../include/types.h"
+#include "types.h"
 
-/* Max valid menu number in simulation menu (valid range: 0..SIMULATION_MAX_VALID_NUMBER). */
+/* ========================================================================= */
+/* Simulation menu limits                                                    */
+/* ========================================================================= */
+
+/**
+ * @brief Maximum valid menu number in the simulation menu.
+ *
+ * Valid range:
+ * 0 .. SIMULATION_MAX_VALID_NUMBER
+ */
 #define SIMULATION_MAX_VALID_NUMBER (2)
 
-/* Max valid menu number in post simulation prompt (valid range: 0..SIM_POST_MAX_VALID_NUMBER). */
-#define SIM_POST_MAX_VALID_NUMBER (1)
+/* ========================================================================= */
+/* Public interface                                                          */
+/* ========================================================================= */
 
 /**
- * @brief Prints the simulation menu including current configuration.
+ * @brief Prints the simulation screen including current settings.
  *
- * @param[in] p_settings Current settings to display.
+ * The settings overview is aligned with the config screen so the user sees
+ * the same values in a familiar layout before starting the simulation.
+ *
+ * @param[in] p_settings Pointer to the current settings object.
+ * @return OK on success, ERROR if p_settings is invalid.
  */
-void print_simulationscreen(const Settings *p_settings);
+int print_simulationscreen(const Settings *p_settings);
 
 /**
- * @brief Post-simulation user prompt that offers jumping to the storage folder.
+ * @brief Handles user interaction in the simulation menu.
  *
- * @param[in] p_sim_output_path Path to the directory where simulation files were saved.
- */
-void post_simulation_prompt(const char *p_sim_output_path);
-
-/**
- * @brief Handles the simulation menu interaction.
+ * This function:
+ * - prints the simulation screen
+ * - reads and validates the user's menu selection
+ * - starts the simulation backend
+ * - prints available statistics
+ * - returns the next UI state
  *
- * Starts the simulation and prints tick statistics and final summary depending
- * on the selected output_mode.
- *
- * @param[in] p_settings Current settings used to start the simulation.
+ * @param[in] p_settings Pointer to the current settings object.
+ * @param[in] p_simulation Pointer to the simulation object.
  * @return Next UI state depending on user selection.
  */
-ui_state simulation_menu(Settings *p_settings);
+ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation);
 
-/**
- * @brief Starts the simulation (implemented by simulation/data layer).
- *
- * The simulation layer must:
- * - Run the simulation according to settings
- * - Provide tick statistics via hand_over_simulationdata(...)
- * - Provide final summary via hand_over_endstatistics(...)
- * - Create a new output directory for this run and return its path
- *
- * @param[in] p_settings Current settings used for the simulation.
- * @return Pointer to a string containing the output directory path (may be NULL on error).
- */
-char *start_simulation(Settings *p_settings);
-
-/**
- * @brief Callback: hands over the pointer to the stats list (tick history).
- *
- * This function is called by the simulation/data layer after creating the
- * statistics list container.
- *
- * @param[in] p_stat_list Pointer to the StatList that contains p_tick_head/tail.
- */
-void hand_over_simulationdata(struct StatList *p_stat_list);
-
-/**
- * @brief Callback: hands over the pointer to the final summary statistics.
- *
- * This function is called by the simulation/data layer after computing the
- * final StatsSummary.
- *
- * @param[in] p_summary Pointer to the aggregated summary statistics.
- */
-void hand_over_endstatistics(struct StatsSummary *p_summary);
-
-#endif /* SIMULATION_H */
+#endif /* UI_SIMULATION_H */
