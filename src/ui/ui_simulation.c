@@ -115,7 +115,7 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
 /* ========================================================================= */
 /* Statistics-print functions - used by Backend                                */
 /* ========================================================================= */
-void print_StatsTick_backend(const Settings *p_settings, const StatsTick *p_current_tick)
+void print_StatsTick_backend(const StatsTick *p_current_tick, const Settings *p_settings)
 {
     ui_statistics_print_tick(p_current_tick, p_settings);
 }
