@@ -18,45 +18,46 @@
      *
      * @author Luca Perri
      */
-    int parkhaus_init(Parkhaus *p_parkhaus,
-                      const Settings *p_settings,
-                      Queue **p_gate_queues);
+int parkhouse_init(Parkhaus* p_parkhaus,
+                   const Settings* p_settings,
+                   Queue** p_gate_queues);
 
-    /**
-     * @brief Tick function for Parkhaus.
-     * @param p_self Pointer to the SimulationObject.psc
-     * @param current_tick Current simulation tick.
-     *
-     * @author Luca Perri
-     */
-    int parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick);
+/**
+ * @brief Tick function for Parkhaus.
+ * @param p_self Pointer to the SimulationObject.psc
+ * @param current_tick Current simulation tick.
+ *
+ * @author Luca Perri
+ */
+int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatList* p_StatList,
+                   uint32_t current_tick);
 
 
-    /**
-     * @brief Remove a vehicle from the Parkhaus (e.g., when parking time is over).
-     *        The vehicle is removed from the internal list and free the underlying memory.
-     * @param p_vehicle Pointer to the GenericVehicle to remove.
-     * @return 0 on success, non-zero if the vehicle was not found.
-     * @author Luca Perri
-     */
-    int parkhaus_remove_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle);
+/**
+ * @brief Remove a vehicle from the Parkhaus (e.g., when parking time is over).
+ *        The vehicle is removed from the internal list and free the underlying memory.
+ * @param p_vehicle Pointer to the GenericVehicle to remove.
+ * @return 0 on success, non-zero if the vehicle was not found.
+ * @author Luca Perri
+ */
+int remove_vehicle(GenericVehicle* p_vehicle);
 
-    /**
-     * @brief Free all dynamic memory that belongs to the Parkhaus.
-     *        This includes:
-     *        - all parked GenericVehicle nodes,
-     *        - any other dynamic resources owned by Parkhaus.
-     *        - call the queues free() function.
-     * Parkhaus is the owner of its Queue so it will call it's free function!
-     * @param p_parkhaus Pointer to the Parkhaus.
-     * @author Luca Perri
-     */
-    void parkhaus_free(Parkhaus *p_parkhaus);
+/**
+ * @brief Free all dynamic memory that belongs to the Parkhaus.
+ *        This includes:
+ *        - all parked GenericVehicle nodes,
+ *        - any other dynamic resources owned by Parkhaus.
+ *        - call the queues free() function.
+ * Parkhaus is the owner of its Queue so it will call it's free function!
+ * @param p_parkhaus Pointer to the Parkhaus.
+ * @author Luca Perri
+ */
+int parkhouse_free(Parkhaus* p_parkhaus);
 
-    /**
-     * @brief Lets all currently parked vehicles leave at simulation end and updates stats.
-     * @author Simon Ibach
-     */
+/**
+ * @brief Lets all currently parked vehicles leave at simulation end and updates stats.
+ * @author Simon Ibach
+ */
     int vehicles_leaving_end(Parkhaus *p_parkhaus, StatList *p_StatList);
 
     /**
