@@ -1,8 +1,29 @@
-#include "../include/ui/ui_storage.h"
 #include <stdio.h>
+#include <string.h>
 
-void print_storagescreen(void) {
-    printf("Storage Screen (Stub)\n");
+#include "../include/ui/ui.h"
+#include "../include/ui/ui_storage.h"
+
+#include "../include/storage.h"
+#include "../include/types.h"
+
+/* ========================================================================= */
+/* Main storage menu                                                         */
+/* ========================================================================= */
+
+int print_storagescreen(void)
+{
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("            STORAGE MENU\n");
+    printf("====================================\n");
+    printf("\n");
+    printf("1 Browse Stats Directory\n");
+    printf("0 Back to Home\n");
+    printf("\n");
+
+    return OK;
 }
 
 ui_state storage_menu() {
