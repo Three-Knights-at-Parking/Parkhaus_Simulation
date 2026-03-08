@@ -508,7 +508,6 @@ int remove_vehicle(GenericVehicle* p_vehicle)
         print_error("parkhaus_remove_vehicle: car_destroy failed");
         return ERROR;
     }
-    free(p_vehicle);
     return OK;
 }
 

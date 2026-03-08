@@ -25,7 +25,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
     }
 
     //erstellen der Queues
-    Queue *Gate_Queues = calloc(p_sim->settings->gates, sizeof(Queue));
+    Queue* Gate_Queues = calloc(p_sim->settings->gates, sizeof(Queue));
 
     if (Gate_Queues == NULL)
     {
