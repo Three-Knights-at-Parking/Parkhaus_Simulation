@@ -35,8 +35,7 @@ int print_simulationscreen(const Settings *p_settings)
 
     printf("Current Settings\n");
     printf("------------------------------------\n");
-    //printf("Name                 : %s\n",
-      //     (p_settings->name != NULL) ? p_settings->name : SETTINGS_DEFAULT_NAME); FIXME Pointer mismatch
+    printf("Name                 : %s\n", *p_settings->name);
     printf("Capacity / Floor     : %u\n", (unsigned)p_settings->capacity);
     printf("Floors               : %u\n", (unsigned)p_settings->floors);
     printf("Gates                : %u\n", (unsigned)p_settings->gates);
