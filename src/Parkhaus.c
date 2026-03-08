@@ -183,44 +183,54 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, Se
 }
 
 //FIXME IMPLEMET
-int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus *p_parkhouse, Settings *p_settings, StatList *p_StatList,
-                           Queue *p_gate_queues) {
+int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings, StatList* p_StatList,
+                           Queue* p_gate_queues)
+{
     uint16_t cur_cycle;
     uint16_t cycles;
     uint8_t gate;
 
 
-    if (p_parkhouse == NULL || p_settings == NULL || p_parkhouse->gate_queues == NULL || p_settings->gates <= 2U) {
+    if (p_parkhouse == NULL || p_settings == NULL || p_parkhouse->gate_queues == NULL || p_settings->gates <= 2U)
+    {
         print_error("parkhaus_tick_fill_subtick: central Pointer ERROR");
         return ERROR;
     }
 
-    if (p_StatList != NULL) {
+    if (p_StatList != NULL)
+    {
         uint16_t total = 0;
-        for (gate = 0; gate < p_settings->gates; gate++) {
-            if (p_parkhouse->gate_queues[gate] != NULL) {
-                total = (uint16_t) (total + queue_get_demand(p_parkhouse->gate_queues[gate]));
+        for (gate = 0; gate < p_settings->gates; gate++)
+        {
+            if (p_parkhouse->gate_queues[gate] != NULL)
+            {
+                total = (uint16_t)(total + queue_get_demand(p_parkhouse->gate_queues[gate]));
             }
         }
-        if (total > 0U) {
+        if (total > 0U)
+        {
             stats_tick_add_arrivals_generated(p_StatList, total);
         }
     }
 
     cycles = derive_entries_per_tick_per_gate(p_settings);
 
-    for (cur_cycle = 0; cur_cycle < cycles; cur_cycle++) {
-        const int last_cycle = (cur_cycle == (uint16_t) (cycles - 1U));
-        for (gate = 0; gate < p_settings->gates; gate++) {
-            Queue *p_gate_queue = p_parkhouse->gate_queues[gate];
-            if (p_gate_queue == NULL) {
+    for (cur_cycle = 0; cur_cycle < cycles; cur_cycle++)
+    {
+        const int last_cycle = (cur_cycle == (uint16_t)(cycles - 1U));
+        for (gate = 0; gate < p_settings->gates; gate++)
+        {
+            Queue* p_gate_queue = p_parkhouse->gate_queues[gate];
+            if (p_gate_queue == NULL)
+            {
                 continue;
             }
 
             if (parkhouse_fill_subtick_routine(current_tick, p_parkhouse, p_settings, p_StatList, p_gate_queue,
-                                               last_cycle) == ERROR) {
+                                               last_cycle) == ERROR)
+            {
                 return ERROR;
-                                               }
+            }
         }
     }
 
