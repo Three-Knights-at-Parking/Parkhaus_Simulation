@@ -7,6 +7,7 @@
 
 #include "../include/simulation.h"
 #include "../include/types.h"
+#include "utils/SafteyUtils.h"
 
 /* ========================================================================= */
 /* Function prototypes                                                       */
@@ -179,3 +180,16 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
     /* Defensive fallback */
     return UI_SIMULATION;
 }
+
+/* ========================================================================= */
+/* Hand-over functions                                                       */
+/* ========================================================================= */
+/*void print_StatsTick_backend(Settings *p_settings, StatsTick *p_stat_stats_tick) {
+    if (print_simulation_statistics(p_settings, p_stat_stats_tick) != OK)
+    {
+        printf("Failed to print simulation statistics.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return UI_SIMULATION;
+    }
+}*/
