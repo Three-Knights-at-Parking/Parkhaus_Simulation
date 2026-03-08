@@ -13,7 +13,8 @@ file(GLOB_RECURSE PARKHAUS_SIMULATION_HEADERS CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
 )
 
-add_executable(Parkhaus_Simulation ${PARKHAUS_SIMULATION_SOURCES} ${PARKHAUS_SIMULATION_HEADERS})
+add_executable(Parkhaus_Simulation ${PARKHAUS_SIMULATION_SOURCES} ${PARKHAUS_SIMULATION_HEADERS}
+        src/ui/ui_statistics.c)
 
 target_include_directories(Parkhaus_Simulation
         PRIVATE
