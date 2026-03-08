@@ -72,7 +72,6 @@ struct SimulationObject {
 struct GenericVehicle {
     SimulationObject base; // base object
     GenericVehicle *p_next;  // Chain with other Vehicles
-    uint8_t type; //saves what type the vehicle is for cast - for now not implemented
     uint32_t created_at_tick; // Tick of creation
     uint32_t park_house_entered; // Entry tick, when the car started parking
     uint32_t park_house_left; // Exit tick, when the car left the parking slot
