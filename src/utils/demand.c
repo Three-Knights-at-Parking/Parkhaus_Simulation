@@ -14,8 +14,7 @@ uint16_t demand_generate_total_perTick(const Settings *p_settings)
     checkNull(p_settings);
 
     //Erwartungswert -> how many Vehicles arrive in one Tick on average
-    //if 200% * 10 = 2000% --> in Float --> 20.00 because 100% = 1.0
-    double lambda = (double)p_settings->entry_probability_perSec_prec * p_settings->real_equivalent;
+    double lambda = (double)(p_settings->entry_probability_perSec_prec / 100) * p_settings->real_equivalent;
 
     if (lambda <= 0.0)
     {
