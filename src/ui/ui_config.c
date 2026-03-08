@@ -24,7 +24,6 @@ static int parse_float(const char *p_text, float *p_out);
 static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out);
 static int read_float_percent(const char *p_prompt, float *p_out);
 static int ui_settings_set_name(Settings *p_settings, const char *p_name);
-static const char *output_mode_to_string(const enum OutputMode mode);
 static enum OutputMode apply_mode_select(const int mode_select);
 static int edit_mode_select(void);
 
@@ -278,7 +277,7 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
  * @param[in] mode Output mode enum value.
  * @return Constant string representation.
  */
-static const char *output_mode_to_string(const enum OutputMode mode)
+const char *output_mode_to_string(const enum OutputMode mode)
 {
     if (mode == NONE) return "NONE";
     if (mode == NORMAL) return "NORMAL";

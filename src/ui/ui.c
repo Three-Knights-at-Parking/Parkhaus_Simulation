@@ -142,7 +142,7 @@ ui_state welcome_message(void)
 /* Main UI state machine                                                     */
 /* ========================================================================= */
 
-ui_state ui_start(Settings* p_settings)
+ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
 {
     ui_state state = welcome_message();
 
@@ -158,7 +158,7 @@ ui_state ui_start(Settings* p_settings)
         }
         else if (state == UI_SIMULATION)
         {
-            state = simulation_menu(p_settings);
+            state = simulation_menu(p_settings, p_simulation);
         }
         else if (state == UI_STORAGE)
         {

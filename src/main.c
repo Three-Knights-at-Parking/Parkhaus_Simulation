@@ -3,11 +3,19 @@
 
 #include "../include/ui/ui.h"
 #include "../include/Settings.h"
+#include "../include/Simulation.h"
 
 int main() {
     /* Temporary Solution */
-    Settings* p_settings = malloc(sizeof(Settings));
-    if (p_settings == NULL) {
+    Simulation *p_simulation = malloc(sizeof(Simulation));
+    if (p_simulation == NULL)
+    {
+        printf("malloc (Simulation) failed");
+        return ERROR;
+    }
+    Settings *p_settings = malloc(sizeof(Settings));
+    if (p_settings == NULL)
+    {
         printf("malloc failed");
         return ERROR;
     }
@@ -34,9 +42,17 @@ int main() {
     {
         return ERROR;
     }
+    if (simulation_init(p_simulation, p_settings, NULL) != OK)
+    {
+        return ERROR;
+    }
 
-    ui_start(p_settings);
+    ui_start(p_settings, p_simulation);
 
+    if (free_simulation(p_simulation) != OK)
+    {
+        return ERROR;
+    }
     if (delete_settings(p_settings) != OK)
     {
         return ERROR;
