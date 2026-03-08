@@ -12,7 +12,7 @@
      * @param p_tick Pointer to StatsTick to append (p_next should be NULL).
      * @return 0 on success, non-zero on error.
      */
-    int statlist_append(Simulation *p_sim, StatsTick *p_tick);
+    int statlist_append(const Simulation *p_sim, StatsTick *p_tick);
 
     /**
      * @brief Remove and free all StatsTick nodes in the Simulation's stats list.
