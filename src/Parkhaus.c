@@ -81,7 +81,7 @@ int parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList
         }
     }
 
-    return ERROR;
+    return OK;
 }
 
 int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus *p_parkhouse, Settings *p_settings,
@@ -291,16 +291,15 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
         if (open_space >= (minimum * 2U) && rng_percent() <= BAD_PARKING_CHANCE_PERCENT) {
             spaces_needed = (minimum * 2U);
         }
-        else {
-            //adding the vehicle to parkhouse queue
-            status = park_vehicle(p_parkhaus, p_vehicle);
-            if (status == ERROR)
-            {
-                print_error("fill_from_queue: park error");
-                free(p_vehicle);
-                *pp_vehicle = NULL;
-                return ERROR;
-            }
+        //adding the vehicle to parkhouse queue
+        status = park_vehicle(p_parkhaus, p_vehicle);
+        if (status == ERROR)
+        {
+            print_error("fill_from_queue: park error");
+            free(p_vehicle);
+            *pp_vehicle = NULL;
+            return ERROR;
+
         }
     }
 
@@ -420,6 +419,7 @@ int park_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
     else{
         if (p_parkhaus->p_parked_tail == NULL)
         {
+            p_parkhaus->p_parked_head->p_next = p_vehicle;
             p_parkhaus->p_parked_tail = p_vehicle;
         }
         else
@@ -440,7 +440,7 @@ int park_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
 }
 
 uint16_t get_open_space(const Parkhaus *p_parkhouse) {
-    if (p_parkhouse == NULL || p_parkhouse->capacity_taken >= p_parkhouse->capacity) {
+    if (p_parkhouse == NULL || p_parkhouse->capacity_taken > p_parkhouse->capacity) {
         print_error("get_open_space: pointer issue OR capacity_taken > capacity");
         return ERROR;
     }

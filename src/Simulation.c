@@ -34,6 +34,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
         {
             queue_free(&Gate_Queues[j]);
             free(&Gate_Queues[j]);
+            j = j + 1;
         }
         print_error("Gate Queues allocation failed");
         return ERROR;
@@ -53,6 +54,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
         {
             queue_free(&Gate_Queues[j]);
             free(&Gate_Queues[j]);
+            j = j + 1;
         }
         free(p_sim->parkhaus);
         p_sim->parkhaus = NULL;
@@ -75,15 +77,23 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
     }
 
     //initialisierung von Statistik List Objekt
-    //p_StatList =
+   // p_StatList =
+
+
+
+
+
+
+
+
+
 
     return OK;
 }
 
 int simulation_tick(Simulation *p_sim) {
-    if (checkNull(p_sim)) {
-        return UNKNOWN;
-    }
+
+
     p_sim->current_tick++;
     p_sim->parkhaus->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
     for (int i = 0; i < p_sim->settings->gates-1; i++) {
