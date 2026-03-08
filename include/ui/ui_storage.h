@@ -23,14 +23,6 @@
 #define STORAGE_MAX_VALID_NUMBER (1)
 
 /**
- * @brief Root directory that contains simulation output folders.
- *
- * @note Adjust this path to match your project setup (e.g. "./runtime" or "../runtime").
- *       In the C implementation this may be provided by the data/storage layer instead.
- */
-#define RUNTIME_PATH ("./runtime")
-
-/**
  * @brief Prints the storage main screen.
  */
 void print_storagescreen(void);

@@ -11,7 +11,7 @@
 /* Main storage menu                                                         */
 /* ========================================================================= */
 
-int print_storagescreen(void)
+void print_storagescreen(void)
 {
     clear_terminal();
 
@@ -22,13 +22,32 @@ int print_storagescreen(void)
     printf("1 Browse Stats Directory\n");
     printf("0 Back to Home\n");
     printf("\n");
-
-    return OK;
 }
 
-ui_state storage_menu() {
-    printf("Storage Menu (Stub)\n");
-    return UI_HOME;
+ui_state storage_menu(void)
+{
+    int choice = 0;
+    validation_flag valid = INVALID;
+
+    print_storagescreen();
+
+    while (valid != VALID)
+    {
+        choice = user_input();
+        valid = validate_user_input(choice, STORAGE_MAX_VALID_NUMBER);
+    }
+
+    if (choice == 1)
+    {
+        browse_directory(NULL);
+        return UI_STORAGE;
+    }
+    else if (choice == 0)
+    {
+        return UI_HOME;
+    }
+
+    return UI_STORAGE;
 }
 
 void browse_directory(const char *p_current_path) {
