@@ -17,8 +17,6 @@
 /* ========================================================================= */
 
 // Function Prototypes
-static int trim_newline(char *p_text);
-static int read_line(char *p_buffer, const size_t buffer_len);
 static int parse_long(const char *p_text, long *p_out);
 static int parse_float(const char *p_text, float *p_out);
 static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out);
@@ -27,58 +25,6 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name);
 static enum OutputMode apply_mode_select(const int mode_select);
 static int edit_mode_select(void);
 
-
-
-static int trim_newline(char *p_text)
-{
-    if (p_text == NULL)
-    {
-        return ERROR;
-    }
-
-    const size_t len = strlen(p_text);
-
-    if (len == 0U)
-    {
-        return ERROR;
-    }
-
-    if (p_text[len - 1U] == '\n')
-    {
-        p_text[len - 1U] = '\0';
-    }
-    return OK;
-}
-
-static int read_line(char *p_buffer, const size_t buffer_len)
-{
-    if (p_buffer == NULL || buffer_len == 0U)
-    {
-        return ERROR;
-    }
-
-    if (fgets(p_buffer, buffer_len, stdin) == NULL)
-    {
-        return ERROR;
-    }
-
-    if (strchr(p_buffer, '\n') == NULL)
-    {
-        int c;
-
-        while ((c = getchar()) != '\n' && c != EOF)
-        {
-            /* discard */
-        }
-    }
-
-    if (trim_newline(p_buffer) != OK)
-    {
-        return ERROR;
-    }
-
-    return OK;
-}
 
 static int parse_long(const char *p_text, long *p_out)
 {
