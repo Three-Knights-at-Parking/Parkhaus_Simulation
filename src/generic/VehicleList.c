@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 void vehicle_list_append(GenericVehicle **pp_head, GenericVehicle **pp_tail, GenericVehicle *p_vehicle) {
-    if (pp_head == NULL || pp_tail == NULL || p_vehicle == NULL) {
+    if (checkNull(pp_head) || checkNull(pp_tail) || checkNull(p_vehicle)) {
         print_error_s("Invalid pointers passed.", HIGH);
         return;
     }
@@ -19,7 +19,7 @@ void vehicle_list_append(GenericVehicle **pp_head, GenericVehicle **pp_tail, Gen
 }
 
 GenericVehicle *vehicle_list_pop_front(GenericVehicle **pp_head, GenericVehicle **pp_tail) {
-    if (pp_head == NULL || pp_tail == NULL || *pp_head == NULL) {
+    if (checkNull(pp_head) || checkNull(pp_tail) || checkNull(*pp_head)) {
         return NULL;
     }
     GenericVehicle *p_popped = *pp_head;
@@ -32,8 +32,8 @@ GenericVehicle *vehicle_list_pop_front(GenericVehicle **pp_head, GenericVehicle 
     return p_popped;
 }
 
-int vehicle_list_remove(GenericVehicle **pp_head, GenericVehicle **pp_tail, GenericVehicle *p_target) {
-    if (pp_head == NULL || pp_tail == NULL || p_target == NULL || *pp_head == NULL) {
+int vehicle_list_remove(GenericVehicle **pp_head, GenericVehicle **pp_tail, const GenericVehicle *p_target) {
+    if (checkNull(pp_head) || checkNull(pp_tail) || checkNull(p_target) || checkNull(*pp_head)) {
         return ERROR;
     }
 
@@ -66,7 +66,7 @@ int vehicle_list_remove(GenericVehicle **pp_head, GenericVehicle **pp_tail, Gene
 }
 
 void vehicle_list_remove_all(GenericVehicle **pp_head, GenericVehicle **pp_tail) {
-    if (pp_head == NULL || pp_tail == NULL) {
+    if (checkNull(pp_head)|| checkNull(pp_tail)) {
         return;
     }
 

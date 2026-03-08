@@ -31,7 +31,7 @@
      * @param p_target vehicle to remove.
      * @return 0 on success, non-zero if not found.
      */
-    int vehicle_list_remove(GenericVehicle **pp_head, GenericVehicle **pp_tail, GenericVehicle *p_target);
+    int vehicle_list_remove(GenericVehicle **pp_head, GenericVehicle **pp_tail, const GenericVehicle *p_target);
 
     /**
      * @brief Remove all vehicles from this list.

@@ -37,6 +37,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
             j = j + 1;
         }
         print_error("Gate Queues allocation failed");
+        free(Gate_Queues); // Fixing memory leak
         return ERROR;
     }
     //initialisierung der Queues
