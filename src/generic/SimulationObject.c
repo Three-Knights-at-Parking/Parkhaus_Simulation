@@ -14,7 +14,7 @@ SimulationTickFunction simulation_object_get_tick(const SimulationObject *p_obj)
     return p_obj->tick;
 }
 
-int free_simulation_object(const SimulationObject *p_obj) {
+int free_simulation_object(SimulationObject *p_obj) {
     if (p_obj == NULL) {
         return ERROR;
     }

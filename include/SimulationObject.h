@@ -40,6 +40,6 @@
      * @param p_obj Pointer to the SimulationObject.psc.
      * @return 0 on success, non-zero on error.
      */
-    int free_simulation_object(const SimulationObject *p_obj);
+    int free_simulation_object(SimulationObject *p_obj);
 
 #endif
