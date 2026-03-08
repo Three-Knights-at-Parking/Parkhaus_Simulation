@@ -1,6 +1,7 @@
 #include "Parkhaus.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include "utils/SafteyUtils.h"
@@ -24,8 +25,8 @@ int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_ga
     return OK;
 }
 //FIXME Ist hier nicht eine p_parkhaus pointer nötig anstelle des SimulaionObjecct da es in Parkhaus abgelegt ist?
-int parkhouse_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick) {
-
+int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatList* p_StatList, uint32_t current_tick)
+{
     if (p_self == NULL || p_settings == NULL || p_StatList == NULL) {
         print_error("parkhaus_tick: central Pointer ERROR");
         return ERROR;
@@ -211,13 +212,13 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     if (p_parkhouse == NULL || pp_vehicle_list_head == NULL || p_vehicle == NULL) {
         return ERROR;
     }
-
+    //going through the list an searching for the correct vehicle
     p_cur = *pp_vehicle_list_head;
     while (p_cur != NULL && p_cur != p_vehicle) {
         p_prev = p_cur;
         p_cur = p_cur->p_next;
     }
-    //no vehicle found
+    //no vehicle found in list
     if (p_cur == NULL) {
         print_error("vehicle_leaving: vehicle not found");
         return ERROR;
@@ -486,19 +487,27 @@ int update_on_vehicle_entry(Parkhaus *p_parkhouse, StatList *p_StatList, Generic
 }
 
 
-//FIXME DELETE? -> Queue
-int parkhaus_remove_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
+
+int remove_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
     if (p_parkhaus == NULL || p_vehicle == NULL) {
-        print_error("parkhaus_remove_vehicle: pointer issue");
+        print_error("remove_vehicle: pointer issue");
         return ERROR;
     }
 
-    (void) p_parkhaus;
+    // Switch (p_vehicle.type) for destroying diffrent types of vehicles correctly
+        Car* p_car = (Car*)p_vehicle;
+        if (car_destroy(p_car) == ERROR)
+        {
+            print_error("parkhaus_remove_vehicle: car_destroy failed");
+            return ERROR;
+        }
+        free(p_vehicle);
     return OK;
 }
 
 //Freeing parkhouse parked vehicle list & queues
-int parkhouse_free(Parkhaus *p_parkhaus) {
+int parkhouse_free(Parkhaus* p_parkhaus)
+{
     if (p_parkhaus == NULL) {
         print_error("parkhouse_free: pointer issue");
         return ERROR;
@@ -511,25 +520,25 @@ int parkhouse_free(Parkhaus *p_parkhaus) {
     }
     if (p_parkhaus->p_parked_head != NULL)
     {
-        GenericVehicle *p_vehicle;
-        GenericVehicle *p_next;
+        GenericVehicle* p_vehicle;
+        GenericVehicle* p_next;
 
+        //Loop for removing all parked vehicles
         p_vehicle = p_parkhaus->p_parked_head;
         p_next = p_parkhaus->p_parked_head->p_next;
-
         while (p_vehicle != NULL)
         {
             p_next = p_vehicle->p_next;
 
-            // Switch (p_vehicle.type) for destroying diffrent types of vehicles correctly
-            Car* p_car = (Car*) p_vehicle;
-            status = car_destroy(p_car);
-            if (status == ERROR) {print_error("parkhaus_remove_vehicle: car_destroy failed");}
-            free(p_vehicle);
-
+            //remove vehicle
+            status = remove_vehicle(p_parkhaus, p_vehicle);
+            if (status == ERROR)
+            {
+                print_error("parkhouse_free: parkhaus_remove_vehicle: failed");
+                return ERROR;
+            }
             p_vehicle = p_next;
         }
-
     }
 
     p_parkhaus->p_parked_head = NULL;
