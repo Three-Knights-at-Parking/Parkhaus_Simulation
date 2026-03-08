@@ -136,8 +136,18 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
     json_object *obj = json_object_new_object();
     if (checkNull(obj)) return ERROR;
 
-    json_object_object_add(obj, "name", json_object_new_string(p_settings->name ? p_settings->name : ""));
-    json_object_object_add(obj, "src_path", json_object_new_string(p_settings->src_path ? p_settings->src_path : ""));
+    if (!checkNull(p_settings->name)) {
+        json_object_object_add(obj, "name", json_object_new_string(p_settings->name[0]));
+    } else {
+        json_object_object_add(obj, "name", json_object_new_string(""));
+    }
+
+    if (p_settings->src_path) {
+        json_object_object_add(obj, "src_path", json_object_new_string(p_settings->src_path));
+    } else {
+        json_object_object_add(obj, "src_path", json_object_new_string(""));
+    }
+
     json_object_object_add(obj, "capacity", json_object_new_int((int32_t) p_settings->capacity));
     json_object_object_add(obj, "floors", json_object_new_int((int32_t) p_settings->floors));
     json_object_object_add(obj, "gates", json_object_new_int((int32_t) p_settings->gates));
@@ -188,7 +198,7 @@ int settings_init(Settings *p_settings,
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    p_settings->name = NULL;
+    *p_settings->name = "\0";
     p_settings->src_path = NULL;
 
     if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) return ERROR;
@@ -305,7 +315,11 @@ int settings_set_max_ticks(Settings *p_settings, const int32_t max_ticks) {
     }
 
     if (max_ticks < SETTINGS_MAXIMUM_DAY_TICKS || max_ticks > SETTINGS_MAXIMUM_TICKS) {
-        p_settings->max_ticks = (int32_t)(SECONDS_IN_DAY / (p_settings->real_equivalent ? p_settings->real_equivalent : 10));
+        if (p_settings->real_equivalent) {
+            p_settings->max_ticks = (int32_t)(SECONDS_IN_DAY / p_settings->real_equivalent);
+        } else {
+            p_settings->max_ticks = (int32_t)(SECONDS_IN_DAY / 10);
+        }
         print_warning_s("Invalid max ticks, setting to default (one day equivalent).");
         return UNKNOWN;
     }
@@ -337,9 +351,12 @@ int settings_to_parkhaus(const Settings *p_settings, Parkhaus *p_parkhaus) {
         return ERROR;
     }
     const char *default_name = SETTINGS_DEFAULT_NAME;
-    const char *name_to_use = (p_settings->name != NULL && p_settings->name[0] != '\0')
-                              ? p_settings->name
-                              : default_name;
+    const char *name_to_use;
+    if (checkNull(&p_settings->name) && *p_settings->name[0] != '\0') {
+        name_to_use = p_settings->name[0];
+    } else {
+        name_to_use = default_name;
+    }
 
     strncpy(p_parkhaus->name, name_to_use, sizeof(p_parkhaus->name) - 1);
     p_parkhaus->name[sizeof(p_parkhaus->name) - 1] = '\0';
@@ -361,9 +378,9 @@ int delete_settings(Settings *p_settings) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    free(p_settings->name);
+    free(p_settings->name); // FIXME this might not work as expected.
     free(p_settings->src_path);
-    p_settings->name = NULL;
+    *p_settings->name = "\0";
     p_settings->src_path = NULL;
     return OK;
 }
@@ -591,8 +608,8 @@ static int settings_set_name(Settings *p_settings, const char *name) {
     memcpy(buf, name, len);
     buf[len] = '\0';
 
-    free(p_settings->name);
-    p_settings->name = buf;
+    free(p_settings->name); // FIXME this might not work as expected.
+    *p_settings->name = buf;
     return OK;
 }
 

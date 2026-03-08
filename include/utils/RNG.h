@@ -17,7 +17,7 @@
      * @return 0 on success, non-zero on error.
      * @author Luca Perri
      */
-    int rng_init(const Settings *p_settings);
+    int rng_init(Settings *p_settings);
 
     /**
      * @brief Get a random unsigned 32-bit value in the full range [0, UINT32_MAX].

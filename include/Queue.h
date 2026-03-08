@@ -16,7 +16,7 @@
      * @param max_size Maximum number of vehicles in the queue. If 0, queue is effectively disabled.
      * @return 0 on success, non-zero on error (e.g. invalid max_size).
      */
-    int queue_init(Queue *p_queue, uint16_t max_size);
+    int queue_init(Queue *p_self, uint16_t max_size);
 
     /**
      * @brief Check if the queue is full.
@@ -53,7 +53,14 @@
      * @param p_queue Pointer to the Queue.
      * @return Pointer to the dequeued Vehicle, or NULL if the queue is empty.
      */
-    GenericVehicle *queue_dequeue(Queue *p_queue);
+    int queue_dequeue(Queue *p_queue);
+
+    /**
+     * @brief Get the next vehicle in the queue (FIFO) without removing it.
+     * @param p_queue Pointer to the Queue.
+     * @return Pointer to the next Vehicle, or NULL if the queue is empty.
+     */
+    GenericVehicle *queue_get_next(const Queue *p_queue);
 
     /**
      * @brief Remove a specific vehicle from the queue (e.g. timeout / max tick reached).

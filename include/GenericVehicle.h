@@ -24,4 +24,8 @@
                               uint32_t created_at,
                               uint32_t parking_time);
 
+    int get_vehicle_minimum_space(GenericVehicle *p_vehicle);
+
+    int get_vehicle_space_needed(GenericVehicle *p_vehicle);
+
 #endif
