@@ -71,8 +71,8 @@ int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatLis
     }
     else
     {
-        status =  parkhouse_fill_subtick(current_tick,
-                                        p_parkhaus, (Settings *) p_settings,
+        status = parkhouse_fill_subtick(current_tick,
+                                        p_parkhaus, (Settings*)p_settings,
                                         p_StatList, *p_parkhaus->gate_queues);
         if (status == ERROR)
         {
@@ -181,7 +181,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, Se
     return OK;
 }
 
-int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings, StatList* p_StatList ,
+int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings, StatList* p_StatList,
                            Queue* p_gate_queues)
 {
     //checking for valid function call
@@ -202,23 +202,27 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Setting
     }
 
     uint8_t gate;
-    uint16_t subticks = p_settings->real_equivalent / p_settings->gate_entry_inSec; //this represents the max entries per tick
+    uint16_t subticks = p_settings->real_equivalent / p_settings->gate_entry_inSec;
+    //this represents the max entries per tick
 
     //Adding total demand of all queues to StatsTick
     uint16_t total = 0;
-    for (gate = 0; gate < p_settings->gates; gate++) {
-        if (p_parkhouse->gate_queues[gate] != NULL) {
+    for (gate = 0; gate < p_settings->gates; gate++)
+    {
+        if (p_parkhouse->gate_queues[gate] != NULL)
+        {
             total = total + queue_get_demand(p_parkhouse->gate_queues[gate]);
         }
     }
-    if (total > 0U) {
+    if (total > 0U)
+    {
         stats_tick_add_arrivals_generated(p_StatList, total);
     }
 
 
     for (uint8_t cycle = 0; cycle < subticks; cycle++)
     {
-        const int last_cycle = (cycle == (uint16_t) (subticks - 1U));
+        const int last_cycle = (cycle == (uint16_t)(subticks - 1U));
         for (gate = 0; gate <= p_settings->gates; gate++)
         {
             Queue* p_gate_queue = p_parkhouse->gate_queues[gate];
@@ -229,8 +233,9 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Setting
             }
 
             int status = parkhouse_fill_subtick_routine(current_tick, p_parkhouse, p_settings, p_StatList,
-                                                p_gate_queue, last_cycle);
-            if ( status == ERROR){
+                                                        p_gate_queue, last_cycle);
+            if (status == ERROR)
+            {
                 print_warning_s("parkhouse_fill_subtick_routine returned error");
                 return ERROR;
             }
@@ -239,23 +244,26 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Setting
     return OK;
 }
 
-int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus *p_parkhouse, Settings *p_settings,
-                                   StatList *p_StatList, Queue *p_gate_queue, int last_cycle) {
-
+int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings,
+                                   StatList* p_StatList, Queue* p_gate_queue, int last_cycle)
+{
     int status = OK;
 
-    if (p_parkhouse == NULL || p_settings == NULL || p_gate_queue == NULL || p_StatList == NULL) {
+    if (p_parkhouse == NULL || p_settings == NULL || p_gate_queue == NULL || p_StatList == NULL)
+    {
         print_error("parkhaus_tick_fill_subtick: central Pointer ERROR");
         return ERROR;
     }
 
     uint16_t demand = queue_get_demand(p_gate_queue);
-    if (demand <= 0U) {
+    if (demand <= 0U)
+    {
         print_warning_s("NO demnad there, LOW");
         return OK;
     }
 
-    if (queue_is_empty(p_gate_queue)) {
+    if (queue_is_empty(p_gate_queue))
+    {
         status = queue_add_random_vehicle(p_gate_queue, current_tick, p_settings);
         if (status == ERROR)
         {
@@ -265,13 +273,14 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus *p_parkhouse,
         demand--;
     }
 
-    GenericVehicle *p_vehicle = NULL;
+    GenericVehicle* p_vehicle = NULL;
     uint16_t required_space;
     if (!queue_is_empty(p_gate_queue))
     {
         //check if theres enough space left
         required_space = get_vehicle_minimum_space(p_gate_queue->p_head);
-        if (required_space > get_open_space(p_parkhouse)) {
+        if (required_space > get_open_space(p_parkhouse))
+        {
             stats_tick_add_blocker_full_active(p_StatList);
         }
         else
@@ -284,8 +293,10 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus *p_parkhouse,
 
     queue_set_demand(p_gate_queue, demand);
 
-    if (last_cycle && demand > 0U) {
-        if (open_demand(p_StatList, p_gate_queue, demand, current_tick, p_settings) == ERROR) {
+    if (last_cycle && demand > 0U)
+    {
+        if (open_demand(p_StatList, p_gate_queue, demand, current_tick, p_settings) == ERROR)
+        {
             print_warning_s("open_demand: returned error");
             return ERROR;
         }
