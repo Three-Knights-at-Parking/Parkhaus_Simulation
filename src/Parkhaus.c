@@ -495,7 +495,8 @@ int update_on_vehicle_entry(Parkhaus *p_parkhouse, StatList *p_StatList, Generic
 
 int remove_vehicle(GenericVehicle* p_vehicle)
 {
-    if (p_vehicle == NULL) {
+    if (p_vehicle == NULL)
+    {
         print_error("remove_vehicle: pointer issue");
         return ERROR;
     }
