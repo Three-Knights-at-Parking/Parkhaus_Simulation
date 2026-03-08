@@ -19,16 +19,16 @@
      * @author Luca Perri
      */
 int parkhouse_init(Parkhaus* p_parkhaus,
-                   const Settings *p_settings,
-                   Queue **p_gate_queues);
+                   const Settings* p_settings,
+                   Queue** p_gate_queues);
 
-    /**
-     * @brief Tick function for Parkhaus.
-     * @param p_self Pointer to the SimulationObject.psc
-     * @param current_tick Current simulation tick.
-     *
-     * @author Luca Perri
-     */
+/**
+ * @brief Tick function for Parkhaus.
+ * @param p_self Pointer to the SimulationObject.psc
+ * @param current_tick Current simulation tick.
+ *
+ * @author Luca Perri
+ */
     int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatList* p_StatList,
                        uint32_t current_tick);
 
@@ -40,7 +40,7 @@ int parkhouse_init(Parkhaus* p_parkhaus,
  * @return 0 on success, non-zero if the vehicle was not found.
  * @author Luca Perri
  */
-    int remove_vehicle(Parkhaus* p_parkhaus, GenericVehicle* p_vehicle);
+int remove_vehicle(GenericVehicle* p_vehicle);
 
 /**
  * @brief Free all dynamic memory that belongs to the Parkhaus.
@@ -52,7 +52,7 @@ int parkhouse_init(Parkhaus* p_parkhaus,
  * @param p_parkhaus Pointer to the Parkhaus.
  * @author Luca Perri
  */
-    int parkhouse_free(Parkhaus *p_parkhaus);
+int parkhouse_free(Parkhaus* p_parkhaus);
 
     /**
      * @brief Lets all currently parked vehicles leave at simulation end and updates stats.

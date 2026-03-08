@@ -220,7 +220,9 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     }
     //no vehicle found in list
     if (p_cur == NULL) {
-        print_error("vehicle_leaving: vehicle not found");
+        //deleting lost car
+        remove_vehicle(p_vehicle);
+        print_error("vehicle_leaving: vehicle not found in parkhouse - vehicle destroyed");
         return ERROR;
     }
 
@@ -245,6 +247,10 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
         required_space = get_vehicle_space_needed(p_vehicle);
     }
     status = update_on_vehicle_exit(p_parkhouse, p_StatList, p_cur, required_space, current_tick);
+    if (status == ERROR) { print_error("vehicle_leaving: update_on_vehicle_exit: vehicle exited with error"); }
+
+    status = remove_vehicle(p_vehicle);
+    if (status == ERROR) { print_error("remove_leaving: remove_vehicle: vehicle exited with error"); }
     free(p_cur);
 
     if (p_parkhouse->p_parked_head == NULL) {
@@ -487,28 +493,29 @@ int update_on_vehicle_entry(Parkhaus *p_parkhouse, StatList *p_StatList, Generic
 }
 
 
-
-int remove_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
-    if (p_parkhaus == NULL || p_vehicle == NULL) {
+int remove_vehicle(GenericVehicle* p_vehicle)
+{
+    if (p_vehicle == NULL) {
         print_error("remove_vehicle: pointer issue");
         return ERROR;
     }
 
     // Switch (p_vehicle.type) for destroying diffrent types of vehicles correctly
-        Car* p_car = (Car*)p_vehicle;
-        if (car_destroy(p_car) == ERROR)
-        {
-            print_error("parkhaus_remove_vehicle: car_destroy failed");
-            return ERROR;
-        }
-        free(p_vehicle);
+    Car* p_car = (Car*)p_vehicle;
+    if (car_destroy(p_car) == ERROR)
+    {
+        print_error("parkhaus_remove_vehicle: car_destroy failed");
+        return ERROR;
+    }
+    free(p_vehicle);
     return OK;
 }
 
 //Freeing parkhouse parked vehicle list & queues
 int parkhouse_free(Parkhaus* p_parkhaus)
 {
-    if (p_parkhaus == NULL) {
+    if (p_parkhaus == NULL)
+    {
         print_error("parkhouse_free: pointer issue");
         return ERROR;
     }
@@ -531,7 +538,7 @@ int parkhouse_free(Parkhaus* p_parkhaus)
             p_next = p_vehicle->p_next;
 
             //remove vehicle
-            status = remove_vehicle(p_parkhaus, p_vehicle);
+            status = remove_vehicle(p_vehicle);
             if (status == ERROR)
             {
                 print_error("parkhouse_free: parkhaus_remove_vehicle: failed");
