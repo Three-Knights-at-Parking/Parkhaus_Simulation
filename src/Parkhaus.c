@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-
 #include "utils/SafteyUtils.h"
 #include "GenericVehicle.h"
 #include "Stats.h"
@@ -25,7 +24,7 @@ int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_ga
     return OK;
 }
 //FIXME Ist hier nicht eine p_parkhaus pointer nötig anstelle des SimulaionObjecct da es in Parkhaus abgelegt ist?
-int parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick) {
+int parkhouse_tick(SimulationObject *p_self, const Settings *p_settings, StatList *p_StatList, uint32_t current_tick) {
 
     if (p_self == NULL || p_settings == NULL || p_StatList == NULL) {
         print_error("parkhaus_tick: central Pointer ERROR");
@@ -69,17 +68,18 @@ int parkhaus_tick(SimulationObject *p_self, const Settings *p_settings, StatList
             return ERROR;
         }
     }
-    else
-    {
-        status =  parkhouse_fill_subtick(current_tick,
-                                        p_parkhaus, (Settings *) p_settings,
-                                        p_StatList, NULL);
-        if (status == ERROR)
-        {
-            print_error("parkhouse_fill_subtick: ERROR in Simulation");
-            return ERROR;
-        }
-    }
+    //Not implemented
+    // else
+    // {
+    //     status =  parkhouse_fill_subtick(current_tick,
+    //                                     p_parkhaus, (Settings *) p_settings,
+    //                                     p_StatList, NULL);
+    //     if (status == ERROR)
+    //     {
+    //         print_error("parkhouse_fill_subtick: ERROR in Simulation");
+    //         return ERROR;
+    //     }
+    // }
 
     return OK;
 }
@@ -331,28 +331,6 @@ int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remai
     return OK;
 }
 
-//FIXME DELETE? -> Queue
-Queue *parkhaus_create_gate_queues(uint32_t number_of_gates) {
-    (void) number_of_gates;
-    return NULL;
-}
-
-//FIXME DELETE? -> Queue
-int parkhaus_enqueue_at_gate(Queue *p_gate_queues, uint32_t gate_index, GenericVehicle *p_vehicle) {
-    (void) p_gate_queues;
-    (void) gate_index;
-    (void) p_vehicle;
-    return OK;
-}
-
-//FIXME DELETE? -> Queue
-int parkhaus_set_gate_demand(Queue *p_gate_queues, uint32_t gate_index, uint16_t demand_value) {
-    (void) p_gate_queues;
-    (void) gate_index;
-    (void) demand_value;
-    return OK;
-}
-
 
 int queue_add_random_vehicle(Queue *p_gate_queue, uint32_t current_tick, Settings *p_settings) {
     GenericVehicle *p_vehicle;
@@ -504,12 +482,14 @@ int update_on_vehicle_entry(Parkhaus *p_parkhouse, StatList *p_StatList, Generic
         print_error("update_on_vehicle_entry: stats_tick_add_vehicle failed");
         return ERROR;
     };
+    return OK;
 }
 
 
 //FIXME DELETE? -> Queue
 int parkhaus_remove_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
     if (p_parkhaus == NULL || p_vehicle == NULL) {
+        print_error("parkhaus_remove_vehicle: pointer issue");
         return ERROR;
     }
 
@@ -517,14 +497,44 @@ int parkhaus_remove_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
     return OK;
 }
 
-//FIXME IMPLEMET
-void parkhaus_free(Parkhaus *p_parkhaus) {
+//Freeing parkhouse parked vehicle list & queues
+int parkhouse_free(Parkhaus *p_parkhaus) {
     if (p_parkhaus == NULL) {
-        return;
+        print_error("parkhouse_free: pointer issue");
+        return ERROR;
+    }
+    int status = 0;
+    //free Cars
+    if (p_parkhaus->p_parked_head == NULL || p_parkhaus->p_parked_tail == NULL)
+    {
+        print_error("parkhouse_free: no cars in parkhouse");
+    }
+    if (p_parkhaus->p_parked_head != NULL)
+    {
+        GenericVehicle *p_vehicle;
+        GenericVehicle *p_next;
+
+        p_vehicle = p_parkhaus->p_parked_head;
+        p_next = p_parkhaus->p_parked_head->p_next;
+
+        while (p_vehicle != NULL)
+        {
+            p_next = p_vehicle->p_next;
+
+            // Switch (p_vehicle.type) for destroying diffrent types of vehicles correctly
+            Car* p_car = (Car*) p_vehicle;
+            status = car_destroy(p_car);
+            if (status == ERROR) {print_error("parkhaus_remove_vehicle: car_destroy failed");}
+            free(p_vehicle);
+
+            p_vehicle = p_next;
+        }
+
     }
 
     p_parkhaus->p_parked_head = NULL;
     p_parkhaus->p_parked_tail = NULL;
     p_parkhaus->gate_queues = NULL;
+    return OK;
 }
 
