@@ -25,6 +25,7 @@
 
     /**
      * @brief Remove a specific vehicle from the list, preserving the order of others.
+     *
      * @param pp_head Pointer to head pointer.
      * @param pp_tail Pointer to tail pointer.
      * @param p_target vehicle to remove.
@@ -35,7 +36,7 @@
     /**
      * @brief Remove all vehicles from this list.
      *        This function takes ownership of the cars and will clean up every
-     *        node itself. This function is usefull for cleanup after simulation
+     *        node itself. This function is useful for cleanup after simulation
      *        end.
      * @param pp_head Pointer to head pointer of the list.
      * @param pp_tail Pointer to tail pointer of the list.
