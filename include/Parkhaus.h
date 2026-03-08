@@ -101,23 +101,6 @@ int parkhouse_free(Parkhaus* p_parkhaus);
      */
     int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle **pp_vehicle_list_head, GenericVehicle *p_vehicle, uint32_t current_tick);
 
-    /**
-     * @brief Creates a queue structure for multiple gates.
-     * @author Simon Ibach
-     */
-    Queue *parkhaus_create_gate_queues(uint32_t number_of_gates);
-
-    /**
-     * @brief Enqueues a vehicle at a gate.
-     * @author Simon Ibach
-     */
-    int parkhaus_enqueue_at_gate(Queue *p_gate_queues, uint32_t gate_index, GenericVehicle *p_vehicle);
-
-    /**
-     * @brief Sets the demand value for a gate.
-     * @author Simon Ibach
-     */
-    int parkhaus_set_gate_demand(Queue *p_gate_queues, uint32_t gate_index, uint16_t demand_value);
 
     /**
      * @brief Creates a random vehicle and enqueues it into a gate queue.
