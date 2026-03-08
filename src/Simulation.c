@@ -10,7 +10,7 @@
 int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatList *p_StatList) {
     checkNull(p_sim);
     checkNull(p_settings);
-    checkNull(stats);
+    checkNull(p_StatList);
 
     p_sim->settings = (Settings *) p_settings;
     p_sim->StatList = (StatList *) p_StatList;
@@ -62,7 +62,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatLis
         return ERROR;
     }
 
-    status = parkhaus_init(p_sim->parkhaus, p_sim->settings, &Gate_Queues);
+    status = parkhouse_init(p_sim->parkhaus, p_sim->settings, &Gate_Queues);
     if (status == ERROR)
     {
         //Parkhouse has not been initialised correctly
