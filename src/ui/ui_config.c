@@ -278,6 +278,23 @@ static int is_time_config_valid(const uint16_t tick_in_sec, const uint16_t gate_
     return ((tick_in_sec % gate_entry_in_sec) == 0U) ? OK : ERROR;
 }
 
+static uint16_t find_prev_valid_tick(const uint16_t current_tick, const uint16_t gate_entry_in_sec)
+{
+    if (gate_entry_in_sec == 0U)
+    {
+        return current_tick;
+    }
+
+    const uint16_t remainder = (uint16_t)(current_tick % gate_entry_in_sec);
+
+    if (remainder == 0U)
+    {
+        return current_tick;
+    }
+
+    return (uint16_t)(current_tick - remainder);
+}
+
 static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_field)
 {
     long choice = 0;
