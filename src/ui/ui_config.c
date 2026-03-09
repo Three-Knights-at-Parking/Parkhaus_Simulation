@@ -210,7 +210,7 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     p_buf[len] = '\0';
 
     free(p_settings->name);
-    p_settings->name = p_buf;
+    *p_settings->name = p_buf;
 
     return OK;
 }
