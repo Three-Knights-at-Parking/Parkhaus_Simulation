@@ -275,6 +275,7 @@ struct StatList {
     StatsTick *p_tick_head; /**< Erster Tick in der Verlaufsliste. */
     StatsTick *p_tick_tail; /**< Letzter Tick in der Verlaufsliste. */
     StatsTick *p_current_tick; /**< Tick-Builder fuer den aktuell laufenden Tick. */
+    StatsSummary *p_summary; /**< Finale StasSummary nach Simulations-Durchlauf. */
 };
 
 
