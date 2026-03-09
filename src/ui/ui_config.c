@@ -295,6 +295,23 @@ static uint16_t find_prev_valid_tick(const uint16_t current_tick, const uint16_t
     return (uint16_t)(current_tick - remainder);
 }
 
+static uint16_t find_next_valid_tick(const uint16_t current_tick, const uint16_t gate_entry_in_sec)
+{
+    if (gate_entry_in_sec == 0U)
+    {
+        return current_tick;
+    }
+
+    const uint16_t remainder = (uint16_t)(current_tick % gate_entry_in_sec);
+
+    if (remainder == 0U)
+    {
+        return current_tick;
+    }
+
+    return (uint16_t)(current_tick + (gate_entry_in_sec - remainder));
+}
+
 static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_field)
 {
     long choice = 0;
