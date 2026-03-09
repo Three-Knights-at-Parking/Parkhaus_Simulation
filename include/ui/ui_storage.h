@@ -102,4 +102,4 @@ ui_state storage_menu(Settings *p_settings);
  */
 //void delete_file(const char *p_path);
 
-#endif /* STORAGE_H */
+#endif /* UI_STORAGE_H */
