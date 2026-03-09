@@ -46,9 +46,9 @@ int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatLis
 
     // General emptying step for the Parkhaus.
     status = parkhouse_tick_empty_general(current_tick, p_parkhaus,
-                                        (Settings *) p_settings,
-                                        p_StatList,
-                                        &p_parkhaus->p_parked_head);
+                                          (Settings*)p_settings,
+                                          p_StatList,
+                                          &p_parkhaus->p_parked_head);
     if (status == ERROR)
     {
         print_error("parkhaus_tick_empty_general: ERROR in Simulation");
@@ -322,7 +322,8 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
         p_cur = p_cur->p_next;
     }
     // No vehicle found in list.
-    if (p_cur == NULL) {
+    if (p_cur == NULL)
+    {
         // Destroy lost vehicle instance.
         remove_vehicle(p_vehicle);
         print_error("vehicle_leaving: vehicle not found in parkhouse - vehicle destroyed");
@@ -332,7 +333,9 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     // Vehicle found: if it is the head, move head to next.
     if (p_prev == NULL) {
         *pp_vehicle_list_head = p_cur->p_next;
-    } else {
+    }
+    else
+    {
         p_prev->p_next = p_cur->p_next; // Link previous vehicle to the next one after current.
     }
 
@@ -383,7 +386,7 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
         return ERROR;
     }
     // Switch by p_vehicle type.
-    p_car = (Car *) p_vehicle;
+    p_car = (Car*)p_vehicle;
 
     // Minimum required space for clarity.
     minimum = get_vehicle_minimum_space(p_vehicle);
@@ -391,11 +394,11 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
     spaces_needed = minimum;
 
     // Check whether the vehicle fits.
-    if (spaces_needed <= open_space) {
-
+    if (spaces_needed <= open_space)
+    {
         // Remove the vehicle from queue after fit confirmation.
         status = queue_dequeue(p_gate_queue);
-        if (status == ERROR) {print_error("fill_from_queue: dequeue error");}
+        if (status == ERROR) { print_error("fill_from_queue: dequeue error"); }
 
         // Apply bad-parking probability when extra space is available.
         if (open_space >= (minimum * 2U) && rng_percent() <= BAD_PARKING_CHANCE_PERCENT) {
@@ -538,8 +541,8 @@ uint16_t get_open_space(const Parkhaus *p_parkhouse) {
 
 // Update Parkhaus, vehicle, and statistics on vehicle exit.
 int update_on_vehicle_exit(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle *p_vehicle,
-                            uint16_t required_space, uint32_t current_tick) {
-
+                           uint16_t required_space, uint32_t current_tick)
+{
     // GenericVehicle *p_mutable_vehicle = (GenericVehicle *) p_vehicle;
 
     if (p_parkhouse == NULL || p_vehicle == NULL || p_StatList == NULL) {
@@ -566,6 +569,7 @@ int update_on_vehicle_exit(Parkhaus *p_parkhouse, StatList *p_StatList, GenericV
 
     return OK;
 }
+
 // Update Parkhaus and statistics on vehicle entry.
 int update_on_vehicle_entry(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle *p_vehicle,
                              uint16_t required_space, uint32_t current_tick)
