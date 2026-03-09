@@ -24,6 +24,10 @@ static int read_float_percent(const char *p_prompt, float *p_out);
 static int ui_settings_set_name(Settings *p_settings, const char *p_name);
 static enum OutputMode apply_mode_select(const int mode_select);
 static int edit_mode_select(void);
+static int is_time_config_valid(uint16_t tick_in_sec, uint16_t gate_entry_in_sec);
+static uint16_t find_prev_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
+static uint16_t find_next_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
+static int resolve_tick_gate_conflict(Settings *p_settings, int changed_field);
 
 
 static int parse_long(const char *p_text, long *p_out)
@@ -253,9 +257,8 @@ static enum OutputMode apply_mode_select(const int mode_select)
  */
 static int edit_mode_select(void)
 {
-    long choice = 0;
-
     clear_terminal();
+
     printf("Select Output Mode:\n");
     printf("------------------------------------\n");
     printf("0 = NONE\n");
@@ -264,7 +267,14 @@ static int edit_mode_select(void)
     printf("3 = DEBUG\n");
     printf("------------------------------------\n");
 
-    (void) read_long_in_range("Enter your choice (0 - 3): ", 0, 3, &choice);
+    int choice = -1;
+    validation_flag valid = INVALID;
+
+    while (valid != VALID)
+    {
+        choice = user_input();
+        valid = validate_user_input(choice, 3);
+    }
     return (int)choice;
 }
 
@@ -431,9 +441,11 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
 
         return ERROR;
     }
+
+    return OK;
 }
 
-static uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
+uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
 {
     if (p_settings == NULL)
     {
@@ -459,12 +471,13 @@ static uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
 
 int print_configscreen(const Settings *p_settings)
 {
-    const uint16_t max_entries_per_tick = calc_max_possible_entries_per_tick(p_settings);
-
     if (p_settings == NULL)
     {
         return ERROR;
     }
+
+    const uint16_t max_entries_per_tick = calc_max_possible_entries_per_tick(p_settings);
+
     clear_terminal();
 
     printf("====================================\n");
@@ -536,7 +549,7 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 1)
     {
-        char name_buf[20];
+        char name_buf[SETTINGS_NAME_MAX_LENGTH + 1];
 
         printf("Enter name (max %d chars): ", SETTINGS_NAME_MAX_LENGTH);
 
