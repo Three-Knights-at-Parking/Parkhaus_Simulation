@@ -294,6 +294,25 @@ static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_fi
         return OK;
     }
 
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("        INVALID TIME SETTINGS\n");
+    printf("====================================\n\n");
+
+    printf("Current configuration is invalid:\n");
+    printf("Tick Length      : %u sec\n", (unsigned)p_settings->tick_inSec);
+    printf("Gate Entry Time  : %u sec\n\n", (unsigned)p_settings->gate_entry_inSec);
+
+    printf("Reason:\n");
+    printf("tick_inSec must be a multiple of gate_entry_inSec.\n");
+    printf("Otherwise fractional entries per tick would occur.\n\n");
+
+    if (changed_field == 6)
+    {
+        prev_valid = find_prev_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
+        next_valid = find_next_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
+
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
