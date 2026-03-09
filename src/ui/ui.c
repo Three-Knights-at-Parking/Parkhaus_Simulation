@@ -201,7 +201,7 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
     {
         if (state == UI_HOME)
         {
-            state = home_menu(p_settings);
+            state = home_menu();
         }
         else if (state == UI_KONFIG)
         {
