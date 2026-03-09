@@ -268,6 +268,22 @@ static int edit_mode_select(void)
     return (int)choice;
 }
 
+static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_field)
+{
+    long choice = 0;
+    uint16_t prev_valid = 0U;
+    uint16_t next_valid = 0U;
+
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    if (is_time_config_valid(p_settings->tick_inSec, p_settings->gate_entry_inSec) == OK)
+    {
+        return OK;
+    }
+
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
