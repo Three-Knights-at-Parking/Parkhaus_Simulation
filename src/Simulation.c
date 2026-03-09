@@ -8,6 +8,7 @@
 #include "Queue.h"
 #include "Stats.h"
 #include "io/SaveHandler.h"
+#include "utils/StatList.h"
 
 int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_StatList) {
     checkNull(p_sim);
@@ -104,8 +105,12 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
 
 //FIXME LUCA IMPLEMENT
 int simulation_tick(Simulation *p_sim) {
+    StatList *p_tick = StatList_init(p_sim);
+    p_sim->StatList->p_current_tick = p_tick;
     p_sim->current_tick++;
     p_sim->parkhaus->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
+
+    statlist_append(p_sim, p_sim->StatList->p_current_tick);
     return OK;
 }
 
