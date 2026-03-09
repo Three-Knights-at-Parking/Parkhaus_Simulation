@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "../include/ui/ui.h"
+#include "../include/ui/ui_statistics.h"
 #include "../include/ui/ui_storage.h"
 
 #include "../include/io/SaveHandler.h"
@@ -11,6 +12,48 @@
 /* ========================================================================= */
 /* Local helper functions                                                    */
 /* ========================================================================= */
+
+static int print_loaded_statistics(const Settings *p_settings,
+                                   const StatList *p_stat_list)
+{
+    const StatsTick *p_current_tick = NULL;
+    int print_all_remaining = 0;
+
+    if (p_settings == NULL || p_stat_list == NULL)
+    {
+        return ERROR;
+    }
+
+    ui_statistics_print_header(p_settings);
+
+    p_current_tick = p_stat_list->p_tick_head;
+
+    while (p_current_tick != NULL)
+    {
+        ui_statistics_print_tick(p_current_tick, p_settings);
+
+        if (print_all_remaining == 0 && p_current_tick->p_next != NULL)
+        {
+            if (ask_tick_output_mode(&print_all_remaining) != OK)
+            {
+                return ERROR;
+            }
+        }
+
+        p_current_tick = p_current_tick->p_next;
+    }
+
+    if (p_stat_list->p_summary != NULL)
+    {
+        ui_statistics_print_final(p_stat_list->p_summary, p_settings);
+    }
+    else
+    {
+        printf("Warning: No summary available in loaded statistics.\n");
+    }
+
+    return OK;
+}
 
 static void free_loaded_stat_list(StatList *p_stat_list)
 {
