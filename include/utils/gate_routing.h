@@ -1,19 +1,24 @@
-//
-// Created by ibach on 01.03.2026.
-//
-
 #ifndef TEIL1_PARKHAUS_SIMULATION_PLANNUNG_GATE_ROUTING_H
 #define TEIL1_PARKHAUS_SIMULATION_PLANNUNG_GATE_ROUTING_H
 
 #include "../types.h"
 
-/*
- * Gate routing module
- * - distributes global per-tick demand (100%) across existing gate queues
- * - checks at every step whether queue/element exists
- * - writes only per-gate demand values into the queues
+/**
+ * Gate routing module.
+ * Distributes total demand per tick across all configured gate queues.
  */
 
-uint8_t GateRouting_DistributeTotalDemand(const Settings* settings, uint_16 total_demand,const Queue* gate_queues, rng* rng, uint32_t current_tick);
+/**
+ * @brief Distributes total tick demand across all gate queues.
+ * @author: ibach
+ * @param settings Pointer to simulation settings containing gate count.
+ * @param total_demand Total generated demand for the current tick.
+ * @param gate_queues Pointer to the array of gate queues.
+ * @param current_tick Current simulation tick.
+ */
+int GateRouting_DistributeTotalDemand(const Settings *settings,
+                                      uint16_t total_demand,
+                                      Queue **gate_queues,
+                                      uint32_t current_tick);
 
-#endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_GATE_ROUTING_H
+#endif // TEIL1_PARKHAUS_SIMULATION_PLANNUNG_GATE_ROUTING_H
