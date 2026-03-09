@@ -3,13 +3,18 @@
 
 /**
  * @file ui_config.h
- * @brief Configuration menu UI for editing Settings via terminal input.
+ * @brief Terminal-based configuration menu for simulation settings.
  *
  * This module is responsible for:
- * - printing the current configuration
- * - editing individual settings values
- * - validating terminal input
- * - returning the next UI state
+ * - displaying the current configuration
+ * - allowing the user to modify simulation settings
+ * - validating user input in the configuration menu
+ *
+ * Design note:
+ * - This module only modifies the Settings structure.
+ * - It does not execute simulation logic.
+ * - Derived values (e.g. max entries per tick) are only displayed
+ *   and are not stored in the Settings object.
  */
 
 #include <stdint.h>
@@ -18,38 +23,69 @@
 #include "types.h"
 
 /* ========================================================================= */
-/* Config menu limits                                                        */
+/* Menu limits                                                               */
 /* ========================================================================= */
 
 /**
- * @brief Maximum valid menu number in the config menu.
+ * @brief Maximum valid menu entry number in the configuration menu.
  *
- * Valid range:
+ * Valid user input range:
  * 0 .. CONFIG_MAX_VALID_NUMBER
  */
 #define CONFIG_MAX_VALID_NUMBER (10)
 
 /* ========================================================================= */
-/* Numeric ranges used by ui_config.c                                        */
+/* Numeric limits                                                            */
 /* ========================================================================= */
 
-/* Probability in percent */
-#define MIN_PROB_PERCENT (0.0f)
-#define MAX_PROB_PERCENT (100.0f)
+/**
+ * @brief Minimum allowed tick length in seconds.
+ */
+#define MIN_TICK_SEC (10)
 
-/* Tick length in seconds
-   NOTE: currently no dedicated Settings setter exists for tick_inSec. */
-#define MIN_TICK_SEC (1)
+/**
+ * @brief Maximum allowed tick length in seconds.
+ */
 #define MAX_TICK_SEC (86400)
 
-/* Random seed */
-#define MAX_SEED (2147483647)
+/**
+ * @brief Maximum allowed random seed value.
+ */
+#define MAX_SEED INT32_MAX
+
+/* ========================================================================= */
+/* Arrival rate input                                                        */
+/* ========================================================================= */
+
+/**
+ * @brief Defines how the user specifies vehicle arrival rates.
+ *
+ * The configuration menu allows entering the arrival rate as:
+ * - vehicles per second
+ * - vehicles per minute
+ * - vehicles per hour
+ *
+ * The value is converted internally to a probability percentage
+ * per second and stored in:
+ *
+ * Settings::entry_probability_perSec_prec
+ */
+typedef enum
+{
+    RATE_PER_SECOND = 1, /**< Vehicles per second */
+    RATE_PER_MINUTE = 2, /**< Vehicles per minute */
+    RATE_PER_HOUR   = 3  /**< Vehicles per hour   */
+} rate_input_mode;
 
 /* ========================================================================= */
 /* Public interface                                                          */
 /* ========================================================================= */
+
 /**
- * @brief Converts OutputMode enum to a readable string.
+ * @brief Converts an OutputMode enum value to a readable string.
+ *
+ * Used for displaying the currently selected output mode
+ * in the configuration screen.
  *
  * @param[in] mode Output mode enum value.
  * @return Constant string representation.
@@ -57,34 +93,46 @@
 const char *output_mode_to_string(enum OutputMode mode);
 
 /**
- * @brief Prints the configuration screen including current settings.
+ * @brief Calculates the maximum number of vehicles that can enter
+ * the parking garage during a single simulation tick.
  *
- * @param[in] p_settings Pointer to the current settings object.
- * @return OK on success, ERROR if p_settings is invalid.
+ * The value is derived from the relation between:
+ * - tick length (Settings::tick_inSec)
+ * - gate entry time (Settings::gate_entry_inSec)
+ *
+ * Formula:
+ * tick_inSec / gate_entry_inSec
+ *
+ * If the configuration is invalid (not divisible), the function returns 0.
+ *
+ * @param[in] p_settings Pointer to active settings.
+ * @return Maximum possible gate entries per tick.
+ */
+uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings);
+
+/**
+ * @brief Prints the configuration screen with current settings.
+ *
+ * The screen includes all configurable parameters as well as
+ * derived values such as the maximum number of gate entries per tick.
+ *
+ * @param[in] p_settings Pointer to active settings.
+ * @return OK on success, ERROR if p_settings is NULL.
  */
 int print_configscreen(const Settings *p_settings);
 
 /**
- * @brief Handles user interaction in the configuration menu.
+ * @brief Handles the configuration menu interaction.
  *
  * This function:
- * - prints the config screen
- * - reads and validates the menu selection
- * - edits the selected setting
- * - returns the next UI state
+ * - prints the configuration screen
+ * - reads the user menu selection
+ * - updates the corresponding setting
+ * - validates dependent settings where required
  *
- * @param[in,out] p_settings Pointer to the Settings object to edit.
+ * @param[in,out] p_settings Pointer to the Settings object to modify.
  * @return Next UI state depending on user selection.
  */
 ui_state config_menu(Settings *p_settings);
-
-uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings);
-
-typedef enum
-{
-    RATE_PER_SECOND = 1,
-    RATE_PER_MINUTE = 2,
-    RATE_PER_HOUR   = 3
-} rate_input_mode;
 
 #endif /* UI_CONFIG_H */
