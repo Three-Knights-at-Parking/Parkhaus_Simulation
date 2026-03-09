@@ -10,6 +10,19 @@
 #include "../include/types.h"
 
 /* ========================================================================= */
+/* Local helper function prototypes                                          */
+/* ========================================================================= */
+
+static int ask_tick_output_mode(int *p_print_all);
+
+static int print_loaded_statistics(const Settings *p_settings,
+                                   const StatList *p_stat_list);
+
+static void free_loaded_stat_list(StatList *p_stat_list);
+
+static int load_statistics_file_prompt(const Settings *p_settings);
+
+/* ========================================================================= */
 /* Local helper functions                                                    */
 /* ========================================================================= */
 
