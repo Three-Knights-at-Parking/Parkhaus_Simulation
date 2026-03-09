@@ -718,12 +718,22 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 8)
     {
-        float prob = 0.0f;
+        float vehicles = 0.0f;
 
-        (void)read_float_percent("Enter entry probability per second (0.0 - 100.0 %): ", &prob);
+        const int mode = edit_arrival_rate_mode();
 
-        /* TODO: replace with settings_set_entry_probability_perSec_prec(p_settings, ...) when available */
-        p_settings->entry_probability_perSec_prec = prob;
+        (void)read_float_percent(
+            "Enter average arriving vehicles: ",
+            &vehicles);
+
+        const float probability = convert_rate_to_prob_perc(vehicles, mode);
+
+        p_settings->entry_probability_perSec_prec = probability;
+
+        printf("Converted probability per second: %.2f %%\n", probability);
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+
         return UI_KONFIG;
     }
     else if (choice == 9)
@@ -741,7 +751,7 @@ ui_state config_menu(Settings *p_settings)
         }
         return UI_KONFIG;
     }
-    else
+    else if (choice == 10)
     {
         long value = 0;
 
