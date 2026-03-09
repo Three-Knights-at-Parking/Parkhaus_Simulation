@@ -76,6 +76,9 @@ int user_input(void);
  */
 validation_flag validate_user_input(const int user_choice, const int max_valid_number);
 
+int trim_newline(char *p_text);
+int read_line(char *p_buffer, size_t buffer_len);
+
 /* ========================================================================= */
 /* UI state machine                                                          */
 /* ========================================================================= */

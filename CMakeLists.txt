@@ -14,6 +14,8 @@ file(GLOB_RECURSE PARKHAUS_SIMULATION_HEADERS CONFIGURE_DEPENDS
 )
 
 add_executable(Parkhaus_Simulation ${PARKHAUS_SIMULATION_SOURCES} ${PARKHAUS_SIMULATION_HEADERS}
+        src/ui/ui_statistics.c)
+add_executable(Parkhaus_Simulation ${PARKHAUS_SIMULATION_SOURCES} ${PARKHAUS_SIMULATION_HEADERS}
         src/generic/Stats.c)
 
 target_include_directories(Parkhaus_Simulation

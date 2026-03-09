@@ -118,6 +118,57 @@ validation_flag validate_user_input(const int user_choice, const int max_valid_n
     return VALID;
 }
 
+int trim_newline(char *p_text)
+{
+    if (p_text == NULL)
+    {
+        return ERROR;
+    }
+
+    const size_t len = strlen(p_text);
+
+    if (len == 0U)
+    {
+        return ERROR;
+    }
+
+    if (p_text[len - 1U] == '\n')
+    {
+        p_text[len - 1U] = '\0';
+    }
+    return OK;
+}
+
+int read_line(char *p_buffer, const size_t buffer_len)
+{
+    if (p_buffer == NULL || buffer_len == 0U)
+    {
+        return ERROR;
+    }
+
+    if (fgets(p_buffer, buffer_len, stdin) == NULL)
+    {
+        return ERROR;
+    }
+
+    if (strchr(p_buffer, '\n') == NULL)
+    {
+        int c;
+
+        while ((c = getchar()) != '\n' && c != EOF)
+        {
+            /* discard */
+        }
+    }
+
+    if (trim_newline(p_buffer) != OK)
+    {
+        return ERROR;
+    }
+
+    return OK;
+}
+
 /* ========================================================================= */
 /* Welcome screen                                                            */
 /* ========================================================================= */
@@ -150,7 +201,7 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
     {
         if (state == UI_HOME)
         {
-            state = home_menu(p_settings);
+            state = home_menu();
         }
         else if (state == UI_KONFIG)
         {
@@ -162,7 +213,7 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
         }
         else if (state == UI_STORAGE)
         {
-            state = storage_menu();
+            state = storage_menu(p_settings);
         }
         else
         {
