@@ -347,6 +347,28 @@ static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_fi
         prev_valid = find_prev_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
         next_valid = find_next_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
 
+        printf("Choose a valid Tick Length:\n");
+        printf("1 - Use previous valid value: %u sec\n", (unsigned)prev_valid);
+        printf("2 - Use next valid value    : %u sec\n", (unsigned)next_valid);
+        printf("0 - Cancel and keep old configuration\n\n");
+
+        (void)read_long_in_range("Enter your choice: ", 0, 2, &choice);
+
+        if (choice == 1)
+        {
+            p_settings->tick_inSec = prev_valid;
+            return OK;
+        }
+        if (choice == 2)
+        {
+            p_settings->tick_inSec = next_valid;
+            return OK;
+        }
+
+        return ERROR;
+    }
+
+
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
