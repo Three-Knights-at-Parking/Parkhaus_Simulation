@@ -105,12 +105,16 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
 
 //FIXME LUCA IMPLEMENT
 int simulation_tick(Simulation *p_sim) {
-    StatList *p_tick = StatList_init(p_sim);
-    p_sim->StatList->p_current_tick = p_tick;
-    p_sim->current_tick++;
-    p_sim->parkhaus->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
+    if (checkNull(p_sim) || checkNull(p_sim->StatList) || checkNull(p_sim->parkhaus) || checkNull(p_sim->settings)) {
+        return ERROR;
+    }
 
-    statlist_append(p_sim, p_sim->StatList->p_current_tick);
+    p_sim->current_tick++;
+    if (StatsTick_init(p_sim, p_sim->parkhaus->capacity, p_sim->current_tick) == ERROR) {
+        return ERROR;
+    }
+
+    p_sim->parkhaus->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
     return OK;
 }
 
@@ -130,8 +134,8 @@ void simulation_end(Simulation *p_sim) {
 
     if (p_sim->StatList != NULL) {
         StatsSummary summary;
-        if (stats_build_summary(p_sim->StatList, &summary) == OK) {
-            savehandler_save_summary(p_sim, &summary, NULL);
+        if (stats_build_summary(p_sim->StatList, &p_sim->StatList->p_summary) == OK) {
+            savehandler_save_summary(p_sim, &p_sim->StatList->p_summary, NULL);
         }
     }
 
