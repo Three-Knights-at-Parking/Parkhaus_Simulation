@@ -53,7 +53,7 @@ int parkhouse_free(Parkhaus* p_parkhaus);
  * @param p_StatList Pointer to the statistics list.
  * @param pp_vehicle_list_head Pointer to the head pointer of parked vehicles.
  */
-int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings,
+int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse,const Settings* p_settings,
                                  StatList* p_StatList, GenericVehicle** pp_vehicle_list_head);
 
 /**
@@ -66,7 +66,7 @@ int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, S
  * @param pp_vehicle_list_head Pointer to the head pointer of parked vehicles.
  * @param p_gate_queue Pointer to the gate queue.
  */
-int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings,
+int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings,
                                 StatList* p_StatList, GenericVehicle** pp_vehicle_list_head, Queue* p_gate_queue);
 
 /**
@@ -78,7 +78,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, Se
  * @param p_StatList Pointer to the statistics list.
  * @param p_gate_queues Pointer to gate queues.
  */
-int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings,
+int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings,
                            StatList* p_StatList, Queue* p_gate_queues);
 
 /**
@@ -91,7 +91,7 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Setting
  * @param p_gate_queue Pointer to the gate queue.
  * @param last_cycle Flag indicating the last subtick cycle.
  */
-int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings,
+int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings,
                                    StatList* p_StatList, Queue* p_gate_queue, int last_cycle);
 
 /**
@@ -135,7 +135,7 @@ int vehicle_leaving(Parkhaus* p_parkhouse, StatList* p_StatList, GenericVehicle*
  * @param current_tick Current simulation tick.
  * @param p_settings Pointer to simulation settings.
  */
-int queue_add_random_vehicle(Queue* p_gate_queue, uint32_t current_tick, Settings* p_settings);
+int queue_add_random_vehicle(Queue* p_gate_queue, uint32_t current_tick, const Settings* p_settings);
 
 /**
  * @brief Creates a random vehicle according to simulation settings.
@@ -143,7 +143,7 @@ int queue_add_random_vehicle(Queue* p_gate_queue, uint32_t current_tick, Setting
  * @param current_tick Current simulation tick.
  * @param p_settings Pointer to simulation settings.
  */
-GenericVehicle* create_random_vehicle(uint32_t current_tick, Settings* p_settings);
+GenericVehicle* create_random_vehicle(uint32_t current_tick, const Settings* p_settings);
 
 /**
  * @brief Appends a vehicle to the parked vehicle list.
