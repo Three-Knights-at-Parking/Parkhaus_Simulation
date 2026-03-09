@@ -312,9 +312,12 @@ static uint16_t find_next_valid_tick(const uint16_t current_tick, const uint16_t
     return (uint16_t)(current_tick + (gate_entry_in_sec - remainder));
 }
 
-static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_field)
+static int resolve_tick_gate_conflict(Settings *p_settings,
+                                       const int changed_field)
 {
-    long choice = 0;
+    int choice = -1;
+    validation_flag valid = INVALID;
+
     uint16_t prev_valid = 0U;
     uint16_t next_valid = 0U;
 
@@ -323,7 +326,8 @@ static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_fi
         return ERROR;
     }
 
-    if (is_time_config_valid(p_settings->tick_inSec, p_settings->gate_entry_inSec) == OK)
+    if (is_time_config_valid(p_settings->tick_inSec,
+                             p_settings->gate_entry_inSec) == OK)
     {
         return OK;
     }
@@ -352,13 +356,18 @@ static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_fi
         printf("2 - Use next valid value    : %u sec\n", (unsigned)next_valid);
         printf("0 - Cancel and keep old configuration\n\n");
 
-        (void)read_long_in_range("Enter your choice: ", 0, 2, &choice);
+        while (valid != VALID)
+        {
+            choice = user_input();
+            valid = validate_user_input(choice, 2);
+        }
 
         if (choice == 1)
         {
             p_settings->tick_inSec = prev_valid;
             return OK;
         }
+
         if (choice == 2)
         {
             p_settings->tick_inSec = next_valid;
@@ -368,6 +377,64 @@ static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_fi
         return ERROR;
     }
 
+    if (changed_field == 5)
+    {
+        printf("The new gate entry time does not divide the current tick length.\n");
+        printf("Please choose one of the following options:\n");
+        printf("1 - Re-enter gate entry time\n");
+        printf("2 - Adjust tick length automatically\n");
+        printf("0 - Cancel\n\n");
+
+        while (valid != VALID)
+        {
+            choice = user_input();
+            valid = validate_user_input(choice, 2);
+        }
+
+        if (choice == 1)
+        {
+            return ERROR;
+        }
+
+        if (choice == 2)
+        {
+            prev_valid = find_prev_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
+            next_valid = find_next_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
+
+            clear_terminal();
+
+            printf("Possible valid tick lengths for gate entry time %u sec:\n\n",(unsigned)p_settings->gate_entry_inSec);
+
+            printf("1 - %u sec\n", (unsigned)prev_valid);
+            printf("2 - %u sec\n", (unsigned)next_valid);
+            printf("0 - Cancel\n\n");
+
+            valid = INVALID;
+
+            while (valid != VALID)
+            {
+                choice = user_input();
+                valid = validate_user_input(choice, 2);
+            }
+
+            if (choice == 1)
+            {
+                p_settings->tick_inSec = prev_valid;
+                return OK;
+            }
+
+            if (choice == 2)
+            {
+                p_settings->tick_inSec = next_valid;
+                return OK;
+            }
+        }
+
+        return ERROR;
+    }
+
+    return ERROR;
+}
 
 /* ========================================================================= */
 /* Screen printing                                                           */
