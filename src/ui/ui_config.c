@@ -286,7 +286,7 @@ int print_configscreen(const Settings *p_settings)
 
     printf("Current Settings\n");
     printf("------------------------------------\n");
-    printf("1  Name                 : %s\n", (p_settings->name != NULL) ? p_settings->name : SETTINGS_DEFAULT_NAME);
+    printf("1  Name                 : %s\n", *p_settings->name);
     printf("2  Capacity / Floor     : %u\n", (unsigned)p_settings->capacity);
     printf("3  Floors               : %u\n", (unsigned)p_settings->floors);
     printf("4  Gates                : %u\n", (unsigned)p_settings->gates);
