@@ -80,6 +80,11 @@ ui_state config_menu(Settings *p_settings);
 
 uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings);
 
-enum time_mode {SECOND, MINUTE, HOUR};
+typedef enum
+{
+    RATE_PER_SECOND = 1,
+    RATE_PER_MINUTE = 2,
+    RATE_PER_HOUR   = 3
+} rate_input_mode;
 
 #endif /* UI_CONFIG_H */
