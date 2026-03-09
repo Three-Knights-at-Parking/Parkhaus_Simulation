@@ -20,7 +20,7 @@
 static int parse_long(const char *p_text, long *p_out);
 static int parse_float(const char *p_text, float *p_out);
 static int read_long_in_range(const char *p_prompt, long min_val, long max_val, long *p_out);
-static int read_float_percent(const char *p_prompt, float *p_out);
+static int read_float_nonnegative(const char *p_prompt, float *p_out);
 static int ui_settings_set_name(Settings *p_settings, const char *p_name);
 static enum OutputMode apply_mode_select(const int mode_select);
 static int edit_mode_select(void);
@@ -145,7 +145,7 @@ static int read_long_in_range(const char *p_prompt, const long min_val, const lo
     }
 }
 
-static int read_float_percent(const char *p_prompt, float *p_out)
+static int read_float_nonnegative(const char *p_prompt, float *p_out)
 {
     char buffer[64];
 
@@ -156,6 +156,8 @@ static int read_float_percent(const char *p_prompt, float *p_out)
 
     while (1)
     {
+        float value = 0.0f;
+
         printf("%s", p_prompt);
 
         if (read_line(buffer, sizeof(buffer)) != OK)
@@ -164,7 +166,6 @@ static int read_float_percent(const char *p_prompt, float *p_out)
             continue;
         }
 
-        float value = 0.0f;
         if (parse_float(buffer, &value) != OK)
         {
             printf("Your input is not a valid number!\n");
@@ -173,9 +174,9 @@ static int read_float_percent(const char *p_prompt, float *p_out)
             continue;
         }
 
-        if (value < MIN_PROB_PERCENT || value > MAX_PROB_PERCENT)
+        if (value <= 0.0f)
         {
-            printf("Probability must be between %.1f and %.1f percent.\n", MIN_PROB_PERCENT, MAX_PROB_PERCENT);
+            printf("Value must be greater than 0.0.\n");
             printf("Press ENTER and try again...\n");
             press_enter_to_continue();
             continue;
@@ -766,4 +767,6 @@ ui_state config_menu(Settings *p_settings)
         }
         return UI_KONFIG;
     }
+
+    return UI_KONFIG;
 }
