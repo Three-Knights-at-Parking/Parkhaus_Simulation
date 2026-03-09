@@ -171,7 +171,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
 
     queue_set_demand(p_gate_queue, demand);
     if (demand > 0U) {
-        status = open_demand(p_StatList, p_gate_queue, demand, current_tick, p_settings);
+        status = open_demand(p_StatList, p_gate_queue, demand, current_tick, const p_settings);
         if (status == ERROR)
         {
             return ERROR;

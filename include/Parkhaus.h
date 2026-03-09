@@ -113,7 +113,7 @@ uint16_t fill_from_queue(Parkhaus* p_parkhaus, Queue* p_gate_queue, GenericVehic
  * @param p_settings Pointer to simulation settings.
  */
 int open_demand(StatList* p_StatList, Queue* p_gate_queue, uint16_t demand_remaining, uint32_t current_tick,
-                Settings* p_settings);
+                const Settings* p_settings);
 
 /**
  * @brief Removes a leaving vehicle and updates occupancy/state.
