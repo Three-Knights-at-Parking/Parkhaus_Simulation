@@ -50,10 +50,8 @@ enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};
 
 enum MinimumSpace{ Bike_Space = 1, Car_Space = 2 };
 
-//FIXME LUCA MOVE TO SETTINGS
+//FIXME Kannste das nächste mal auch selber machen :)  STRG+x STRG+v
 //important Backup defines
-#define DEFAULT_MAX_QUEUE_LENGTH 10 //standard limit für Queue length
-#define BAD_PARKING_CHANCE_PERCENT 2 // 2/100 -> annahme das 2% aller Fahrzeuge schlecht Parken
 
 
 /**
@@ -149,7 +147,7 @@ struct Car {
 struct Settings {
     char* src_path; // Relative path to settings file, if any. Settings takes ownership of the string.
     char* stats_path; // Relative path to the stats save location. Settings takes ownership of the string.
-    char* name[20]; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
+    char name[20]; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
     uint16_t capacity; // Total parking spots per floor ##UI##
     uint8_t floors; // Number of floors. This is currently miscellaneous ##UI##
     uint8_t gates; // Number of gates. This will affect queue time. ##UI##
@@ -272,7 +270,6 @@ struct StatList {
     StatsTick *p_tick_head; /**< Erster Tick in der Verlaufsliste. */
     StatsTick *p_tick_tail; /**< Letzter Tick in der Verlaufsliste. */
     StatsTick *p_current_tick; /**< Tick-Builder fuer den aktuell laufenden Tick. */
-    StatsSummary *p_summary; /**< Finale StasSummary nach Simulations-Durchlauf. */
 };
 
 

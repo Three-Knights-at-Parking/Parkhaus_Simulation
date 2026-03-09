@@ -48,6 +48,9 @@
 #define SETTINGS_DEFAULT_IS_LEAVABLE NON_LEAVABLE // Cars cannot leave the queue
 #define SECONDS_IN_DAY 86400
 #define SETTINGS_MAX_SIZE_PARAM 255
+#define DEFAULT_MAX_QUEUE_LENGTH 10 //standard limit für Queue length
+#define BAD_PARKING_CHANCE_PERCENT 2 // 2/100 -> annahme das 2% aller Fahrzeuge schlecht Parken
+
 
 #include "types.h"
 /**
