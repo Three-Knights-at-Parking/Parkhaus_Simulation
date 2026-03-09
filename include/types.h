@@ -19,7 +19,6 @@ typedef struct GenericVehicle GenericVehicle;
 typedef struct StatsTick StatsTick;
 typedef struct StatsSummary StatsSummary;
 typedef struct StatList StatList;
-typedef struct RNG RNG;
 
 
 /**
@@ -51,6 +50,7 @@ enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};
 
 enum MinimumSpace{ Bike_Space = 1, Car_Space = 2 };
 
+//FIXME LUCA MOVE TO SETTINGS
 //important Backup defines
 #define DEFAULT_MAX_QUEUE_LENGTH 10 //standard limit für Queue length
 #define BAD_PARKING_CHANCE_PERCENT 2 // 2/100 -> annahme das 2% aller Fahrzeuge schlecht Parken
@@ -134,11 +134,6 @@ struct Car {
     GenericVehicle base; // base vehicle object
     uint8_t minimum_spaces; // How many spaces this vehicle needs at least.
     uint8_t spaces_needed; // How many spaces this vehicle needs
-};
-
-struct RNG
-{
-    uint32_t seed;
 };
 
 // --- EXAMPLE OF ANOTHER VEHICLE TYPE ---
@@ -273,6 +268,7 @@ struct StatsSummary {
  */
 struct StatList {
     SimulationObject base;
+    StatsSummary p_summary; //slot to link summary
     StatsTick *p_tick_head; /**< Erster Tick in der Verlaufsliste. */
     StatsTick *p_tick_tail; /**< Letzter Tick in der Verlaufsliste. */
     StatsTick *p_current_tick; /**< Tick-Builder fuer den aktuell laufenden Tick. */
