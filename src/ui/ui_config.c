@@ -443,7 +443,7 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
         return ERROR;
     }
 
-    return OK;
+    return ERROR;
 }
 
 static float convert_rate_to_prob_perc(const float vehicles, const rate_input_mode mode)
