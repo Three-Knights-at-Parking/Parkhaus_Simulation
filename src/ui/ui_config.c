@@ -446,19 +446,19 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
     return OK;
 }
 
-static float convert_rate_to_prob_perc(const float vehicles, const enum time_mode mode)
+static float convert_rate_to_prob_perc(const float vehicles, const rate_input_mode mode)
 {
     float cars_per_second = 0.0f;
 
-    if (mode == SECOND) /* per second */
+    if (mode == RATE_PER_SECOND)
     {
         cars_per_second = vehicles;
     }
-    else if (mode == MINUTE) /* per minute */
+    else if (mode == RATE_PER_MINUTE)
     {
         cars_per_second = vehicles / 60.0f;
     }
-    else if (mode == HOUR) /* per hour */
+    else if (mode == RATE_PER_HOUR)
     {
         cars_per_second = vehicles / 3600.0f;
     }
