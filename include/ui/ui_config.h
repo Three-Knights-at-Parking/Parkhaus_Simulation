@@ -78,4 +78,8 @@ int print_configscreen(const Settings *p_settings);
  */
 ui_state config_menu(Settings *p_settings);
 
+uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings);
+
+enum time_mode {SECOND, MINUTE, HOUR};
+
 #endif /* UI_CONFIG_H */

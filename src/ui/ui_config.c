@@ -445,6 +445,26 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
     return OK;
 }
 
+static float convert_rate_to_prob_perc(const float vehicles, const enum time_mode mode)
+{
+    float cars_per_second = 0.0f;
+
+    if (mode == SECOND) /* per second */
+    {
+        cars_per_second = vehicles;
+    }
+    else if (mode == MINUTE) /* per minute */
+    {
+        cars_per_second = vehicles / 60.0f;
+    }
+    else if (mode == HOUR) /* per hour */
+    {
+        cars_per_second = vehicles / 3600.0f;
+    }
+
+    return cars_per_second * 100.0f;
+}
+
 uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
 {
     if (p_settings == NULL)
@@ -705,7 +725,7 @@ ui_state config_menu(Settings *p_settings)
 
         (void)read_long_in_range("Enter random seed (or -1 for default/time): ",
                                  SETTINGS_DEFAULT_RAND_SEED,
-                                 MAX_SEED,  //Missing in Settings.h
+                                 MAX_SEED,
                                  &value);
 
         if (settings_set_rand_seed(p_settings, (int32_t)value) != OK)
