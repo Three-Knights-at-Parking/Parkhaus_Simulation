@@ -324,7 +324,8 @@ static uint16_t find_next_valid_tick(const uint16_t current_tick, const uint16_t
 }
 
 static int resolve_tick_gate_conflict(Settings *p_settings,
-                                       const int changed_field) {
+                                       const int changed_field)
+{
     int choice = -1;
     validation_flag valid = INVALID;
 
