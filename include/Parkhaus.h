@@ -53,7 +53,7 @@ int parkhouse_free(Parkhaus* p_parkhaus);
  * @param p_StatList Pointer to the statistics list.
  * @param pp_vehicle_list_head Pointer to the head pointer of parked vehicles.
  */
-int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse,const Settings* p_settings,
+int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings,
                                  StatList* p_StatList, GenericVehicle** pp_vehicle_list_head);
 
 /**

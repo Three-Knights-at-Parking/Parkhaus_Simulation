@@ -110,7 +110,8 @@ int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, c
 }
 
 
-int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, const Settings *p_settings, StatList *p_StatList,
+int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings,
+                                StatList* p_StatList,
                                 GenericVehicle **pp_vehicle_list_head, Queue *p_gate_queue) {
     uint16_t demand;
     uint16_t entries_done = 0;
@@ -136,7 +137,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, co
 
     //Entry Cycle
     while (demand > 0U && entries_done < entries_limit && !queue_blocked) {
-        GenericVehicle *p_vehicle = NULL;
+        GenericVehicle* p_vehicle = NULL;
         uint16_t required_space = 0;
 
         // wenn queue leer -> neues vehicle generiern & anhängen
@@ -180,7 +181,8 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, co
     return OK;
 }
 
-int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings, StatList* p_StatList,
+int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings,
+                           StatList* p_StatList,
                            Queue* p_gate_queues)
 {
     //checking for valid function call
@@ -330,7 +332,8 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     }
 
     //Vehicle found -> vehicle ist head -> nächstes Vehicle als head zuweisen
-    if (p_prev == NULL) {
+    if (p_prev == NULL)
+    {
         *pp_vehicle_list_head = p_cur->p_next;
     }
     else
@@ -444,7 +447,7 @@ int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remai
 }
 
 
-int queue_add_random_vehicle(Queue *p_gate_queue, uint32_t current_tick, const Settings *p_settings) {
+int queue_add_random_vehicle(Queue* p_gate_queue, uint32_t current_tick, const Settings *p_settings) {
 
 
     if (p_gate_queue == NULL || p_settings == NULL) {
@@ -452,7 +455,7 @@ int queue_add_random_vehicle(Queue *p_gate_queue, uint32_t current_tick, const S
         return ERROR;
     }
 
-    GenericVehicle *p_vehicle = create_random_vehicle(current_tick, p_settings);
+    GenericVehicle* p_vehicle = create_random_vehicle(current_tick, p_settings);
     if (p_vehicle == NULL) {
         print_error("queue_add_random_vehicle: create_random_vehicle: ERROR");
         return ERROR;
@@ -468,7 +471,7 @@ int queue_add_random_vehicle(Queue *p_gate_queue, uint32_t current_tick, const S
 }
 
 //vorerst ausschließlich car
-GenericVehicle *create_random_vehicle(uint32_t current_tick, const Settings *p_settings) {
+GenericVehicle* create_random_vehicle(uint32_t current_tick, const Settings *p_settings) {
 
     if (p_settings == NULL) {
         print_error("create_random_vehicle: central pointer error");
@@ -478,7 +481,7 @@ GenericVehicle *create_random_vehicle(uint32_t current_tick, const Settings *p_s
     uint32_t parking_ticks = rng_parking_time(p_settings->min_parking_ticks, p_settings->max_parking_ticks);
 
     // Switch (p_vehicle.type) + warscheinlichkeits auswahl
-    Car *p_car = car_create(current_tick, parking_ticks, Car_Space);
+    Car* p_car = car_create(current_tick, parking_ticks, Car_Space);
     GenericVehicle *p_vehicle = (GenericVehicle *) p_car;
 
 
@@ -537,7 +540,7 @@ uint16_t get_open_space(const Parkhaus *p_parkhouse) {
 }
 
 //Parkhaus & Vehicle & Statistik update bei verlassen des Parkhaus
-int update_on_vehicle_exit(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle* p_vehicle,
+int update_on_vehicle_exit(Parkhaus* p_parkhouse, StatList* p_StatList, GenericVehicle* p_vehicle,
                            uint16_t required_space, uint32_t current_tick)
 {
     //GenericVehicle *p_mutable_vehicle = (GenericVehicle *) p_vehicle;
@@ -631,7 +634,6 @@ int parkhouse_free(Parkhaus* p_parkhaus)
     }
     if (p_parkhaus->p_parked_head != NULL)
     {
-
         //Loop for removing all parked vehicles
         GenericVehicle* p_vehicle = p_parkhaus->p_parked_head;
         GenericVehicle* p_next = p_parkhaus->p_parked_head->p_next;
