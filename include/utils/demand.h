@@ -6,15 +6,12 @@
 #define TEIL1_PARKHAUS_SIMULATION_PLANNUNG_DEMAND_H
 
 #include "../types.h"
-#include "utils/RNG.h"
 
-/*
- * Demand module
- * - simulates the total demand per tick (global)
- * INPUT: Settings, Current_Tick, random number generator (with seed)
- * OUTPUT: returns total demand as unsigned integer
+/**
+ * @brief Generates total vehicle demand per tick based on Poisson-distributed arrivals.
+ * @author: ibach
+ * @param p_settings Pointer to simulation settings.
  */
-
 uint16_t demand_generate_total_perTick(const Settings *p_settings);
 
 #endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_DEMAND_H

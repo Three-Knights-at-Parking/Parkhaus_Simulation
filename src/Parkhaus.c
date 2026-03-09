@@ -15,7 +15,7 @@ int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_ga
     if (p_parkhaus == NULL || p_settings == NULL || p_gate_queues == NULL) {
         return ERROR;
     }
-    //p_parkhaus->name = p_settings->name[0]; FIXME Parkhaus Name
+    // p_parkhaus->name = p_settings->name[0]; FIXME Parkhaus name
     p_parkhaus->capacity = p_settings->capacity;
     p_parkhaus->floors = p_settings->floors;
     p_parkhaus->capacity_taken = 0;
@@ -24,7 +24,7 @@ int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_ga
     p_parkhaus->p_parked_tail = NULL;
     return OK;
 }
-//FIXME Ist hier nicht eine p_parkhaus pointer nötig anstelle des SimulaionObjecct da es in Parkhaus abgelegt ist?
+// FIXME Should this use a p_parkhaus pointer instead of SimulationObject since it is stored in Parkhaus?
 int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatList* p_StatList, uint32_t current_tick)
 {
     if (p_self == NULL || p_settings == NULL || p_StatList == NULL) {
@@ -39,12 +39,12 @@ int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatLis
     }
     int status = OK;
 
-    //pre checking Parkhaus initialisation & conditons
+    // Pre-check Parkhaus initialization conditions.
     if (p_settings->gates == 0U || p_parkhaus->gate_queues == NULL) {
         return ERROR;
     }
 
-    //Allgemeines leeren des Parkhaus
+    // General emptying step for the Parkhaus.
     status = parkhouse_tick_empty_general(current_tick, p_parkhaus,
                                         (Settings *) p_settings,
                                         p_StatList,
@@ -55,7 +55,7 @@ int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatLis
         return ERROR;
     }
 
-    //Allemeine Fill Funktion sofern nur ein Gate besteht
+    // General fill routine when only one gate exists.
     if (p_settings->gates == 1U) {
         status = parkhouse_tick_fill_general(current_tick,
                                             p_parkhaus,
@@ -124,7 +124,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, Se
         return ERROR;
     }
 
-    //demand for this Tick for this queue
+    // Demand for this tick on this queue.
     demand = p_gate_queue->demand; //or queue_get_demand(p_gate_queue);
     if (demand == 0U) {
         return OK;
@@ -132,15 +132,15 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, Se
 
     stats_tick_add_arrivals_generated(p_StatList, demand);
 
-    //anz. der möglichen Entrys pro Tick
+    // Number of possible entries per tick.
     entries_limit = p_settings->real_equivalent / p_settings->gate_entry_inSec;
 
-    //Entry Cycle
+    // Entry cycle.
     while (demand > 0U && entries_done < entries_limit && !queue_blocked) {
         GenericVehicle *p_vehicle = NULL;
         uint16_t required_space;
 
-        // wenn queue leer -> neues vehicle generiern & anhängen
+        // If queue is empty, create and enqueue a new vehicle.
         if (queue_is_empty(p_gate_queue)) {
             status = queue_add_random_vehicle(p_gate_queue, current_tick, p_settings);
             if (status == ERROR)
@@ -153,7 +153,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, Se
 
         if (!queue_is_empty(p_gate_queue))
         {
-            //check if theres enough space left
+            // Check if enough free space is available.
             required_space = get_vehicle_minimum_space(p_gate_queue->p_head);
             if (required_space > get_open_space(p_parkhouse)) {
                 stats_tick_add_blocker_full_active(p_StatList);
@@ -184,7 +184,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus *p_parkhouse, Se
 int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Settings* p_settings, StatList* p_StatList,
                            Queue* p_gate_queues)
 {
-    //checking for valid function call
+    // Check for a valid function call.
     if (p_parkhouse == NULL || p_settings == NULL || p_StatList == NULL)
     {
         print_error("parkhaus_tick_fill_subtick: central Pointer ERROR");
@@ -203,9 +203,9 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, Setting
 
     uint8_t gate;
     uint16_t subticks = p_settings->real_equivalent / p_settings->gate_entry_inSec;
-    //this represents the max entries per tick
+    // This represents the maximum entries per tick.
 
-    //Adding total demand of all queues to StatsTick
+    // Add total demand across all queues to this stats tick.
     uint16_t total = 0;
     for (gate = 0; gate < p_settings->gates; gate++)
     {
@@ -277,7 +277,7 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse,
     uint16_t required_space;
     if (!queue_is_empty(p_gate_queue))
     {
-        //check if theres enough space left
+        // Check if enough free space is available.
         required_space = get_vehicle_minimum_space(p_gate_queue->p_head);
         if (required_space > get_open_space(p_parkhouse))
         {
@@ -315,28 +315,28 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     if (p_parkhouse == NULL || pp_vehicle_list_head == NULL || p_vehicle == NULL) {
         return ERROR;
     }
-    //going through the list an searching for the correct vehicle
+    // Traverse the list and search for the target vehicle.
     p_cur = *pp_vehicle_list_head;
     while (p_cur != NULL && p_cur != p_vehicle) {
         p_prev = p_cur;
         p_cur = p_cur->p_next;
     }
-    //no vehicle found in list
+    // No vehicle found in list.
     if (p_cur == NULL) {
-        //deleting lost car
+        // Destroy lost vehicle instance.
         remove_vehicle(p_vehicle);
         print_error("vehicle_leaving: vehicle not found in parkhouse - vehicle destroyed");
         return ERROR;
     }
 
-    //Vehicle found -> vehicle ist head -> nächstes Vehicle als head zuweisen
+    // Vehicle found: if it is the head, move head to next.
     if (p_prev == NULL) {
         *pp_vehicle_list_head = p_cur->p_next;
     } else {
-        p_prev->p_next = p_cur->p_next; //Vehicle davor als nächstes das Vehicle nach Current zuweisen
+        p_prev->p_next = p_cur->p_next; // Link previous vehicle to the next one after current.
     }
 
-    //vehicle = parkhaus tail -> parkhaus.tail <- prev vehicle
+    // If current is tail, move tail to previous vehicle.
     if (p_parkhouse->p_parked_tail == p_cur) {
         p_parkhouse->p_parked_tail = p_prev;
     }
@@ -344,7 +344,7 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
         p_parkhouse->p_parked_head = p_cur->p_next;
     }
 
-    //updating Parkhouse and Stats
+    // Update Parkhaus state and statistics.
     required_space = get_vehicle_minimum_space(p_vehicle);
     if (get_vehicle_space_needed(p_vehicle) >= required_space) {
         required_space = get_vehicle_space_needed(p_vehicle);
@@ -375,33 +375,33 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
         print_error("fill_from_queue: central pointer error");
         return ERROR;
     }
-    //loading the Vehicle
+    // Load the next vehicle.
     GenericVehicle *p_vehicle = queue_get_next(p_gate_queue);
     if (p_vehicle == NULL) {
         *pp_vehicle = NULL;
         print_error("fill_from_queue: queue_dequeue: vehicle pointer missing");
         return ERROR;
     }
-    // Switch (p_vehicle.type)
+    // Switch by p_vehicle type.
     p_car = (Car *) p_vehicle;
 
-    //minimum für bessere verständlichkeit
+    // Minimum required space for clarity.
     minimum = get_vehicle_minimum_space(p_vehicle);
     open_space = get_open_space(p_parkhaus);
     spaces_needed = minimum;
 
-    //does the vehicle fit in?
+    // Check whether the vehicle fits.
     if (spaces_needed <= open_space) {
 
-        //deleting the vehicle from the queue after confirmation of fitting
+        // Remove the vehicle from queue after fit confirmation.
         status = queue_dequeue(p_gate_queue);
         if (status == ERROR) {print_error("fill_from_queue: dequeue error");}
 
-        //can the vehicle even "park bad" & probability
+        // Apply bad-parking probability when extra space is available.
         if (open_space >= (minimum * 2U) && rng_percent() <= BAD_PARKING_CHANCE_PERCENT) {
             spaces_needed = (minimum * 2U);
         }
-        //adding the vehicle to parkhouse queue
+        // Add the vehicle to the Parkhaus parked list.
         status = park_vehicle(p_parkhaus, p_vehicle);
         if (status == ERROR)
         {
@@ -417,7 +417,7 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
     return spaces_needed;
 }
 
-//moving left demand into queue or add to rejections
+// Move remaining demand into queue or count as rejections.
 int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remaining,
                 uint32_t current_tick, Settings *p_settings) {
 
@@ -465,7 +465,7 @@ int queue_add_random_vehicle(Queue *p_gate_queue, uint32_t current_tick, Setting
     return OK;
 }
 
-//vorerst ausschließlich car
+// Currently only car type is supported.
 GenericVehicle *create_random_vehicle(uint32_t current_tick, Settings *p_settings) {
     uint32_t parking_ticks;
 
@@ -476,7 +476,7 @@ GenericVehicle *create_random_vehicle(uint32_t current_tick, Settings *p_setting
 
     parking_ticks = rng_parking_time(p_settings->min_parking_ticks, p_settings->max_parking_ticks);
 
-    // Switch (p_vehicle.type) + warscheinlichkeits auswahl
+    // Switch by p_vehicle type and probability-based selection.
     Car *p_car;
     p_car = car_create(current_tick, parking_ticks, Car_Space);
     GenericVehicle *p_vehicle = (GenericVehicle *) p_car;
@@ -491,7 +491,7 @@ GenericVehicle *create_random_vehicle(uint32_t current_tick, Settings *p_setting
     return p_vehicle;
 }
 
-//parking / enqueueing new Vehicles at Parkhaus
+// Park/enqueue a new vehicle in Parkhaus.
 int park_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
     if (p_parkhaus == NULL || p_vehicle == NULL) {
         print_error("park_vehicel: central pointer error");
@@ -536,18 +536,18 @@ uint16_t get_open_space(const Parkhaus *p_parkhouse) {
     return (uint16_t) (p_parkhouse->capacity - p_parkhouse->capacity_taken);
 }
 
-//Parkhaus & Vehicle & Statistik update bei verlassen des Parkhaus
+// Update Parkhaus, vehicle, and statistics on vehicle exit.
 int update_on_vehicle_exit(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle *p_vehicle,
                             uint16_t required_space, uint32_t current_tick) {
 
-    //GenericVehicle *p_mutable_vehicle = (GenericVehicle *) p_vehicle;
+    // GenericVehicle *p_mutable_vehicle = (GenericVehicle *) p_vehicle;
 
     if (p_parkhouse == NULL || p_vehicle == NULL || p_StatList == NULL) {
         print_error("update_on_vehicle_exit: pointer issue");
         return ERROR;
     }
 
-    //left already set || car uses more space than is taken
+    // Exit already set or vehicle uses more space than currently taken.
     if (p_vehicle->park_house_left != 0U || p_parkhouse->capacity_taken < required_space)
     {
         print_error("update_on_vehicle_exit: Data Error");
@@ -566,11 +566,11 @@ int update_on_vehicle_exit(Parkhaus *p_parkhouse, StatList *p_StatList, GenericV
 
     return OK;
 }
-//Parkhaus & Statistik update bei betreten des Parkhaus
+// Update Parkhaus and statistics on vehicle entry.
 int update_on_vehicle_entry(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle *p_vehicle,
                              uint16_t required_space, uint32_t current_tick)
 {
-    //GenericVehicle *p_mutable_vehicle = (GenericVehicle *) p_vehicle;
+    // GenericVehicle *p_mutable_vehicle = (GenericVehicle *) p_vehicle;
 
     if (p_parkhouse == NULL || p_vehicle == NULL || p_StatList == NULL) {
         print_error("update_on_vehicle_entry: pointer issue");
@@ -604,7 +604,7 @@ int remove_vehicle(GenericVehicle* p_vehicle)
         return ERROR;
     }
 
-    // Switch (p_vehicle.type) for destroying diffrent types of vehicles correctly
+    // Switch by p_vehicle type to destroy different vehicle types correctly.
     Car* p_car = (Car*)p_vehicle;
     if (car_destroy(p_car) == ERROR)
     {
@@ -614,7 +614,8 @@ int remove_vehicle(GenericVehicle* p_vehicle)
     return OK;
 }
 
-//Freeing parkhouse parked vehicle list & queues
+// FIXME luca check.
+// Free Parkhaus parked vehicle list and queue references.
 int parkhouse_free(Parkhaus* p_parkhaus)
 {
     if (p_parkhaus == NULL)
@@ -623,7 +624,7 @@ int parkhouse_free(Parkhaus* p_parkhaus)
         return ERROR;
     }
     int status = 0;
-    //free Cars
+    // Free cars.
     if (p_parkhaus->p_parked_head == NULL || p_parkhaus->p_parked_tail == NULL)
     {
         print_error("parkhouse_free: no cars in parkhouse");
@@ -633,14 +634,14 @@ int parkhouse_free(Parkhaus* p_parkhaus)
         GenericVehicle* p_vehicle;
         GenericVehicle* p_next;
 
-        //Loop for removing all parked vehicles
+        // Loop over and remove all parked vehicles.
         p_vehicle = p_parkhaus->p_parked_head;
         p_next = p_parkhaus->p_parked_head->p_next;
         while (p_vehicle != NULL)
         {
             p_next = p_vehicle->p_next;
 
-            //remove vehicle
+            // Remove vehicle.
             status = remove_vehicle(p_vehicle);
             if (status == ERROR)
             {
@@ -655,4 +656,5 @@ int parkhouse_free(Parkhaus* p_parkhaus)
     p_parkhaus->gate_queues = NULL;
     return OK;
 }
+
 
