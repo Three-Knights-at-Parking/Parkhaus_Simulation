@@ -13,6 +13,41 @@
 /* Local helper functions                                                    */
 /* ========================================================================= */
 
+static int ask_tick_output_mode(int *p_print_all)
+{
+    char buffer[16];
+
+    if (p_print_all == NULL)
+    {
+        return ERROR;
+    }
+
+    while (1)
+    {
+        printf("Press ENTER for next tick or enter 0 to print all remaining ticks: ");
+
+        if (read_line(buffer, sizeof(buffer)) != OK)
+        {
+            printf("Input error.\n");
+            continue;
+        }
+
+        if (buffer[0] == '\0')
+        {
+            *p_print_all = 0;
+            return OK;
+        }
+
+        if (strcmp(buffer, "0") == 0)
+        {
+            *p_print_all = 1;
+            return OK;
+        }
+
+        printf("Invalid input. Please press ENTER or type 0.\n");
+    }
+}
+
 static int print_loaded_statistics(const Settings *p_settings,
                                    const StatList *p_stat_list)
 {
