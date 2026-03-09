@@ -82,10 +82,18 @@ void print_storagescreen(void)
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state storage_menu(void)
+ui_state storage_menu(Settings *p_settings)
 {
     int choice = 0;
     validation_flag valid = INVALID;
+
+    if (p_settings == NULL)
+    {
+        printf("Internal error: Settings not available.\n");
+        printf("Press ENTER to return...\n");
+        press_enter_to_continue();
+        return UI_HOME;
+    }
 
     print_storagescreen();
 
@@ -97,7 +105,7 @@ ui_state storage_menu(void)
 
     if (choice == 1)
     {
-        (void)load_statistics_file_prompt();
+        (void)load_statistics_file_prompt(p_settings);
         return UI_STORAGE;
     }
     else if (choice == 0)

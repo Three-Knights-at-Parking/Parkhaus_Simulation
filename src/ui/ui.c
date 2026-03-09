@@ -213,7 +213,7 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
         }
         else if (state == UI_STORAGE)
         {
-            state = storage_menu();
+            state = storage_menu(p_settings);
         }
         else
         {
