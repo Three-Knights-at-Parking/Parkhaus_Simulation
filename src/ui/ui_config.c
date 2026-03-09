@@ -184,9 +184,6 @@ static int read_float_percent(const char *p_prompt, float *p_out)
 
 static int ui_settings_set_name(Settings *p_settings, const char *p_name)
 {
-    /* Settings.c has a private static settings_set_name().
-       Until a public setter exists, we replicate the logic here. */
-
     if (p_settings == NULL || p_name == NULL)
     {
         return ERROR;
@@ -213,7 +210,8 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
     p_buf[len] = '\0';
 
     free(p_settings->name);
-    *p_settings->name = p_buf;
+    p_settings->name = p_buf;
+
     return OK;
 }
 
