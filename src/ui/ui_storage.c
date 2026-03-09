@@ -12,6 +12,36 @@
 /* Local helper functions                                                    */
 /* ========================================================================= */
 
+static void free_loaded_stat_list(StatList *p_stat_list)
+{
+    StatsTick *p_current_tick = NULL;
+    StatsTick *p_next_tick = NULL;
+
+    if (p_stat_list == NULL)
+    {
+        return;
+    }
+
+    p_current_tick = p_stat_list->p_tick_head;
+
+    while (p_current_tick != NULL)
+    {
+        p_next_tick = p_current_tick->p_next;
+        free(p_current_tick);
+        p_current_tick = p_next_tick;
+    }
+
+    if (p_stat_list->p_summary != NULL)
+    {
+        free(p_stat_list->p_summary);
+        p_stat_list->p_summary = NULL;
+    }
+
+    p_stat_list->p_tick_head = NULL;
+    p_stat_list->p_tick_tail = NULL;
+    p_stat_list->p_current_tick = NULL;
+}
+
 static int load_statistics_file_prompt(const Settings *p_settings)
 {
     char file_name[128];
