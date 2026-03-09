@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_storage.h"
@@ -11,9 +12,15 @@
 /* Local helper functions                                                    */
 /* ========================================================================= */
 
-static int load_statistics_file_prompt(void)
+static int load_statistics_file_prompt(const Settings *p_settings)
 {
     char file_name[128];
+    StatList *p_loaded_stats = NULL;
+
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
 
     clear_terminal();
 
@@ -33,11 +40,26 @@ static int load_statistics_file_prompt(void)
         return ERROR;
     }
 
+    p_loaded_stats = malloc(sizeof(StatList));
+    if (p_loaded_stats == NULL)
+    {
+        printf("Memory allocation for StatList failed.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    p_loaded_stats->p_tick_head = NULL;
+    p_loaded_stats->p_tick_tail = NULL;
+    p_loaded_stats->p_current_tick = NULL;
+    p_loaded_stats->p_summary = NULL;
+
     if (file_name[0] == '\0')
     {
-        if (savehandler_load_and_print(NULL) != OK)
+        if (savehandler_load_and_print(NULL, p_loaded_stats) != OK)
         {
             printf("Loading default statistics file failed.\n");
+            free(p_loaded_stats);
             printf("Press ENTER to continue...\n");
             press_enter_to_continue();
             return ERROR;
@@ -45,16 +67,33 @@ static int load_statistics_file_prompt(void)
     }
     else
     {
-        if (savehandler_load_and_print(file_name) != OK)
+        if (savehandler_load_and_print(file_name, p_loaded_stats) != OK)
         {
             printf("Loading statistics file failed.\n");
+            free(p_loaded_stats);
             printf("Press ENTER to continue...\n");
             press_enter_to_continue();
             return ERROR;
         }
     }
 
+    clear_terminal();
+
+    if (print_loaded_statistics(p_settings, p_loaded_stats) != OK)
+    {
+        printf("Printing loaded statistics failed.\n");
+        free_loaded_stat_list(p_loaded_stats);
+        free(p_loaded_stats);
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    free_loaded_stat_list(p_loaded_stats);
+    free(p_loaded_stats);
+
     printf("\n");
+    printf("Finished displaying loaded statistics.\n");
     printf("Press ENTER to continue...\n");
     press_enter_to_continue();
 
@@ -73,7 +112,7 @@ void print_storagescreen(void)
     printf("            STORAGE MENU\n");
     printf("====================================\n");
     printf("\n");
-    printf("1 Browse Stats Directory\n");
+    printf("1 Load statistics files\n");
     printf("0 Back to Home\n");
     printf("\n");
 }
