@@ -19,7 +19,6 @@ typedef struct GenericVehicle GenericVehicle;
 typedef struct StatsTick StatsTick;
 typedef struct StatsSummary StatsSummary;
 typedef struct StatList StatList;
-typedef struct RNG RNG;
 
 
 /**
@@ -135,11 +134,6 @@ struct Car {
     GenericVehicle base; // base vehicle object
     uint8_t minimum_spaces; // How many spaces this vehicle needs at least.
     uint8_t spaces_needed; // How many spaces this vehicle needs
-};
-
-struct RNG
-{
-    uint32_t seed;
 };
 
 // --- EXAMPLE OF ANOTHER VEHICLE TYPE ---
