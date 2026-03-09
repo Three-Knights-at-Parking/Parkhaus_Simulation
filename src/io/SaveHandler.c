@@ -16,9 +16,9 @@
     #define MAKE_DIR(path) mkdir(path, 0777)
 #endif
 
-#define STATS_BASE_DIR "../stats/"
+#define STATS_BASE_DIR "./stats/"
 #define DEFAULT_STATS_FILE "stats.csv"
-#define DEFAULT_STATS_PATH "../stats/stats.csv"
+#define DEFAULT_STATS_PATH "./stats/stats.csv"
 #define MAX_PATH_LENGTH 512
 
 const char *savehandler_resolve_stats_path(const char *dest_path) {
@@ -113,7 +113,7 @@ int savehandler_save_summary(const Simulation *p_sim, const StatsSummary *p_summ
 
     FILE *f = fopen(resolved_path, "a");
     if (f == NULL) {
-        print_error_s("savehandler_save_summary: Could not open stats file for writing.", HIGH);
+        print_error_s("Could not open stats file for writing.", HIGH);
         return ERROR;
     }
 
@@ -148,7 +148,7 @@ int savehandler_load_and_print(const char *src_path) {
 
     FILE *f = fopen(resolved_path, "r");
     if (f == NULL) {
-        print_warning_s("savehandler_load_and_print: No existing stats file found to load.");
+        print_warning_s("No existing stats file found to load.");
         return ERROR;
     }
 
