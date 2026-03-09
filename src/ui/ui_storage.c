@@ -148,7 +148,7 @@ static int load_statistics_file_prompt(const Settings *p_settings)
         return ERROR;
     }
 
-    p_loaded_stats = malloc(sizeof(StatList));
+    //p_loaded_stats = malloc(sizeof(StatList));
     if (p_loaded_stats == NULL)
     {
         printf("Memory allocation for StatList failed.\n");
@@ -198,7 +198,7 @@ static int load_statistics_file_prompt(const Settings *p_settings)
     }
 
     free_loaded_stat_list(p_loaded_stats);
-    free(p_loaded_stats);
+    //free(p_loaded_stats);
 
     printf("\n");
     printf("Finished displaying loaded statistics.\n");
@@ -220,7 +220,7 @@ void print_storagescreen(void)
     printf("            STORAGE MENU\n");
     printf("====================================\n");
     printf("\n");
-    printf("1 Load statistics files\n");
+    printf("1 Load statistics file\n");
     printf("0 Back to Home\n");
     printf("\n");
 }
