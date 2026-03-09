@@ -575,6 +575,8 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 5)
     {
+        const uint16_t old_gate_entry = p_settings->gate_entry_inSec;
+
         long value = 0;
 
         (void)read_long_in_range("Enter gate entry time in seconds: ",
@@ -582,8 +584,17 @@ ui_state config_menu(Settings *p_settings)
                                  SETTINGS_MAXIMUM_GATE_ENTRY_SEC,
                                  &value);
 
-        /* TODO: replace with settings_set_gate_entry_inSec(p_settings, ...) when available */
         p_settings->gate_entry_inSec = (uint16_t)value;
+
+        if (resolve_tick_gate_conflict(p_settings, 5) != OK)
+        {
+            p_settings->gate_entry_inSec = old_gate_entry;
+
+            printf("Change cancelled. Previous gate entry time restored.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
         return UI_KONFIG;
     }
     else if (choice == 6)
