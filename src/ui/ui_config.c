@@ -268,6 +268,16 @@ static int edit_mode_select(void)
     return (int)choice;
 }
 
+static int is_time_config_valid(const uint16_t tick_in_sec, const uint16_t gate_entry_in_sec)
+{
+    if (gate_entry_in_sec == 0U)
+    {
+        return ERROR;
+    }
+
+    return ((tick_in_sec % gate_entry_in_sec) == 0U) ? OK : ERROR;
+}
+
 static int resolve_tick_gate_conflict(Settings *p_settings, const int changed_field)
 {
     long choice = 0;
