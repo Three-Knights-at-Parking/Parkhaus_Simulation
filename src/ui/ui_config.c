@@ -469,7 +469,6 @@ static float convert_rate_to_prob_perc(const float vehicles, const rate_input_mo
 static int edit_arrival_rate_mode(void)
 {
     int choice = -1;
-    validation_flag valid = INVALID;
 
     clear_terminal();
 
@@ -477,15 +476,28 @@ static int edit_arrival_rate_mode(void)
     printf("-----------------------\n");
     printf("1 - Vehicles per second\n");
     printf("2 - Vehicles per minute\n");
-    printf("3 - Vehicles per hour\n");
+    printf("3 - Vehicles per hour\n\n");
 
-    while (valid != VALID)
+    while (1)
     {
         choice = user_input();
-        valid = validate_user_input(choice, 3);
-    }
 
-    return choice;
+        if (choice >= 1 && choice <= 3)
+        {
+            return choice;
+        }
+
+        printf("Please choose 1, 2 or 3.\n");
+        printf("Press ENTER and try again...\n");
+        press_enter_to_continue();
+        clear_terminal();
+
+        printf("Arrival Rate Input Mode\n");
+        printf("-----------------------\n");
+        printf("1 - Vehicles per second\n");
+        printf("2 - Vehicles per minute\n");
+        printf("3 - Vehicles per hour\n\n");
+    }
 }
 
 uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
