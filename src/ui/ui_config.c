@@ -599,15 +599,26 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 6)
     {
+        const uint16_t old_tick = p_settings->tick_inSec;
+
         long value = 0;
 
         (void)read_long_in_range("Enter tick length in seconds: ",
-                                 MIN_TICK_SEC,    //Is missing in Settings.h
-                                 MAX_TICK_SEC,    //Is missing in Settings.h
+                                 MIN_TICK_SEC,
+                                 MAX_TICK_SEC,
                                  &value);
 
-        /* TODO: replace with settings_set_tick_inSec(p_settings, ...) when available */
         p_settings->tick_inSec = (uint16_t)value;
+
+        if (resolve_tick_gate_conflict(p_settings, 6) != OK)
+        {
+            p_settings->tick_inSec = old_tick;
+
+            printf("Change cancelled. Previous tick length restored.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
         return UI_KONFIG;
     }
     else if (choice == 7)
