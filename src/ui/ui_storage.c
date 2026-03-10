@@ -263,12 +263,12 @@ ui_state storage_menu(Settings *p_settings)
         valid = validate_user_input(choice, STORAGE_MAX_VALID_NUMBER);
     }
 
-    if (choice == 1)
+    if (choice == LOAD_STORAGE)
     {
         (void)load_statistics_file_prompt(p_settings);
         return UI_STORAGE;
     }
-    else if (choice == 0)
+    else if (choice == BACK_STORAGE)
     {
         return UI_HOME;
     }
