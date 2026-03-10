@@ -120,5 +120,26 @@ int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
             blocker_full_ticks++;
         }
 
+        sum_queue_wait_entered_ticks += p_tick->queue_wait_entered_sum_ticks;
+        sum_queue_wait_entered_count += p_tick->queue_wait_entered_count;
+
+        if (p_tick->queue_wait_max_ticks_tick > p_summary->queue_wait_max_ticks)
+        {
+            p_summary->queue_wait_max_ticks = p_tick->queue_wait_max_ticks_tick;
+        }
+
+        sum_parking_duration_departed_ticks +=
+            p_tick->parking_duration_departed_sum_ticks;
+        sum_parking_duration_departed_count +=
+            p_tick->parking_duration_departed_count;
+
+        if (p_summary->total_ticks == 1U)
+        {
+            p_summary->capacity_total = p_tick->capacity_total;
+        }
+
+        p_next_tick = p_tick->p_next;
+    }
+
     return OK;
 }
