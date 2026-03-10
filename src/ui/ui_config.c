@@ -483,6 +483,26 @@ static int edit_arrival_rate_mode(void)
     }
 }
 
+static int is_parking_time_config_valid(const Settings *p_settings)
+{
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    if (p_settings->min_parking_ticks < 1U)
+    {
+        return ERROR;
+    }
+
+    if (p_settings->max_parking_ticks < p_settings->min_parking_ticks)
+    {
+        return ERROR;
+    }
+
+    return OK;
+}
+
 uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
 {
     if (p_settings == NULL)
