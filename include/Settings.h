@@ -26,7 +26,6 @@
 #define SETTINGS_DEFAULT_MAX_TICKS (-1)     // -1 represents 1 day of simulation
 #define SETTINGS_MAXIMUM_DAY_TICKS (-365)     // Max one year of simulation
 #define SETTINGS_MAXIMUM_TICKS INT32_MAX     // Max one year of simulation
-#define SETTINGS_DEFAULT_MAX_TICKS (-1)     // -1 represents 1 day of simulation
 
 #define SETTINGS_MINIMUM_PARKING_TICKS 1
 #define SETTINGS_MAXIMUM_PARKING_TICKS INT32_MAX
