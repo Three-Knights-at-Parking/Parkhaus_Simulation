@@ -182,7 +182,17 @@ ui_state welcome_message(void)
     printf("     Parkhaus-Simulation Rauenegg\n");
     printf("=========================================\n\n");
 
-    printf("[Welcome Message with brief description]\n\n");
+    printf("Welcome!\n\n");
+    printf("This program simulates the behaviour of a parking garage.\n");
+    printf("Vehicles arrive, queue at gates, enter the garage,\n");
+    printf("occupy parking spaces and leave again after a parking time.\n\n");
+
+    printf("You can configure simulation parameters, run simulations\n");
+    printf("and inspect stored statistics.\n\n");
+
+    printf("For a short explanation of the simulation model and all\n");
+    printf("important settings, open the HELP menu from the Home Menu.\n\n");
+
     printf("Press ENTER to continue...\n");
 
     press_enter_to_continue();
