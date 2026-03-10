@@ -36,6 +36,19 @@ const StatsTick * stats_get_latest_tick(const StatList *p_stats) {
 
 int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
 {
+    const StatsTick *p_next_tick = NULL;
+
+    double sum_capacity_taken_percent = 0.0;
+    uint64_t sum_queue_length_end = 0U;
+    uint64_t sum_entered = 0U;
+    uint64_t sum_departed = 0U;
+    uint64_t sum_queue_wait_entered_ticks = 0U;
+    uint64_t sum_queue_wait_entered_count = 0U;
+    uint64_t sum_parking_duration_departed_ticks = 0U;
+    uint64_t sum_parking_duration_departed_count = 0U;
+    uint32_t queue_active_ticks = 0U;
+    uint32_t blocker_full_ticks = 0U;
+
     checkNull(p_stats);
     checkNull(p_summary);
 
@@ -78,6 +91,15 @@ int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
     /* 8) Quality/rule statistics */
     p_summary->bad_parking_cases_total = 0U;
     p_summary->bad_parking_share_percent = 0.0f;
+
+    StatsTick *p_next_tick = p_stats->p_tick_head;
+    while (p_next_tick != NULL)
+    {
+        StatsTick *p_tick = p_next_tick;
+        p_summary->total_ticks = p_summary->total_ticks + 1;
+
+    }
+
 
     return OK;
 }
