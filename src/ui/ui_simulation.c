@@ -79,7 +79,7 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
         valid = validate_user_input(choice, SIMULATION_MAX_VALID_NUMBER);
     }
 
-    if (choice == 1)
+    if (choice == SIMULATION)
     {
         printf("Starting simulation...\n");
 
@@ -99,11 +99,11 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
 
         return UI_SIMULATION;
     }
-    else if (choice == 2)
+    else if (choice == CONFIGURATION)
     {
         return UI_KONFIG;
     }
-    else if (choice == 0)
+    else if (choice == BACK)
     {
         return UI_HOME;
     }

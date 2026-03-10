@@ -15,6 +15,11 @@
 #include "ui.h"
 #include "types.h"
 
+enum users_choice_sim{
+    BACK = 0,
+    SIMULATION = 1,
+    CONFIGURATION = 2
+};
 /* ========================================================================= */
 /* Simulation menu limits                                                    */
 /* ========================================================================= */
