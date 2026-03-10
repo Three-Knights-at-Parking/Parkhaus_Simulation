@@ -16,9 +16,9 @@
 #include "types.h"
 
 enum users_choice_sim{
-    BACK = 0,
-    SIMULATION = 1,
-    CONFIGURATION = 2
+    BACK_SIM = 0,
+    SIMULATION_SIM = 1,
+    CONFIGURATION_SIM = 2
 };
 /* ========================================================================= */
 /* Simulation menu limits                                                    */
