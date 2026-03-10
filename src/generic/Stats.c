@@ -162,5 +162,35 @@ int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
             ((float)blocker_full_ticks * 100.0f) / (float)p_summary->total_ticks;
     }
 
+    if (sum_queue_wait_entered_count > 0U)
+    {
+        p_summary->queue_wait_avg_ticks =
+            (uint32_t)(sum_queue_wait_entered_ticks / sum_queue_wait_entered_count);
+    }
+    else
+    {
+        p_summary->queue_wait_avg_ticks = 0U;
+    }
+
+    if (sum_parking_duration_departed_count > 0U)
+    {
+        p_summary->parking_duration_avg_ticks =
+            (uint16_t)(sum_parking_duration_departed_ticks / sum_parking_duration_departed_count);
+    }
+    else
+    {
+        p_summary->parking_duration_avg_ticks = 0U;
+    }
+
+    if (p_summary->entered_total > 0U)
+    {
+        p_summary->bad_parking_share_percent =
+            ((float)p_summary->bad_parking_cases_total * 100.0f) / (float)p_summary->entered_total;
+    }
+    else
+    {
+        p_summary->bad_parking_share_percent = 0.0f;
+    }
+
     return OK;
 }
