@@ -82,5 +82,21 @@ int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
         {
             current_capacity_percent = 0.0f;
         }
+
+        sum_capacity_taken_percent += current_capacity_percent;
+        sum_queue_length_end += p_tick->queue_length_end;
+        sum_entered += p_tick->entered;
+        sum_departed += p_tick->departed;
+
+        if (p_tick->capacity_free == 0U)
+        {
+            p_summary->full_ticks++;
+
+            if (p_summary->first_full_tick < 0)
+            {
+                p_summary->first_full_tick = (int32_t)p_tick->current_tick;
+            }
+        }
+
     return OK;
 }
