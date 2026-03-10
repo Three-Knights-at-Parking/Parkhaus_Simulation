@@ -7,7 +7,6 @@
 
 #include "../include/simulation.h"
 #include "../include/types.h"
-#include "utils/SafteyUtils.h"
 
 
 /* ========================================================================= */
