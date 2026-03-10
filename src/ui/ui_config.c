@@ -145,7 +145,7 @@ static int read_long_in_range(const char *p_prompt, const long min_val, const lo
     }
 }
 
-static int read_float_nonnegative(const char *p_prompt, float *p_out)
+static int read_float_positive(const char *p_prompt, float *p_out)
 {
     char buffer[64];
 
@@ -324,7 +324,8 @@ static uint16_t find_next_valid_tick(const uint16_t current_tick, const uint16_t
 }
 
 static int resolve_tick_gate_conflict(Settings *p_settings,
-                                       const int changed_field) {
+                                       const int changed_field)
+{
     int choice = -1;
     validation_flag valid = INVALID;
 
@@ -734,7 +735,7 @@ ui_state config_menu(Settings *p_settings)
         float vehicles = 0.0f;
         const rate_input_mode mode = (rate_input_mode)edit_arrival_rate_mode();
 
-        (void)read_float_nonnegative("Enter average arriving vehicles: ",
+        (void)read_float_positive("Enter average arriving vehicles: ",
                                      &vehicles);
 
         const float probability = convert_rate_to_prob_perc(vehicles, mode);
