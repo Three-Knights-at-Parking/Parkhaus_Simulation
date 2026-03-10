@@ -9,6 +9,7 @@
 #include "../include/ui/ui_config.h"
 #include "../include/ui/ui_simulation.h"
 #include "../include/ui/ui_storage.h"
+#include "../include/ui/ui_help.h"
 
 /* ========================================================================= */
 /* Helper functions                                                          */
@@ -214,6 +215,10 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
         else if (state == UI_STORAGE)
         {
             state = storage_menu(p_settings);
+        }
+        else if (state == UI_HELP)
+        {
+            state = help_menu();
         }
         else
         {
