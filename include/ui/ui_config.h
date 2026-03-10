@@ -32,7 +32,7 @@
  * Valid user input range:
  * 0 .. CONFIG_MAX_VALID_NUMBER
  */
-#define CONFIG_MAX_VALID_NUMBER (10)
+#define CONFIG_MAX_VALID_NUMBER (12)
 
 /* ========================================================================= */
 /* Numeric limits                                                            */

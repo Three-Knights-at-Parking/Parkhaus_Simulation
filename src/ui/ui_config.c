@@ -530,22 +530,12 @@ int print_configscreen(const Settings *p_settings)
     printf("4  Gates                  : %u\n", (unsigned)p_settings->gates);
     printf("5  Gate Entry Time (sec)  : %u\n", (unsigned)p_settings->gate_entry_inSec);
     printf("6  Tick Length (sec)      : %u\n", (unsigned)p_settings->tick_inSec);
-
-    if (max_entries_per_tick > 0U)
-    {
-        printf("   Max Gate Entries / Tick: %u\n", (unsigned)max_entries_per_tick);
-    }
-    else
-    {
-        printf("   Max Gate Entries / Tick: INVALID CONFIG\n");
-    }
-
-    printf("7  Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
-    printf("8  Entry Prob / Sec (%%)    : %.2f\n", p_settings->entry_probability_perSec_prec);
-    printf("9  Max Ticks              : %ld\n", (long)p_settings->max_ticks);
-    printf("10 Random Seed            : %ld\n", (long)p_settings->rand_seed);
-    printf("------------------------------------\n");
-    printf("0  Back to Home\n\n");
+    printf("7  Min Parking Ticks      : %lu\n", (unsigned long)p_settings->min_parking_ticks);
+    printf("8  Max Parking Ticks      : %lu\n", (unsigned long)p_settings->max_parking_ticks);
+    printf("9  Entry Prob / Sec (%%)    : %.2f\n", p_settings->entry_probability_perSec_prec);
+    printf("10 Max Ticks              : %ld\n", (long)p_settings->max_ticks);
+    printf("11 Random Seed            : %ld\n", (long)p_settings->rand_seed);
+    printf("12 Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
 
     return OK;
 }
