@@ -591,7 +591,7 @@ ui_state config_menu(Settings *p_settings)
 
         if (ui_settings_set_name(p_settings, name_buf) != OK)
         {
-            printf("Failed to set name (out of memory?).\n");
+            printf("Failed to set name.\n");
             printf("Press ENTER to continue...\n");
             press_enter_to_continue();
         }
@@ -609,8 +609,11 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_size(p_settings, (uint16_t)value) != OK)
         {
-            printf("Failed to set capacity (out of memory?).\n");
+            printf("Failed to set capacity.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
     else if (choice == 3)
@@ -624,8 +627,11 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_floors(p_settings, (uint8_t)value) != OK)
         {
-            printf("Failed to set floors (out of memory?).\n");
+            printf("Failed to set floors.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
     else if (choice == 4)
@@ -639,14 +645,16 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_gates(p_settings, (uint8_t)value) != OK)
         {
-            printf("Failed to set gates (out of memory?).\n");
+            printf("Failed to set gates.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
     else if (choice == 5)
     {
         const uint16_t old_gate_entry = p_settings->gate_entry_inSec;
-
         long value = 0;
 
         (void)read_long_in_range("Enter gate entry time in seconds: ",
@@ -670,7 +678,6 @@ ui_state config_menu(Settings *p_settings)
     else if (choice == 6)
     {
         const uint16_t old_tick = p_settings->tick_inSec;
-
         long value = 0;
 
         (void)read_long_in_range("Enter tick length in seconds: ",
@@ -693,16 +700,53 @@ ui_state config_menu(Settings *p_settings)
     }
     else if (choice == 7)
     {
-        const int mode_select = edit_mode_select();
-        const enum OutputMode mode = apply_mode_select(mode_select);
+        const uint32_t old_min = p_settings->min_parking_ticks;
+        long value = 0;
 
-        if (settings_set_output_mode(p_settings, mode) != OK)
+        (void)read_long_in_range("Enter minimum parking ticks: ",
+                                 1,
+                                 INT32_MAX,
+                                 &value);
+
+        p_settings->min_parking_ticks = (uint32_t)value;
+
+        if (is_parking_time_config_valid(p_settings) != OK)
         {
-            printf("Failed to set output mode (out of memory?).\n");
+            p_settings->min_parking_ticks = old_min;
+
+            printf("Invalid configuration.\n");
+            printf("Minimum parking ticks must be <= maximum parking ticks.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
     else if (choice == 8)
+    {
+        const uint32_t old_max = p_settings->max_parking_ticks;
+        long value = 0;
+
+        (void)read_long_in_range("Enter maximum parking ticks: ",
+                                 1,
+                                 INT32_MAX,
+                                 &value);
+
+        p_settings->max_parking_ticks = (uint32_t)value;
+
+        if (is_parking_time_config_valid(p_settings) != OK)
+        {
+            p_settings->max_parking_ticks = old_max;
+
+            printf("Invalid configuration.\n");
+            printf("Maximum parking ticks must be >= minimum parking ticks.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
+        return UI_KONFIG;
+    }
+    else if (choice == 9)
     {
         float vehicles = 0.0f;
         const rate_input_mode mode = (rate_input_mode)edit_arrival_rate_mode();
@@ -710,17 +754,16 @@ ui_state config_menu(Settings *p_settings)
         (void)read_float_nonnegative("Enter average arriving vehicles: ",
                                      &vehicles);
 
-        const float probability = convert_rate_to_prob_perc(vehicles, mode);
+        p_settings->entry_probability_perSec_prec = convert_rate_to_prob_perc(vehicles, mode);
 
-        p_settings->entry_probability_perSec_prec = probability;
-
-        printf("Converted probability per second: %.2f %%\n", probability);
+        printf("Converted probability per second: %.2f %%\n",
+               p_settings->entry_probability_perSec_prec);
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
 
         return UI_KONFIG;
     }
-    else if (choice == 9)
+    else if (choice == 10)
     {
         long value = 0;
 
@@ -731,11 +774,14 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_max_ticks(p_settings, (int32_t)value) != OK)
         {
-            printf("Failed to set max ticks (out of memory?).\n");
+            printf("Failed to set max ticks.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
-    else if (choice == 10)
+    else if (choice == 11)
     {
         long value = 0;
 
@@ -746,8 +792,25 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_rand_seed(p_settings, (int32_t)value) != OK)
         {
-            printf("Failed to set random seed (out of memory?).\n");
+            printf("Failed to set random seed.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
+        return UI_KONFIG;
+    }
+    else if (choice == 12)
+    {
+        const int mode_select = edit_mode_select();
+        const enum OutputMode mode = apply_mode_select(mode_select);
+
+        if (settings_set_output_mode(p_settings, mode) != OK)
+        {
+            printf("Failed to set output mode.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
         return UI_KONFIG;
     }
 
