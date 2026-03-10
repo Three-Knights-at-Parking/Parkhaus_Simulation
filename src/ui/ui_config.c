@@ -145,7 +145,7 @@ static int read_long_in_range(const char *p_prompt, const long min_val, const lo
     }
 }
 
-static int read_float_positive(const char *p_prompt, float *p_out)
+static int read_float_nonnegative(const char *p_prompt, float *p_out)
 {
     char buffer[64];
 
@@ -199,23 +199,8 @@ static int ui_settings_set_name(Settings *p_settings, const char *p_name)
         return ERROR;
     }
 
-    size_t len = strlen(p_name);
-    if (len > SETTINGS_NAME_MAX_LENGTH)
-    {
-        len = SETTINGS_NAME_MAX_LENGTH;
-    }
-
-    char *p_buf = malloc(len + 1U);
-    if (p_buf == NULL)
-    {
-        return ERROR;
-    }
-
-    memcpy(p_buf, p_name, len);
-    p_buf[len] = '\0';
-
-    free(p_settings->name);
-    *p_settings->name = p_buf;
+    strncpy(p_settings->name, p_name, SETTINGS_NAME_MAX_LENGTH);
+    p_settings->name[SETTINGS_NAME_MAX_LENGTH] = '\0';
 
     return OK;
 }
@@ -542,7 +527,7 @@ int print_configscreen(const Settings *p_settings)
 
     printf("Current Settings\n");
     printf("------------------------------------\n");
-    printf("1  Name                   : %s\n", *p_settings->name);
+    printf("1  Name                   : %s\n", p_settings->name);
     printf("2  Capacity / Floor       : %u\n", (unsigned)p_settings->capacity);
     printf("3  Floors                 : %u\n", (unsigned)p_settings->floors);
     printf("4  Gates                  : %u\n", (unsigned)p_settings->gates);
