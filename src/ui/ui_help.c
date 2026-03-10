@@ -131,17 +131,17 @@ ui_state help_menu(void)
             valid = validate_user_input(choice, HELP_MAX_VALID_NUMBER);
         }
 
-        if (choice == 1)
+        if (choice == SIMULATION_HELP)
         {
             print_help_simulation();
             press_enter_to_continue();
         }
-        else if (choice == 2)
+        else if (choice == SETTINGS_HELP)
         {
             print_help_settings();
             press_enter_to_continue();
         }
-        else
+        else if (choice == BACK_HELP)
         {
             return UI_HOME;
         }
