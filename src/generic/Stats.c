@@ -72,6 +72,15 @@ int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
         p_summary->queue_rejections_total += p_tick->queue_rejections;
         p_summary->bad_parking_cases_total += p_tick->bad_parking_cases;
 
-
+        if (p_tick->capacity_total > 0U)
+        {
+            current_capacity_percent =
+                ((float)p_tick->capacity_taken * 100.0f) /
+                (float)p_tick->capacity_total;
+        }
+        else
+        {
+            current_capacity_percent = 0.0f;
+        }
     return OK;
 }
