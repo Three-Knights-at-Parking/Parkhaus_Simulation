@@ -15,6 +15,15 @@
 
 #include "ui.h"
 
+typedef enum
+{
+    MENU_EXIT = 0,
+    SIMULATION_HOME = 1,
+    CONFIGURATION_HOME = 2,
+    STORAGE_HOME = 3,
+    HELP_HOME = 4
+}users_choice_home;
+
 /**
  * @brief Maximum valid menu number on the Home screen.
  *

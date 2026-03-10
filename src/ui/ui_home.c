@@ -50,19 +50,19 @@ ui_state home_menu(void) {
 
     /* Map numeric menu choice to UI state.
        The state machine in ui_start() will call the appropriate menu handler. */
-    if (choice == 1)
+    if (choice == SIMULATION_HOME)
     {
         return UI_SIMULATION;
     }
-    else if (choice == 2)
+    else if (choice == CONFIGURATION_HOME)
     {
         return UI_KONFIG;
     }
-    else if (choice == 3)
+    else if (choice == STORAGE_HOME)
     {
         return UI_STORAGE;
     }
-    else if (choice == 4)
+    else if (choice == HELP_HOME)
     {
         return UI_HELP;
     }
