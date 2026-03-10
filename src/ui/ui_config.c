@@ -504,26 +504,6 @@ static int is_parking_time_config_valid(const Settings *p_settings)
     return OK;
 }
 
-uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
-{
-    if (p_settings == NULL)
-    {
-        return 0U;
-    }
-
-    if (p_settings->gate_entry_inSec == 0U)
-    {
-        return 0U;
-    }
-
-    if ((p_settings->tick_inSec % p_settings->gate_entry_inSec) != 0U)
-    {
-        return 0U;
-    }
-
-    return (uint16_t)(p_settings->tick_inSec / p_settings->gate_entry_inSec);
-}
-
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
@@ -534,8 +514,6 @@ int print_configscreen(const Settings *p_settings)
     {
         return ERROR;
     }
-
-    const uint16_t max_entries_per_tick = calc_max_possible_entries_per_tick(p_settings);
 
     clear_terminal();
 
@@ -557,6 +535,8 @@ int print_configscreen(const Settings *p_settings)
     printf("10 Max Ticks              : %ld\n", (long)p_settings->max_ticks);
     printf("11 Random Seed            : %ld\n", (long)p_settings->rand_seed);
     printf("12 Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
+    printf("------------------------------------\n");
+    printf("0  Back to Home\n\n");
 
     return OK;
 }
