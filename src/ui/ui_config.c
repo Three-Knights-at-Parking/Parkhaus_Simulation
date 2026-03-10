@@ -25,6 +25,7 @@ static int is_time_config_valid(uint16_t tick_in_sec, uint16_t gate_entry_in_sec
 static uint16_t find_prev_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
 static uint16_t find_next_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
 static int resolve_tick_gate_conflict(Settings *p_settings, int changed_field);
+static int is_parking_time_config_valid(const Settings *p_settings);
 
 
 static int parse_long(const char *p_text, long *p_out)
