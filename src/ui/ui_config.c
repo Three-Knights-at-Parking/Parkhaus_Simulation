@@ -735,7 +735,7 @@ ui_state config_menu(Settings *p_settings)
         float vehicles = 0.0f;
         const rate_input_mode mode = (rate_input_mode)edit_arrival_rate_mode();
 
-        (void)read_float_positive("Enter average arriving vehicles: ",
+        (void)read_float_nonnegative("Enter average arriving vehicles: ",
                                      &vehicles);
 
         const float probability = convert_rate_to_prob_perc(vehicles, mode);
