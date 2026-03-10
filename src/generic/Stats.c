@@ -1,4 +1,8 @@
+#include <string.h>
+
 #include "Stats.h"
+#include "types.h"
+#include "utils/SafteyUtils.h"
 
 int StatsTick_init(Simulation *p_sim, uint16_t capacity_total, uint32_t current_tick) {
 }
@@ -30,5 +34,50 @@ int stats_tick_add_vehicle(StatList *p_stats, const GenericVehicle *p_vehicle, u
 const StatsTick * stats_get_latest_tick(const StatList *p_stats) {
 }
 
-int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary) {
+int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
+{
+    checkNull(p_stats);
+    checkNull(p_summary);
+
+    memset(p_summary, 0, sizeof(StatsSummary));
+
+    p_summary->total_ticks = 0U;
+
+    /* 1) Utilization & capacity */
+    p_summary->capacity_total = 0U;
+    p_summary->capacity_taken_percent_avg = 0.0f;
+    p_summary->capacity_taken_percent_peak = 0.0f;
+    p_summary->capacity_taken_peak_tick = 0U;
+    p_summary->first_full_tick = -1;
+    p_summary->full_ticks = 0U;
+
+    /* 2) Throughput / flow */
+    p_summary->arrivals_total = 0U;
+    p_summary->enqueued_total = 0U;
+    p_summary->entered_total = 0U;
+    p_summary->departed_total = 0U;
+    p_summary->net_occupancy_change_total = 0.0;
+    p_summary->entered_per_tick_avg = 0.0f;
+    p_summary->departed_per_tick_avg = 0.0f;
+
+    /* 3) Queue (global) */
+    p_summary->queue_length_avg = 0.0f;
+    p_summary->queue_length_peak = 0U;
+    p_summary->queue_length_peak_tick = 0U;
+    p_summary->queue_rejections_total = 0U;
+    p_summary->queue_wait_avg_ticks = 0U;
+    p_summary->queue_wait_max_ticks = 0U;
+    p_summary->queue_active_ratio_percent = 0.0f;
+
+    /* 4) Parking duration */
+    p_summary->parking_duration_avg_ticks = 0U;
+
+    /* 6) Blockers / cause analysis */
+    p_summary->blocker_full_ratio_percent = 0.0f;
+
+    /* 8) Quality/rule statistics */
+    p_summary->bad_parking_cases_total = 0U;
+    p_summary->bad_parking_share_percent = 0.0f;
+
+    return OK;
 }
