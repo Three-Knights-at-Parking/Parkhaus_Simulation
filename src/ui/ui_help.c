@@ -63,3 +63,49 @@ void print_help_simulation(void)
 
     printf("Press ENTER to return to the Help Menu...\n");
 }
+
+void print_help_settings(void)
+{
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("      HELP: SETTINGS EXPLANATION\n");
+    printf("====================================\n\n");
+
+    printf("Capacity / Floor\n");
+    printf("    Number of parking spaces on each floor.\n\n");
+
+    printf("Floors\n");
+    printf("    Number of parking levels in the garage.\n\n");
+
+    printf("Gates\n");
+    printf("    Number of entry gates. More gates may reduce queues.\n\n");
+
+    printf("Gate Entry Time (sec)\n");
+    printf("    Time required for one vehicle to pass a gate.\n\n");
+
+    printf("Tick Length (sec)\n");
+    printf("    Duration of one simulation step.\n");
+    printf("    Must be divisible by Gate Entry Time.\n\n");
+
+    printf("Max Gate Entries / Tick\n");
+    printf("    Maximum number of vehicles that can pass all gates\n");
+    printf("    during one tick based on the time model.\n\n");
+
+    printf("Arrival Prob / Sec (%%)\n");
+    printf("    Probability of vehicle arrival per second.\n");
+    printf("    Derived from the user-defined arrival rate.\n\n");
+
+    printf("Output Mode\n");
+    printf("    Controls how much simulation information is printed.\n");
+    printf("    NONE, NORMAL, VERBOSE or DEBUG.\n\n");
+
+    printf("Max Ticks\n");
+    printf("    Total number of simulation steps.\n\n");
+
+    printf("Random Seed\n");
+    printf("    Controls reproducibility of random behaviour.\n");
+    printf("    Using the same seed produces the same simulation.\n\n");
+
+    printf("Press ENTER to return to the Help Menu...\n");
+}
