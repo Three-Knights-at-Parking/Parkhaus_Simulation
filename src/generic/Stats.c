@@ -98,5 +98,27 @@ int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
             }
         }
 
+        if (current_capacity_percent > p_summary->capacity_taken_percent_peak)
+        {
+            p_summary->capacity_taken_percent_peak = current_capacity_percent;
+            p_summary->capacity_taken_peak_tick = p_tick->current_tick;
+        }
+
+        if (p_tick->queue_length_end > p_summary->queue_length_peak)
+        {
+            p_summary->queue_length_peak = p_tick->queue_length_end;
+            p_summary->queue_length_peak_tick = p_tick->current_tick;
+        }
+
+        if (p_tick->queue_length_end > 0U)
+        {
+            queue_active_ticks++;
+        }
+
+        if (p_tick->blocker_full_active > 0U)
+        {
+            blocker_full_ticks++;
+        }
+
     return OK;
 }
