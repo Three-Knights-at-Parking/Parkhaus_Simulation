@@ -1,6 +1,3 @@
-#ifndef UI_H
-#define UI_H
-
 /**
  * @file ui.h
  * @brief Public interface of the terminal-based UI (state machine, input helpers).
@@ -10,8 +7,8 @@
  * - Basic user input and validation helpers
  * - Simple terminal helper functions used by multiple UI modules
  */
-
-#include <stdint.h>
+#ifndef UI_H
+#define UI_H
 
 #include "Settings.h"
 
