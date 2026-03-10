@@ -5,7 +5,7 @@
 #include "../include/ui/ui_simulation.h"
 #include "../include/ui/ui_statistics.h"
 
-#include "../include/simulation.h"
+#include "../include/Simulation.h"
 #include "../include/types.h"
 
 
@@ -30,7 +30,7 @@ int print_simulationscreen(const Settings *p_settings)
 
     printf("Current Settings\n");
     printf("------------------------------------\n");
-    printf("Name                 : %s\n", *p_settings->name);
+    printf("Name                 : %s\n", p_settings->name);
     printf("Capacity / Floor     : %u\n", (unsigned)p_settings->capacity);
     printf("Floors               : %u\n", (unsigned)p_settings->floors);
     printf("Gates                : %u\n", (unsigned)p_settings->gates);
