@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "ui/ui_statistics.h"
 #ifdef _WIN32
     #include <direct.h>
     #define MAKE_DIR(path) _mkdir(path)
@@ -96,8 +98,7 @@ int savehandler_save_tick(const Simulation *p_sim, const StatsTick *p_tickstats,
     }
 
     fclose(f);
-
-    // TODO Waiting on UI side function to pass values to
+    ui_statistics_print_tick(p_tickstats, p_sim->settings);
 
     return OK;
 }
@@ -131,9 +132,7 @@ int savehandler_save_summary(const Simulation *p_sim, const StatsSummary *p_summ
     fprintf(f, "Bad Parking Share (%%),%.2f\n", p_summary->bad_parking_share_percent);
 
     fclose(f);
-
-    // TODO Waiting on UI function
-
+    ui_statistics_print_final(p_summary, p_sim->settings);
     return OK;
 }
 
@@ -142,7 +141,7 @@ int savehandler_save_summary(const Simulation *p_sim, const StatsSummary *p_summ
  * We need to aggregate the different lines in a StatsList that we pass to the UI
  * as determined in Part 1 of the project. This is a stub for now.
  */
-int savehandler_load_and_print(const char *src_path) {
+int savehandler_load_and_print(const char *src_path, StatList* list) {
     const char *resolved_path = savehandler_resolve_stats_path(src_path);
     if (resolved_path[0] == '\0') return ERROR;
 
