@@ -64,14 +64,18 @@ void print_help_simulation(void);
  * @brief Prints the settings explanation help page.
  *
  * Explains:
+ * - name
  * - capacity
  * - floors
  * - gates
  * - gate entry time
  * - tick length
- * - output mode
+ * - minimum parking ticks
+ * - maximum parking ticks
+ * - entry probability / rate conversion
  * - max ticks
  * - random seed
+ * - output mode
  */
 void print_help_settings(void);
 
