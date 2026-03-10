@@ -275,29 +275,3 @@ ui_state storage_menu(Settings *p_settings)
 
     return UI_STORAGE;
 }
-
-
-
-/* This is a FEATURE, not part of the requirements
- * Actually not part of the UI
- * Adding a file browser should perhaps be checked to see if it falls out-of-scope.
-void browse_directory(const char *p_current_path) {
-}
-
-void directory_options(const char *p_dir_path) {
-}
-
-void file_options(const char *p_file_path) {
-}
-
-void deleting_verification(const char *p_object_path, const char *p_object_type) {
-}
-
-void print_file_to_terminal(const char *p_path) {
-}
-
-void delete_directory(const char *p_path) {
-}
-
-void delete_file(const char *p_path) {
-}*/
