@@ -109,3 +109,41 @@ void print_help_settings(void)
 
     printf("Press ENTER to return to the Help Menu...\n");
 }
+
+/* ========================================================================= */
+/* Menu logic                                                                */
+/* ========================================================================= */
+
+ui_state help_menu(void)
+{
+    int choice = 0;
+    validation_flag valid = INVALID;
+
+    while (1)
+    {
+        print_helpscreen();
+
+        valid = INVALID;
+
+        while (valid != VALID)
+        {
+            choice = user_input();
+            valid = validate_user_input(choice, HELP_MAX_VALID_NUMBER);
+        }
+
+        if (choice == 1)
+        {
+            print_help_simulation();
+            press_enter_to_continue();
+        }
+        else if (choice == 2)
+        {
+            print_help_settings();
+            press_enter_to_continue();
+        }
+        else
+        {
+            return UI_HOME;
+        }
+    }
+}
