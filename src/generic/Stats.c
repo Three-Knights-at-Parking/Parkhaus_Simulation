@@ -141,5 +141,26 @@ int stats_build_summary(const StatList *p_stats, StatsSummary *p_summary)
         p_next_tick = p_tick->p_next;
     }
 
+    if (p_summary->total_ticks > 0U)
+    {
+        p_summary->capacity_taken_percent_avg =
+            (float)(sum_capacity_taken_percent / (double)p_summary->total_ticks);
+
+        p_summary->entered_per_tick_avg =
+            (float)((double)sum_entered / (double)p_summary->total_ticks);
+
+        p_summary->departed_per_tick_avg =
+            (float)((double)sum_departed / (double)p_summary->total_ticks);
+
+        p_summary->queue_length_avg =
+            (float)((double)sum_queue_length_end / (double)p_summary->total_ticks);
+
+        p_summary->queue_active_ratio_percent =
+            ((float)queue_active_ticks * 100.0f) / (float)p_summary->total_ticks;
+
+        p_summary->blocker_full_ratio_percent =
+            ((float)blocker_full_ticks * 100.0f) / (float)p_summary->total_ticks;
+    }
+
     return OK;
 }
