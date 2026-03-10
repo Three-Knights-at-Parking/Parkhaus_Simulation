@@ -28,6 +28,9 @@
 #define SETTINGS_MAXIMUM_TICKS INT32_MAX     // Max one year of simulation
 #define SETTINGS_DEFAULT_MAX_TICKS (-1)     // -1 represents 1 day of simulation
 
+#define SETTINGS_MINIMUM_PARKING_TICKS 1
+#define SETTINGS_MAXIMUM_PARKING_TICKS INT32_MAX
+
 #define SETTINGS_DEFAULT_RAND_SEED (-1)     // -1 tells the RNG to use the current UTC time
 
 #define SETTINGS_DEFAULT_GATE_ENTRY_SEC 5   // 5 seconds to process one car at the gate
