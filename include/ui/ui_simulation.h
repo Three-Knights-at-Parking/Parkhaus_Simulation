@@ -15,11 +15,11 @@
 #include "ui.h"
 #include "types.h"
 
-enum users_choice_sim{
+typedef enum {
     BACK_SIM = 0,
     SIMULATION_SIM = 1,
     CONFIGURATION_SIM = 2
-};
+}users_choice_sim;
 /* ========================================================================= */
 /* Simulation menu limits                                                    */
 /* ========================================================================= */
