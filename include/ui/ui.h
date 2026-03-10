@@ -10,7 +10,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include "Settings.h"
+#include "types.h"
 
 /**
  * @brief UI state identifiers for the main UI state machine.
