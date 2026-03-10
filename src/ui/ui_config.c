@@ -576,7 +576,7 @@ ui_state config_menu(Settings *p_settings)
     {
         return UI_HOME;
     }
-    else if (choice == 1)
+    else if (choice == CONFIG_MENU_NAME)
     {
         char name_buf[SETTINGS_NAME_MAX_LENGTH + 1];
 
@@ -599,7 +599,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 2)
+    else if (choice == CONFIG_MENU_CAPACITY)
     {
         long value = 0;
 
@@ -617,7 +617,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 3)
+    else if (choice == CONFIG_MENU_FLOORS)
     {
         long value = 0;
 
@@ -635,7 +635,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 4)
+    else if (choice == CONFIG_MENU_GATES)
     {
         long value = 0;
 
@@ -653,7 +653,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 5)
+    else if (choice == CONFIG_MENU_GATE_ENTRY_TIME)
     {
         const uint16_t old_gate_entry = p_settings->gate_entry_inSec;
         long value = 0;
@@ -665,7 +665,7 @@ ui_state config_menu(Settings *p_settings)
 
         p_settings->gate_entry_inSec = (uint16_t)value;
 
-        if (resolve_tick_gate_conflict(p_settings, 5) != OK)
+        if (resolve_tick_gate_conflict(p_settings, CONFIG_MENU_GATE_ENTRY_TIME) != OK)
         {
             p_settings->gate_entry_inSec = old_gate_entry;
 
@@ -676,7 +676,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 6)
+    else if (choice == CONFIG_MENU_TICK_LENGTH)
     {
         const uint16_t old_tick = p_settings->tick_inSec;
         long value = 0;
@@ -688,7 +688,7 @@ ui_state config_menu(Settings *p_settings)
 
         p_settings->tick_inSec = (uint16_t)value;
 
-        if (resolve_tick_gate_conflict(p_settings, 6) != OK)
+        if (resolve_tick_gate_conflict(p_settings, CONFIG_MENU_TICK_LENGTH) != OK)
         {
             p_settings->tick_inSec = old_tick;
 
@@ -699,7 +699,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 7)
+    else if (choice == CONFIG_MENU_MIN_PARKING_TICKS)
     {
         const uint32_t old_min = p_settings->min_parking_ticks;
         long value = 0;
@@ -723,7 +723,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 8)
+    else if (choice == CONFIG_MENU_MAX_PARKING_TICKS)
     {
         const uint32_t old_max = p_settings->max_parking_ticks;
         long value = 0;
@@ -747,7 +747,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 9)
+    else if (choice == CONFIG_MENU_ENTRY_PROBABILITY)
     {
         float vehicles = 0.0f;
         const rate_input_mode mode = (rate_input_mode)edit_arrival_rate_mode();
@@ -764,7 +764,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 10)
+    else if (choice == CONFIG_MENU_MAX_TICKS)
     {
         long value = 0;
 
@@ -782,7 +782,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 11)
+    else if (choice == CONFIG_MENU_RANDOM_SEED)
     {
         long value = 0;
 
@@ -800,7 +800,7 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 12)
+    else if (choice == CONFIG_MENU_OUTPUT_MODE)
     {
         const int mode_select = edit_mode_select();
         const enum OutputMode mode = apply_mode_select(mode_select);

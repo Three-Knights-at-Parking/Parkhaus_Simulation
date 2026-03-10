@@ -22,6 +22,27 @@
 #include "ui.h"
 #include "types.h"
 
+/**
+ * @brief Menu entries for the configuration menu.
+ */
+typedef enum
+{
+ BACK_CONFIG = 0,
+ CONFIG_MENU_NAME = 1,
+ CONFIG_MENU_CAPACITY = 2,
+ CONFIG_MENU_FLOORS = 3,
+ CONFIG_MENU_GATES = 4,
+ CONFIG_MENU_GATE_ENTRY_TIME = 5,
+ CONFIG_MENU_TICK_LENGTH = 6,
+ CONFIG_MENU_MIN_PARKING_TICKS = 7,
+ CONFIG_MENU_MAX_PARKING_TICKS = 8,
+ CONFIG_MENU_ENTRY_PROBABILITY = 9,
+ CONFIG_MENU_MAX_TICKS = 10,
+ CONFIG_MENU_RANDOM_SEED = 11,
+ CONFIG_MENU_OUTPUT_MODE = 12
+
+} users_choice_config;
+
 /* ========================================================================= */
 /* Menu limits                                                               */
 /* ========================================================================= */
