@@ -40,26 +40,34 @@ void print_help_simulation(void)
     printf("------------------------------------\n");
     printf("This program simulates a parking garage.\n");
     printf("Vehicles arrive, may wait in queues, enter through gates,\n");
-    printf("park for a certain time and leave again afterwards.\n\n");
+    printf("park for a configurable duration and leave afterwards.\n\n");
 
     printf("Time Model\n");
     printf("------------------------------------\n");
     printf("The simulation runs in discrete time steps called ticks.\n");
     printf("Each tick represents a configurable number of seconds.\n");
     printf("The tick length must be a multiple of the gate entry time\n");
-    printf("so that only whole vehicle entries occur per tick.\n\n");
+    printf("so that only whole gate operations occur per tick.\n\n");
 
     printf("Arrival Model\n");
     printf("------------------------------------\n");
-    printf("Vehicle arrivals are configured as a probability per second.\n");
-    printf("The user may enter an arrival rate in vehicles per second,\n");
-    printf("minute or hour. The value is converted internally into a\n");
-    printf("probability percentage per second.\n\n");
+    printf("The user enters an expected arrival rate in vehicles per\n");
+    printf("second, minute or hour.\n");
+    printf("This value is converted internally into a per-second\n");
+    printf("percentage-based entry value used by the simulation.\n\n");
+
+    printf("Parking Duration\n");
+    printf("------------------------------------\n");
+    printf("Each vehicle receives a parking duration between the\n");
+    printf("configured minimum and maximum parking ticks.\n");
+    printf("Real parking time depends on both parking ticks and the\n");
+    printf("configured tick length.\n\n");
 
     printf("Statistics\n");
     printf("------------------------------------\n");
     printf("The simulation tracks values such as occupancy, queue length,\n");
-    printf("arrivals, departures, waiting times, parking durations and more...\n\n");
+    printf("arrivals, entries, departures, waiting times and parking\n");
+    printf("durations for each tick and for the final summary.\n\n");
 
     printf("Press ENTER to return to the Help Menu...\n");
 }
