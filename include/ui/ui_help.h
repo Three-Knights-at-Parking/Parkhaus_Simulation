@@ -17,11 +17,11 @@
 
 #include "ui.h"
 
-enum users_choice_help{
+typedef enum {
  BACK_HELP = 0,
  SIMULATION_HELP = 1,
  SETTINGS_HELP = 2
-};
+}users_choice_help;
 
 /* ========================================================================= */
 /* Menu limits                                                               */
