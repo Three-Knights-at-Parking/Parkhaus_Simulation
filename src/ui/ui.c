@@ -1,3 +1,13 @@
+/**
+* @file ui.c
+ * @brief Core UI state machine and shared terminal/input helper functions.
+ *
+ * This module provides:
+ * - the main UI state machine
+ * - shared input parsing and validation
+ * - shared terminal helper functions
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
