@@ -16,10 +16,10 @@
 #include "types.h"
 
 typedef enum {
-    BACK_SIM = 0,
-    SIMULATION_SIM = 1,
-    CONFIGURATION_SIM = 2
-}users_choice_sim;
+    SIMULATION_MENU_BACK = 0,
+    SIMULATION_MENU_START = 1,
+    SIMULATION_MENU_CONFIG = 2
+}simulation_menu_choice;
 /* ========================================================================= */
 /* Simulation menu limits                                                    */
 /* ========================================================================= */
