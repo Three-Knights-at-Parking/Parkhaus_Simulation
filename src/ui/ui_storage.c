@@ -1,6 +1,14 @@
+/**
+* @file ui_storage.c
+ * @brief Storage menu implementation for loading saved statistics files.
+ *
+ * This module handles loading persisted statistics data and
+ * displaying it via the ui_statistics module.
+ */
+
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_statistics.h"
@@ -263,12 +271,12 @@ ui_state storage_menu(Settings *p_settings)
         valid = validate_user_input(choice, STORAGE_MAX_VALID_NUMBER);
     }
 
-    if (choice == LOAD_STORAGE)
+    if (choice == STORAGE_MENU_LOAD)
     {
         (void)load_statistics_file_prompt(p_settings);
         return UI_STORAGE;
     }
-    else if (choice == BACK_STORAGE)
+    else if (choice == STORAGE_MENU_BACK)
     {
         return UI_HOME;
     }
