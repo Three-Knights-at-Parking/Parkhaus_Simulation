@@ -1,15 +1,14 @@
-//
-// Created by Daniel_Work on 10.03.2026.
-//
 /**
  * @file ui_help.c
  * @brief Help menu implementation.
+ *
+ * This module prints explanatory pages for the simulation model
+ * and the configurable settings, and handles help-menu navigation.
  */
+#include <stdio.h>
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_help.h"
-
-#include <stdio.h>
 
 /* ========================================================================= */
 /* Screen printing                                                           */
@@ -144,17 +143,17 @@ ui_state help_menu(void)
             valid = validate_user_input(choice, HELP_MAX_VALID_NUMBER);
         }
 
-        if (choice == SIMULATION_HELP)
+        if (choice == HELP_MENU_SIMULATION)
         {
             print_help_simulation();
             press_enter_to_continue();
         }
-        else if (choice == SETTINGS_HELP)
+        else if (choice == HELP_MENU_SETTINGS)
         {
             print_help_settings();
             press_enter_to_continue();
         }
-        else if (choice == BACK_HELP)
+        else
         {
             return UI_HOME;
         }
