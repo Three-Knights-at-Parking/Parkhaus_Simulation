@@ -1,3 +1,11 @@
+/**
+* @file ui_config.c
+ * @brief Configuration menu implementation for terminal-based settings editing.
+ *
+ * This module prints the configuration menu, validates user input
+ * and applies changes to the active Settings object.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -572,7 +580,7 @@ ui_state config_menu(Settings *p_settings)
         valid = validate_user_input(choice, CONFIG_MAX_VALID_NUMBER);
     }
 
-    if (choice == 0)
+    if (choice == CONFIG_MENU_BACK)
     {
         return UI_HOME;
     }
