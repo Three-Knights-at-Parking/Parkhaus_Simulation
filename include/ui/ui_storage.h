@@ -16,9 +16,9 @@
 
 typedef enum
 {
- BACK_STORAGE = 0,
- LOAD_STORAGE = 1
-} users_choice_storage;
+ STORAGE_MENU_BACK = 0,
+ STORAGE_MENU_LOAD = 1
+} storage_menu_choice;
 
 /* ========================================================================= */
 /* Storage menu limits                                                       */
