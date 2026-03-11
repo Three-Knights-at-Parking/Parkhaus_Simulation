@@ -1,3 +1,11 @@
+/**
+* @file ui_simulation.c
+ * @brief Simulation menu implementation and backend print forwarding.
+ *
+ * This module prints the simulation menu, starts the simulation
+ * and forwards backend-triggered statistics output to ui_statistics.
+ */
+
 #include <stdio.h>
 
 #include "../include/ui/ui.h"
@@ -7,7 +15,6 @@
 
 #include "../include/Simulation.h"
 #include "../include/types.h"
-
 
 /* ========================================================================= */
 /* Screen printing                                                           */
@@ -47,7 +54,6 @@ int print_simulationscreen(const Settings *p_settings)
 
     return OK;
 }
-
 /* ========================================================================= */
 /* Menu logic                                                                */
 /* ========================================================================= */
@@ -79,7 +85,7 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
         valid = validate_user_input(choice, SIMULATION_MAX_VALID_NUMBER);
     }
 
-    if (choice == SIMULATION_SIM)
+    if (choice == SIMULATION_MENU_START)
     {
         printf("Starting simulation...\n");
 
@@ -99,11 +105,11 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
 
         return UI_SIMULATION;
     }
-    else if (choice == CONFIGURATION_SIM)
+    else if (choice == SIMULATION_MENU_CONFIG)
     {
         return UI_KONFIG;
     }
-    else if (choice == BACK_SIM)
+    else if (choice == SIMULATION_MENU_BACK)
     {
         return UI_HOME;
     }
@@ -111,7 +117,6 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
     /* Defensive fallback */
     return UI_SIMULATION;
 }
-
 /* ========================================================================= */
 /* Statistics-print functions - used by Backend                                */
 /* ========================================================================= */
