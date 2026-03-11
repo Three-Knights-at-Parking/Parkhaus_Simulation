@@ -17,12 +17,12 @@
 
 typedef enum
 {
-    MENU_EXIT = 0,
-    SIMULATION_HOME = 1,
-    CONFIGURATION_HOME = 2,
-    STORAGE_HOME = 3,
-    HELP_HOME = 4
-}users_choice_home;
+    HOME_MENU_EXIT = 0,
+    HOME_MENU_SIMULATION = 1,
+    HOME_MENU_CONFIG = 2,
+    HOME_MENU_STORAGE = 3,
+    HOME_MENU_HELP = 4
+}home_menu_choice;
 
 /**
  * @brief Maximum valid menu number on the Home screen.
