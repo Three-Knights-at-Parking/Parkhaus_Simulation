@@ -19,6 +19,7 @@ typedef struct GenericVehicle GenericVehicle;
 typedef struct StatsTick StatsTick;
 typedef struct StatsSummary StatsSummary;
 typedef struct StatList StatList;
+typedef struct RNG RNG;
 
 
 /**
@@ -266,7 +267,7 @@ struct StatsSummary {
  */
 struct StatList {
     SimulationObject base;
-    StatsSummary p_summary; //slot to link summary
+    StatsSummary* p_summary; //slot to link summary
     StatsTick *p_tick_head; /**< Erster Tick in der Verlaufsliste. */
     StatsTick *p_tick_tail; /**< Letzter Tick in der Verlaufsliste. */
     StatsTick *p_current_tick; /**< Tick-Builder fuer den aktuell laufenden Tick. */

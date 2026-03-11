@@ -24,6 +24,7 @@ typedef enum
     UI_SIMULATION,
     UI_KONFIG,
     UI_STORAGE,
+    UI_HELP,
     UI_EXIT
 } ui_state;
 
