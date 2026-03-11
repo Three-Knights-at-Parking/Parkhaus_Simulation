@@ -1,3 +1,11 @@
+/**
+* @file ui_statistics.c
+ * @brief Terminal formatting and printing of simulation statistics.
+ *
+ * This module formats tick statistics and final summary statistics
+ * for console output depending on the selected output mode.
+ */
+
 #include <stdio.h>
 
 #include "../include/ui/ui_statistics.h"
