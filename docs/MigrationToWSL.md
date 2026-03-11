@@ -1,13 +1,13 @@
-Libraries einbinden in C ist ziemlich großer schmerz auf Windows. (Man müsste ein seperates Projekt mit dem Source Code compilieren und bauen) und die Chance dass das Projekt dann nicht mehr auf Codespaces kompiliert ist zu groß. Zur Entwicklung gibt es daher jetzt 2 Optionen:
+Libraries einbinden in C ist ziemlich großer schmerz auf Windows. (Man müsste ein separates Projekt mit dem Source Code compilieren und bauen) und die Chance dass das Projekt dann nicht mehr auf Codespaces kompiliert ist zu groß. Zur Entwicklung gibt es daher jetzt 2 Optionen:
 
 ---
 ### 1. Umstieg auf WSL
-Windows Subsystem for Linux ist einer Art "VM" die auf Windows läuft. Sie ermöglicht es ein Linux OS (standardmäßig Ubuntu) parallel zu Windows zu haben (die auch parallel existieren und auf Dateien zugreifen können).
+Windows Subsystem for Linux ist eine Art "VM" die auf Windows läuft. Sie ermöglicht es ein Linux OS (standardmäßig Ubuntu) parallel zu Windows zu haben (die auch parallel existieren und auf Dateien zugreifen können).
 Das Setup ist etwas Zeitaufwand, aber an sich worth it, da wir so nativ entwickeln können (was auf WSL kompiliert, kompiliert auch auf Codespaces). Die installation funktioniert wie folgt:
 
 Schließe VSCode oder CLion.
 
-[öffne cmd oder powershell]
+[öffne cmd oder Powershell]
 Installiere WSL auf deiner Maschine
 ```wsl --install```
 Es sollte sich danach eine Konsole öffnen, in der du deinen Nutzer und das Passwort eingeben musst. Bitte beende das Setup.
@@ -15,12 +15,12 @@ Es sollte sich danach eine Konsole öffnen, in der du deinen Nutzer und das Pass
 Nachdem du das Setup beendet hast, in der Konsole in der WSL geöffnet ist (es sieht aus wie git bash)
 ```LucisNotebook:/mnt/host/c/Users/busin #so sieht der pfad bei mir aus```
 führst du diesen Befehl aus:
-```sudo apt update && sudo apt install build-essential cmake doxygen libjson-c-dev pkg-config```
-Du wirst gefragt nach einem "Sudo" passwort, dass ist dein Benutzerkennwort. Führe nun die Installation durch (gib überall Y für Yes an).
+```sudo apt update && sudo apt install build-essential cmake doxygen libjson-c-dev pkg-config gnuplot```
+Du wirst gefragt nach einem "Sudo" passwort, das ist dein Benutzerkennwort. Führe nun die Installation durch (gib überall Y für Yes an).
 
 Nachdem alles installiert ist, müssen wir WSL erlauben, Dateien auf Windowspfaden zu bearbeiten:
 ```sudo nano /etc/wsl.conf```
-Das öffnet eine Datei, in die wir diese Zeile oben hinein kopieren:
+Das öffnet eine Datei, in die wir diese Zeile oben hineinkopieren:
 ```
 [automount]
 options = "metadata,umask=22,fmask=11"
