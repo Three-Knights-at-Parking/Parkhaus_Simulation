@@ -118,9 +118,10 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
         return ERROR;
     }
 
-    const char *final_path = dest_path;
-    char *allocated_path = NULL;
 
+    const char *final_path = dest_path;
+
+    char *allocated_path = NULL;
     if (settings_is_valid_system_path_string(dest_path) != OK) {
         print_warning_s("dest_path is not a valid path, creating and using default path");
         allocated_path = settings_make_default_config_path();
@@ -132,12 +133,16 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
             final_path = allocated_path;
         }
     }
-
+    if (checkNull(final_path)) {
+        print_error_s("Failed to determine settings file path.", HIGH);
+        free(allocated_path);
+        return ERROR;
+    }
     json_object *obj = json_object_new_object();
     if (checkNull(obj)) return ERROR;
 
-    if (!checkNull(p_settings->name)) {
-        json_object_object_add(obj, "name", json_object_new_string(p_settings->name[0]));
+    if (p_settings->name[0] != '\0') {
+        json_object_object_add(obj, "name", json_object_new_string(p_settings->name));
     } else {
         json_object_object_add(obj, "name", json_object_new_string(""));
     }
@@ -198,8 +203,9 @@ int settings_init(Settings *p_settings,
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    *p_settings->name = "\0";
+    p_settings->name[0] = '\0';
     p_settings->src_path = NULL;
+    p_settings->stats_path = NULL;
 
     if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) return ERROR;
     if (settings_set_gates(p_settings, gates) != OK) return ERROR;
@@ -243,8 +249,7 @@ int settings_set_size(Settings *p_settings, const uint16_t size) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (size < 1 || size > (uint8_t) SETTINGS_MAX_SIZE_PARAM) {
-        p_settings->capacity = 1;
+    if (size < SETTINGS_MINIMUM_CAPACITY || size > SETTINGS_MAXIMUM_CAPACITY) {        p_settings->capacity = 1;
         print_warning_s("Invalid capacity, setting to default (1).");
         return UNKNOWN;
     }
@@ -257,8 +262,7 @@ int settings_set_floors(Settings *p_settings, const uint8_t floors) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (floors < 1 || floors > (uint8_t)  SETTINGS_MAX_SIZE_PARAM) {
-        p_settings->floors = 1;
+    if (floors < SETTINGS_MINIMUM_FLOORS || floors > SETTINGS_MAXIMUM_FLOORS) {        p_settings->floors = 1;
         print_warning_s("Invalid number of floors, setting to default (1).");
         return UNKNOWN;
     }
@@ -324,7 +328,7 @@ int settings_set_max_ticks(Settings *p_settings, const int32_t max_ticks) {
         return UNKNOWN;
     }
 
-    if (max_ticks < -1) {
+    if (max_ticks <= -1) {
         p_settings->max_ticks = (int32_t)(SECONDS_IN_DAY * (-max_ticks) / p_settings->real_equivalent);
     } else {
         p_settings->max_ticks = max_ticks;
@@ -352,8 +356,8 @@ int settings_to_parkhaus(const Settings *p_settings, Parkhaus *p_parkhaus) {
     }
     const char *default_name = SETTINGS_DEFAULT_NAME;
     const char *name_to_use;
-    if (checkNull(&p_settings->name) && *p_settings->name[0] != '\0') {
-        name_to_use = p_settings->name[0];
+    if (p_settings->name[0] != '\0') {
+        name_to_use = p_settings->name;
     } else {
         name_to_use = default_name;
     }
@@ -378,10 +382,11 @@ int delete_settings(Settings *p_settings) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    free(p_settings->name); // FIXME this might not work as expected.
     free(p_settings->src_path);
-    *p_settings->name = "\0";
+    free(p_settings->stats_path);
+    p_settings->name[0] = '\0';
     p_settings->src_path = NULL;
+    p_settings->stats_path = NULL;
     return OK;
 }
 
@@ -423,8 +428,8 @@ int settings_is_valid_system_path_string(const char *path) {
         }
     }
     return OK;
-#    else
-    print_error_s("We couldn't determine your operating system.", HIGH)
+#else
+    print_error_s("We couldn't determine your operating system.", HIGH);
     return ERROR;
 #    endif
 }
@@ -599,20 +604,10 @@ static int settings_set_name(Settings *p_settings, const char *name) {
         len = SETTINGS_NAME_MAX_LENGTH;
     }
 
-    char *buf = (char *)malloc(len + 1);
-    if (checkNull(buf)) {
-        print_error_s("Failed setting Parkhaus name. Out of Memory.", HIGH);
-        return ERROR;
-    }
-
-    memcpy(buf, name, len);
-    buf[len] = '\0';
-
-    free(p_settings->name); // FIXME this might not work as expected.
-    *p_settings->name = buf;
+    memcpy(p_settings->name, name, len);
+    p_settings->name[len] = '\0';
     return OK;
 }
-
 static int settings_set_owned_string(char **p_dest, const char *src) {
     if (checkNull(p_dest) || checkNull(src)) {
         return ERROR;

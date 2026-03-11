@@ -4,6 +4,12 @@
  */
 #ifndef TEIL1_PARKHAUS_SIMULATION_PLANNUNG_TYPES_H
 #define TEIL1_PARKHAUS_SIMULATION_PLANNUNG_TYPES_H
+#include "Settings.h"
+#include <ctype.h>
+#include <errno.h>
+#include <string.h>
+#include <time.h>
+#include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
 
