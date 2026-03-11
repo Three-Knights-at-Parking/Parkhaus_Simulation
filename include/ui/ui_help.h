@@ -1,6 +1,3 @@
-//
-// Created by Daniel_Work on 10.03.2026.
-//
 #ifndef UI_HELP_H
 #define UI_HELP_H
 
@@ -11,17 +8,21 @@
  * This module is responsible for:
  * - printing the help menu
  * - explaining the simulation model
- * - explaining the most important configuration parameters
+ * - explaining the configurable settings
  * - returning to the home menu
  */
 
 #include "ui.h"
 
-typedef enum {
- BACK_HELP = 0,
- SIMULATION_HELP = 1,
- SETTINGS_HELP = 2
-}users_choice_help;
+/**
+ * @brief Menu entries for the help menu.
+ */
+typedef enum
+{
+    HELP_MENU_BACK = 0,
+    HELP_MENU_SIMULATION = 1,
+    HELP_MENU_SETTINGS = 2
+} help_menu_choice;
 
 /* ========================================================================= */
 /* Menu limits                                                               */
@@ -56,6 +57,7 @@ void print_helpscreen(void);
  * - general simulation concept
  * - time model
  * - arrival model
+ * - parking duration model
  * - statistics overview
  */
 void print_help_simulation(void);
