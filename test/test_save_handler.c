@@ -25,23 +25,11 @@ static void cleanup_loaded_ticks(StatList *list) {
 }
 
 static void test_resolve_stats_path_defaults(void) {
-    const char *path_null = savehandler_resolve_stats_path(NULL);
-    const char *path_empty = savehandler_resolve_stats_path("");
-    const char *path_parent = savehandler_resolve_stats_path("../evil.csv");
-    const char *path_fixed = savehandler_resolve_stats_path("C:/some_path/evil.csv");
-    const char *path_custom = savehandler_resolve_stats_path("safe.csv");
-
-    assert(path_null != NULL);
-    assert(path_empty != NULL);
-    assert(path_parent != NULL);
-    assert(path_fixed != NULL);
-    assert(path_custom != NULL);
-
-    assert(strcmp(path_null, "./stats/stats.csv") == 0);
-    assert(strcmp(path_empty, "./stats/stats.csv") == 0);
-    assert(strcmp(path_parent, "./stats/stats.csv") == 0);
-    assert(strcmp(path_fixed, "./stats/stats.csv") == 0);
-    assert(strcmp(path_custom, "./stats/safe.csv") == 0);
+    assert(strcmp(savehandler_resolve_stats_path(NULL), "./stats/stats.csv") == 0);
+    assert(strcmp(savehandler_resolve_stats_path(""), "./stats/stats.csv") == 0);
+    assert(strcmp(savehandler_resolve_stats_path("../evil.csv"), "./stats/stats.csv") == 0);
+    assert(strcmp(savehandler_resolve_stats_path("C:/some_path/evil.csv"), "./stats/stats.csv") == 0);
+    assert(strcmp(savehandler_resolve_stats_path("safe.csv"), "./stats/safe.csv") == 0);
 }
 
 
@@ -248,7 +236,6 @@ int main(void) {
     test_save_tick_normal_writes_header_and_data();
     test_save_summary_appends_summary_lines();
     test_load_and_print_reads_tick_and_summary();
-
     printf("All SaveHandler tests passed.\n");
     return 0;
 }
