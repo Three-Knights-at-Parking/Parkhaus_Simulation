@@ -22,7 +22,7 @@ static void test_settings_init(void) {
     memset(&s, 0, sizeof(s));
     int result = settings_init(&s,
                                "./config.json",
-                               "Test Garage",
+                               "Raunegg Test",
                                100,
                                2,
                                3,
@@ -39,7 +39,7 @@ static void test_settings_init(void) {
                                NON_LEAVABLE);
 
     assert(result == OK);
-    assert(strcmp(s.name, "Test Garage") == 0);
+    assert(strcmp(s.name, "Raunegg Test") == 0);
     assert(strcmp(s.src_path, "./config.json") == 0);
     assert(s.capacity == 100);
     assert(s.floors == 2);
@@ -100,3 +100,41 @@ static void test_settings_setters_invalid(void) {
     assert(settings_set_src_path(&s, NULL) == ERROR);
     assert(settings_set_src_path(&s, "") == ERROR);
 }
+
+static void test_settings_path_validation(void) {
+    assert(settings_is_valid_system_path_string("./config.json") == OK);
+    assert(settings_is_valid_system_path_string("../folder/config.json") == OK);
+    assert(settings_is_valid_system_path_string("config.json") == OK);
+
+    // Invalid absolute paths (starting with slash)
+    assert(settings_is_valid_system_path_string("/etc/config.json") == ERROR);
+    assert(settings_is_valid_system_path_string("\\Windows\\config.json") == ERROR);
+
+    // Empty or whitespace paths
+    assert(settings_is_valid_system_path_string("") == ERROR);
+    assert(settings_is_valid_system_path_string("   ") == ERROR);
+    assert(settings_is_valid_system_path_string(NULL) == ERROR);
+
+#ifdef _WIN32
+    // Windows specific drive letters
+    assert(settings_is_valid_system_path_string("C:/config.json") == ERROR);
+    assert(settings_is_valid_system_path_string("./con<fig.json") == ERROR);
+#endif
+}
+
+static void test_settings_to_parkhaus(void) {
+    Settings s;
+    Parkhaus p;
+    memset(&s, 0, sizeof(s));
+    memset(&p, 0, sizeof(p));
+    settings_init(&s, "./cfg.json", "Raunegg Test", 50, 3, 2, 60, NORMAL, 100, 1, 5, 60, 100, 1, 1, 5.0f, NON_LEAVABLE);
+    assert(settings_to_parkhaus(&s, &p) == OK);
+    assert(strcmp(p.name, "Raunegg Test") == 0);
+    assert(p.capacity == 150);
+    assert(p.floors == 3);
+    assert(p.capacity_taken == 0);
+    assert(p.base.type == PARKHAUS);
+
+    delete_settings(&s);
+}
+
