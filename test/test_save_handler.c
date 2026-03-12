@@ -5,6 +5,7 @@
 
 #include "io/SaveHandler.h"
 #include "types.h"
+#include "./test_settings.c"
 
 
 static void cleanup_loaded_ticks(StatList *list) {
@@ -237,5 +238,30 @@ int main(void) {
     test_save_summary_appends_summary_lines();
     test_load_and_print_reads_tick_and_summary();
     printf("All SaveHandler tests passed.\n");
+
+    printf("Running Settings.c tests...\n");
+
+    test_settings_init();
+    printf(" - test_settings_init passed.\n");
+
+    test_settings_setters_valid();
+    printf(" - test_settings_setters_valid passed.\n");
+
+    test_settings_setters_invalid();
+    printf(" - test_settings_setters_invalid passed.\n");
+
+    test_settings_path_validation();
+    printf(" - test_settings_path_validation passed.\n");
+
+    test_settings_to_parkhaus();
+    printf(" - test_settings_to_parkhaus passed.\n");
+
+    test_settings_save_and_load();
+    printf(" - test_settings_save_and_load passed.\n");
+
+    test_delete_settings();
+    printf(" - test_delete_settings passed.\n");
+
+    printf("All Settings.c tests passed successfully!\n");
     return 0;
 }

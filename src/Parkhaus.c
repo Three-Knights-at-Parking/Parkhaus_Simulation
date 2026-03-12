@@ -9,7 +9,7 @@
 #include "utils/RNG.h"
 #include "Car.h"
 
-int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_gate_queues) {
+int parkhouse_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_gate_queues) {
     if (p_parkhaus == NULL || p_settings == NULL || p_gate_queues == NULL) {
         return ERROR;
     }
@@ -421,30 +421,29 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
     *pp_vehicle = p_vehicle;
     return spaces_needed;
 }
-//
-// moving left demand into queue or add to rejections
- int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remaining,
-                uint32_t current_tick, const Settings *p_settings) {
 
-     if (p_StatList == NULL || p_gate_queue == NULL || p_settings == NULL) {
-         print_error("open_demand: central pointer error");
-         return ERROR;
-     }
+//moving left demand into queue or add to rejections
+int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remaining,
+                uint32_t current_tick, const Settings *p_settings){
+    if (p_StatList == NULL || p_gate_queue == NULL || p_settings == NULL) {
+        print_error("open_demand: central pointer error");
+        return ERROR;
+    }
 
-     while (demand_remaining > 0U && queue_length(p_gate_queue) < p_gate_queue->max_size) {
-         if (queue_add_random_vehicle(p_gate_queue, current_tick, p_settings) == ERROR) {
-             print_error("open_demand: queue_add_random_vehicle error");
-             return ERROR;
-         }
-         demand_remaining--;
-     }
+    while (demand_remaining > 0U && queue_length(p_gate_queue) < p_gate_queue->max_size) {
+        if (queue_add_random_vehicle(p_gate_queue, current_tick, p_settings) == ERROR) {
+            print_error("open_demand: queue_add_random_vehicle error");
+            return ERROR;
+        }
+        demand_remaining--;
+    }
 
-     if (demand_remaining > 0U) {
-         stats_tick_add_queue_rejections(p_StatList, demand_remaining);
-     }
+    if (demand_remaining > 0U) {
+        stats_tick_add_queue_rejections(p_StatList, demand_remaining);
+    }
 
-     return OK;
- }
+    return OK;
+}
 
 
 int queue_add_random_vehicle(Queue* p_gate_queue, uint32_t current_tick, const Settings *p_settings) {
@@ -655,7 +654,4 @@ int parkhouse_free(Parkhaus* p_parkhaus)
     p_parkhaus->p_parked_tail = NULL;
     p_parkhaus->gate_queues = NULL;
     return OK;
-}
-
-int parkhouse_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_gate_queues) {
 }

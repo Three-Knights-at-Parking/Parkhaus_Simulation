@@ -10,48 +10,53 @@ pkg_check_modules(JSONC REQUIRED IMPORTED_TARGET json-c)
 file(GLOB_RECURSE PARKHAUS_SIMULATION_SOURCES CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
 )
+
 file(GLOB_RECURSE PARKHAUS_SIMULATION_HEADERS CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
 )
 
-add_executable(Parkhaus_Simulation
-        ${PARKHAUS_SIMULATION_SOURCES}
+file(GLOB_RECURSE PARKHAUS_TEST_SOURCES CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/*.c"
+)
+
+set(PARKHAUS_LIBRARY_SOURCES ${PARKHAUS_SIMULATION_SOURCES})
+list(REMOVE_ITEM PARKHAUS_LIBRARY_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")
+
+add_library(Parkhaus_Simulation_Core
+        ${PARKHAUS_LIBRARY_SOURCES}
         ${PARKHAUS_SIMULATION_HEADERS}
 )
 
-target_include_directories(Parkhaus_Simulation
-        PRIVATE
+target_include_directories(Parkhaus_Simulation_Core
+        PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
         ${JSONC_INCLUDE_DIRS}
+)
+
+target_link_libraries(Parkhaus_Simulation_Core
+        PUBLIC
+        PkgConfig::JSONC
+        m
+)
+
+add_executable(Parkhaus_Simulation
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c"
 )
 
 target_link_libraries(Parkhaus_Simulation
         PRIVATE
-        PkgConfig::JSONC
-        m
+        Parkhaus_Simulation_Core
 )
 
 enable_testing()
 
-set(PARKHAUS_TEST_SOURCES ${PARKHAUS_SIMULATION_SOURCES})
-list(REMOVE_ITEM PARKHAUS_TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")
-
 add_executable(Parkhaus_Simulation_Tests
         ${PARKHAUS_TEST_SOURCES}
-        ${PARKHAUS_SIMULATION_HEADERS}
-        "${CMAKE_CURRENT_SOURCE_DIR}/test/test_save_handler.c"
-)
-
-target_include_directories(Parkhaus_Simulation_Tests
-        PRIVATE
-        "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        ${JSONC_INCLUDE_DIRS}
 )
 
 target_link_libraries(Parkhaus_Simulation_Tests
         PRIVATE
-        PkgConfig::JSONC
-        m
+        Parkhaus_Simulation_Core
 )
 
-add_test(NAME save_handler_tests COMMAND Parkhaus_Simulation_Tests)
+add_test(NAME Parkhaus_Simulation_Tests COMMAND Parkhaus_Simulation_Tests)
