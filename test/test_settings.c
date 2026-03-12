@@ -138,3 +138,48 @@ static void test_settings_to_parkhaus(void) {
     delete_settings(&s);
 }
 
+
+static void test_settings_save_and_load(void) {
+    Settings s_save;
+    Settings s_load;
+    memset(&s_save, 0, sizeof(s_save));
+    memset(&s_load, 0, sizeof(s_load));
+
+    const char* test_file = "./test_settings_io.json";
+    settings_init(&s_save, test_file, "Raunegg Test", 123, 4, 2, 30, VERBOSE, 500, 77, 8, 30, 200, 5, 2, 12.5f, LEAVABLE);
+    remove(test_file);
+    assert(settings_save_to_file(&s_save, test_file) == OK);
+    assert(settings_load_from_file(&s_load, test_file) == OK);
+    assert(strcmp(s_load.name, s_save.name) == 0);
+    assert(s_load.capacity == s_save.capacity);
+    assert(s_load.floors == s_save.floors);
+    assert(s_load.gates == s_save.gates);
+    assert(s_load.real_equivalent == s_save.real_equivalent);
+    assert(s_load.output_mode == s_save.output_mode);
+    assert(s_load.max_ticks == s_save.max_ticks);
+    assert(s_load.rand_seed == s_save.rand_seed);
+    assert(s_load.gate_entry_inSec == s_save.gate_entry_inSec);
+    assert(s_load.tick_inSec == s_save.tick_inSec);
+    assert(s_load.max_parking_ticks == s_save.max_parking_ticks);
+    assert(s_load.min_parking_ticks == s_save.min_parking_ticks);
+    assert(s_load.mode_select == s_save.mode_select);
+    // Float conversion from/to json might introduce inconsistencies but it should be fine. If not.. won't fix :)
+    assert(s_load.entry_probability_perSec_prec == s_save.entry_probability_perSec_prec);
+    assert(s_load.is_leavable == s_save.is_leavable);
+    delete_settings(&s_save);
+    delete_settings(&s_load);
+    remove(test_file);
+}
+
+static void test_delete_settings(void) {
+    Settings s;
+    memset(&s, 0, sizeof(s));
+
+    settings_set_src_path(&s, "./some_path.json");
+    assert(s.src_path != NULL);
+
+    assert(delete_settings(&s) == OK);
+
+    assert(s.src_path == NULL);
+    assert(s.name[0] == '\0');
+}
