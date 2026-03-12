@@ -9,70 +9,70 @@
 #include "utils/RNG.h"
 #include "Car.h"
 
-int parkhaus_init(Parkhaus *p_parkhaus, const Settings *p_settings, Queue **p_gate_queues) {
-    if (p_parkhaus == NULL || p_settings == NULL || p_gate_queues == NULL) {
+int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_gate_queues) {
+    if (p_parkhouse == NULL || p_settings == NULL || p_gate_queues == NULL) {
         return ERROR;
     }
-    //p_parkhaus->name = p_settings->name[0]; FIXME Parkhaus Name
-    p_parkhaus->base.type = PARKHAUS;
-    p_parkhaus->capacity = p_settings->capacity;
-    p_parkhaus->floors = p_settings->floors;
-    p_parkhaus->capacity_taken = 0;
-    p_parkhaus->gate_queues = p_gate_queues;
-    p_parkhaus->p_parked_head = NULL;
-    p_parkhaus->p_parked_tail = NULL;
+    //p_parkhouse->name = p_settings->name[0]; FIXME Parkhaus Name
+    p_parkhouse->base.type = PARKHAUS;
+    p_parkhouse->capacity = p_settings->capacity;
+    p_parkhouse->floors = p_settings->floors;
+    p_parkhouse->capacity_taken = 0;
+    p_parkhouse->gate_queues = p_gate_queues;
+    p_parkhouse->p_parked_head = NULL;
+    p_parkhouse->p_parked_tail = NULL;
     return OK;
 }
-//FIXME Ist hier nicht eine p_parkhaus pointer nötig anstelle des SimulaionObjecct da es in Parkhaus abgelegt ist?
+//FIXME Ist hier nicht eine p_parkhouse pointer nötig anstelle des SimulaionObjecct da es in Parkhaus abgelegt ist?
 int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatList* p_StatList, uint32_t current_tick)
 {
     if (p_self == NULL || p_settings == NULL || p_StatList == NULL) {
-        print_error("parkhaus_tick: central Pointer ERROR");
+        print_error("parkhouse_tick: central Pointer ERROR");
         return ERROR;
     }
-    Parkhaus *p_parkhaus = (Parkhaus *)p_self;
+    Parkhaus *p_parkhouse = (Parkhaus *)p_self;
 
-    p_parkhaus = (Parkhaus *) p_self;
+    p_parkhouse = (Parkhaus *) p_self;
     if (p_self->type != PARKHAUS) {
         return ERROR;
     }
     int status = OK;
 
     //pre checking Parkhaus initialisation & conditons
-    if (p_settings->gates == 0U || p_parkhaus->gate_queues == NULL) {
+    if (p_settings->gates == 0U || p_parkhouse->gate_queues == NULL) {
         return ERROR;
     }
 
     //Allgemeines leeren des Parkhaus
-    status = parkhouse_tick_empty_general(current_tick, p_parkhaus,
+    status = parkhouse_tick_empty_general(current_tick, p_parkhouse,
                                           (Settings*)p_settings,
                                           p_StatList,
-                                          &p_parkhaus->p_parked_head);
+                                          &p_parkhouse->p_parked_head);
     if (status == ERROR)
     {
-        print_error("parkhaus_tick_empty_general: ERROR in Simulation");
+        print_error("parkhouse_tick_empty_general: ERROR in Simulation");
         return ERROR;
     }
 
     //Allemeine Fill Funktion sofern nur ein Gate besteht
     if (p_settings->gates == 1U) {
         status = parkhouse_tick_fill_general(current_tick,
-                                            p_parkhaus,
+                                            p_parkhouse,
                                             (Settings *) p_settings,
                                             p_StatList,
-                                            &p_parkhaus->p_parked_head,
-                                            p_parkhaus->gate_queues[0]);
+                                            &p_parkhouse->p_parked_head,
+                                            p_parkhouse->gate_queues[0]);
         if (status == ERROR)
         {
-            print_error("parkhaus_tick_fill_general: ERROR in Simulation");
+            print_error("parkhouse_tick_fill_general: ERROR in Simulation");
             return ERROR;
         }
     }
     else
     {
         status = parkhouse_fill_subtick(current_tick,
-                                        p_parkhaus, (Settings*)p_settings,
-                                        p_StatList, *p_parkhaus->gate_queues);
+                                        p_parkhouse, (Settings*)p_settings,
+                                        p_StatList, *p_parkhouse->gate_queues);
         if (status == ERROR)
         {
             print_error("parkhouse_fill_subtick: ERROR in Simulation");
@@ -88,7 +88,7 @@ int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, c
     GenericVehicle *p_vehicle;
 
     if (p_parkhouse == NULL || pp_vehicle_list_head == NULL || p_settings == NULL || p_StatList == NULL) {
-        print_error("parkhaus_tick_empty_general: central Pointer ERROR");
+        print_error("parkhouse_tick_empty_general: central Pointer ERROR");
         return ERROR;
     }
 
@@ -99,7 +99,7 @@ int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, c
 
         if (current_tick >= leave_tick) {
             if (vehicle_leaving(p_parkhouse, p_StatList, pp_vehicle_list_head, p_vehicle, current_tick) == ERROR) {
-                print_error("parkhaus_tick_empty_general: Vehicle_leaving ERROR");
+                print_error("parkhouse_tick_empty_general: Vehicle_leaving ERROR");
                 return ERROR;
             }
         }
@@ -120,7 +120,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     int status = OK;
 
     if (p_parkhouse == NULL || p_settings == NULL || p_gate_queue == NULL || p_StatList == NULL || p_gate_queue == NULL) {
-        print_error("parkhaus_tick_fill_general: central Pointer ERROR");
+        print_error("parkhouse_tick_fill_general: central Pointer ERROR");
         return ERROR;
     }
 
@@ -188,7 +188,7 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
     //checking for valid function call
     if (p_parkhouse == NULL || p_settings == NULL || p_StatList == NULL)
     {
-        print_error("parkhaus_tick_fill_subtick: central Pointer ERROR");
+        print_error("parkhouse_tick_fill_subtick: central Pointer ERROR");
         return ERROR;
     }
     if (p_parkhouse->gate_queues == NULL || p_settings->gates <= 1U)
@@ -252,7 +252,7 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse,
 
     if (p_parkhouse == NULL || p_settings == NULL || p_gate_queue == NULL || p_StatList == NULL)
     {
-        print_error("parkhaus_tick_fill_subtick: central Pointer ERROR");
+        print_error("parkhouse_tick_fill_subtick: central Pointer ERROR");
         return ERROR;
     }
 
@@ -341,7 +341,7 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
         p_prev->p_next = p_cur->p_next; //Vehicle davor als nächstes das Vehicle nach Current zuweisen
     }
 
-    //vehicle = parkhaus tail -> parkhaus.tail <- prev vehicle
+    //vehicle = parkhouse tail -> parkhouse.tail <- prev vehicle
     if (p_parkhouse->p_parked_tail == p_cur) {
         p_parkhouse->p_parked_tail = p_prev;
     }
@@ -369,14 +369,14 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
 }
 
 
-uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehicle **pp_vehicle) {
+uint16_t fill_from_queue(Parkhaus *p_parkhouse, Queue *p_gate_queue, GenericVehicle **pp_vehicle) {
     Car *p_car;
     uint16_t open_space;
     uint16_t minimum;
     uint16_t spaces_needed;
     int status = OK;
 
-    if (p_parkhaus == NULL || p_gate_queue == NULL || pp_vehicle == NULL) {
+    if (p_parkhouse == NULL || p_gate_queue == NULL || pp_vehicle == NULL) {
         print_error("fill_from_queue: central pointer error");
         return ERROR;
     }
@@ -392,7 +392,7 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
 
     //minimum für bessere verständlichkeit
     minimum = get_vehicle_minimum_space(p_vehicle);
-    open_space = get_open_space(p_parkhaus);
+    open_space = get_open_space(p_parkhouse);
     spaces_needed = minimum;
 
     //does the vehicle fit in?
@@ -407,7 +407,7 @@ uint16_t fill_from_queue(Parkhaus *p_parkhaus, Queue *p_gate_queue, GenericVehic
             spaces_needed = (minimum * 2U);
         }
         //adding the vehicle to parkhouse queue
-        status = park_vehicle(p_parkhaus, p_vehicle);
+        status = park_vehicle(p_parkhouse, p_vehicle);
         if (status == ERROR)
         {
             print_error("fill_from_queue: park error");
@@ -495,30 +495,30 @@ GenericVehicle* create_random_vehicle(uint32_t current_tick, const Settings *p_s
 }
 
 //parking / enqueueing new Vehicles at Parkhaus
-int park_vehicle(Parkhaus *p_parkhaus, GenericVehicle *p_vehicle) {
-    if (p_parkhaus == NULL || p_vehicle == NULL) {
+int park_vehicle(Parkhaus *p_parkhouse, GenericVehicle *p_vehicle) {
+    if (p_parkhouse == NULL || p_vehicle == NULL) {
         print_error("park_vehicel: central pointer error");
         return ERROR;
     }
 
     p_vehicle->p_next = NULL;
 
-    if (p_parkhaus->p_parked_head == NULL)
+    if (p_parkhouse->p_parked_head == NULL)
     {
-        p_parkhaus->p_parked_head = p_vehicle;
+        p_parkhouse->p_parked_head = p_vehicle;
     }
     else{
-        if (p_parkhaus->p_parked_tail == NULL)
+        if (p_parkhouse->p_parked_tail == NULL)
         {
-            p_parkhaus->p_parked_head->p_next = p_vehicle;
-            p_parkhaus->p_parked_tail = p_vehicle;
+            p_parkhouse->p_parked_head->p_next = p_vehicle;
+            p_parkhouse->p_parked_tail = p_vehicle;
         }
         else
         {
-            if (p_parkhaus->p_parked_tail->p_next == NULL)
+            if (p_parkhouse->p_parked_tail->p_next == NULL)
             {
-                p_parkhaus->p_parked_tail->p_next = p_vehicle;
-                p_parkhaus->p_parked_tail = p_vehicle;
+                p_parkhouse->p_parked_tail->p_next = p_vehicle;
+                p_parkhouse->p_parked_tail = p_vehicle;
             }
             else
             {
@@ -612,31 +612,31 @@ int remove_vehicle(GenericVehicle* p_vehicle)
     Car* p_car = (Car*)p_vehicle;
     if (car_destroy(p_car) == ERROR)
     {
-        print_error("parkhaus_remove_vehicle: car_destroy failed");
+        print_error("parkhouse_remove_vehicle: car_destroy failed");
         return ERROR;
     }
     return OK;
 }
 
 //Freeing parkhouse parked vehicle list & queues
-int parkhouse_free(Parkhaus* p_parkhaus)
+int parkhouse_free(Parkhaus* p_parkhouse)
 {
-    if (p_parkhaus == NULL)
+    if (p_parkhouse == NULL)
     {
         print_error("parkhouse_free: pointer issue");
         return ERROR;
     }
     int status = 0;
     //free Cars
-    if (p_parkhaus->p_parked_head == NULL || p_parkhaus->p_parked_tail == NULL)
+    if (p_parkhouse->p_parked_head == NULL || p_parkhouse->p_parked_tail == NULL)
     {
         print_error("parkhouse_free: no cars in parkhouse");
     }
-    if (p_parkhaus->p_parked_head != NULL)
+    if (p_parkhouse->p_parked_head != NULL)
     {
         //Loop for removing all parked vehicles
-        GenericVehicle* p_vehicle = p_parkhaus->p_parked_head;
-        GenericVehicle* p_next = p_parkhaus->p_parked_head->p_next;
+        GenericVehicle* p_vehicle = p_parkhouse->p_parked_head;
+        GenericVehicle* p_next = p_parkhouse->p_parked_head->p_next;
         while (p_vehicle != NULL)
         {
             p_next = p_vehicle->p_next;
@@ -645,15 +645,15 @@ int parkhouse_free(Parkhaus* p_parkhaus)
             status = remove_vehicle(p_vehicle);
             if (status == ERROR)
             {
-                print_error("parkhouse_free: parkhaus_remove_vehicle: failed");
+                print_error("parkhouse_free: parkhouse_remove_vehicle: failed");
                 return ERROR;
             }
             p_vehicle = p_next;
         }
     }
-    p_parkhaus->p_parked_head = NULL;
-    p_parkhaus->p_parked_tail = NULL;
-    p_parkhaus->gate_queues = NULL;
+    p_parkhouse->p_parked_head = NULL;
+    p_parkhouse->p_parked_tail = NULL;
+    p_parkhouse->gate_queues = NULL;
     return OK;
 }
 
