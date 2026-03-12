@@ -33,7 +33,8 @@ target_link_libraries(Parkhaus_Simulation
 
 enable_testing()
 
-set(PARKHAUS_TEST_SOURCES ${PARKHAUS_SIMULATION_SOURCES})
+set(PARKHAUS_TEST_SOURCES ${PARKHAUS_SIMULATION_SOURCES}
+        test/test_settings.c)
 list(REMOVE_ITEM PARKHAUS_TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")
 
 add_executable(Parkhaus_Simulation_Tests
