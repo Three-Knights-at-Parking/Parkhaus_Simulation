@@ -149,7 +149,7 @@ int simulation_run(Simulation *p_sim) {
         return ERROR;
     }
 
-    for (p_sim->current_tick; p_sim->current_tick < p_sim->settings->max_ticks; p_sim->current_tick++;) {
+    for (p_sim->current_tick; p_sim->current_tick < p_sim->settings->max_ticks; p_sim->current_tick++) {
         if (simulation_tick(p_sim) == ERROR) {
             return ERROR;
         }
