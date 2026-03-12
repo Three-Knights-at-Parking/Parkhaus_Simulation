@@ -34,19 +34,6 @@ typedef struct RNG RNG;
 enum ObjectType {CAR, PARKHAUS, QUEUE};
 
 /**
- * NONE - Here for completeness
- * NORMAL - The Normal mode, only the most import statistics and averages -> Minimum Required in "Teil 1"
- * VERBOSE - EVERYTHING, every single bit of data (this will dump performance)
- * DEBUG - NORMAL + Debug Messages (i.e. tick - enteredTick() debugInfo debugInfo)
- */
-enum OutputMode {NONE, NORMAL, VERBOSE, DEBUG};
-
-/**
- * Determines if vehicles can leave the queue early (at any position)
- */
-enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
-
-/**
  * Return values for functions/validation.
  */
 enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};

@@ -39,19 +39,20 @@ const char *savehandler_resolve_stats_path(const char *dest_path) {
     MAKE_DIR(STATS_BASE_DIR);
     if (dest_path == NULL || dest_path[0] == '\0') {
         strncpy(resolved_path, DEFAULT_STATS_PATH, MAX_PATH_LENGTH - 1);
-    }
-    else if (strstr(dest_path, "..") != NULL) {
-        // Path contains "..", we do not allow upwards traversal, since it allows writing to abitrary paths! Force safe fallback.
+    } else if (strstr(dest_path, "..") != NULL) {
+        // Path contains ".."; we do not allow upwards traversal, since it allows writing to arbitrary paths! Force safe fallback.
         print_warning_s("Path contained '..'. Falling back to safe default.");
         strncpy(resolved_path, DEFAULT_STATS_PATH, MAX_PATH_LENGTH - 1);
-    }
-    else {
+    } else if (strstr(dest_path, ":") != NULL) {
+        // Path contains ":", we do not allow absolute paths, since it allows writing to arbitrary paths! Force safe fallback.
+        print_warning_s("Path contained ':'. Falling back to safe default.");
+        strncpy(resolved_path, DEFAULT_STATS_PATH, MAX_PATH_LENGTH - 1);
+    } else {
         if (snprintf(resolved_path, MAX_PATH_LENGTH, "%s%s", STATS_BASE_DIR, dest_path) >= MAX_PATH_LENGTH) {
             print_warning_s("Path too long. Falling back to safe default.");
             strncpy(resolved_path, DEFAULT_STATS_PATH, MAX_PATH_LENGTH - 1);
         }
     }
-
     return resolved_path;
 }
 

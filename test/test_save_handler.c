@@ -6,6 +6,24 @@
 #include "io/SaveHandler.h"
 #include "types.h"
 
+
+static void cleanup_loaded_ticks(StatList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    StatsTick *current = list->p_tick_head;
+    while (current != NULL) {
+        StatsTick *next = current->p_next;
+        free(current);
+        current = next;
+    }
+
+    list->p_tick_head = NULL;
+    list->p_tick_tail = NULL;
+    list->p_current_tick = NULL;
+}
+
 static void test_resolve_stats_path_defaults(void) {
     const char *path_null = savehandler_resolve_stats_path(NULL);
     const char *path_empty = savehandler_resolve_stats_path("");
@@ -142,3 +160,95 @@ static void test_save_summary_appends_summary_lines(void) {
     remove(full_path);
 }
 
+
+static void test_load_and_print_reads_tick_and_summary(void) {
+    Settings settings;
+    Simulation sim;
+    StatsTick tick;
+    StatsSummary summary_to_save;
+    StatsSummary loaded_summary;
+    StatList list;
+    const char *dest_name = "test_load.csv";
+    const char *full_path;
+
+    memset(&settings, 0, sizeof(settings));
+    memset(&sim, 0, sizeof(sim));
+    memset(&tick, 0, sizeof(tick));
+    memset(&summary_to_save, 0, sizeof(summary_to_save));
+    memset(&loaded_summary, 0, sizeof(loaded_summary));
+    memset(&list, 0, sizeof(list));
+
+    strcpy(settings.name, "LoadGarage");
+    settings.capacity = 20;
+    settings.floors = 1;
+    settings.gates = 1;
+    settings.gate_entry_inSec = 5;
+    settings.tick_inSec = 60;
+    settings.real_equivalent = 60;
+    settings.output_mode = NORMAL;
+    settings.max_ticks = 100;
+    settings.rand_seed = 5;
+    settings.entry_probability_perSec_prec = 4.0f;
+    settings.is_leavable = NON_LEAVABLE;
+
+    sim.settings = &settings;
+
+    tick.current_tick = 1;
+    tick.capacity_total = 20;
+    tick.capacity_taken = 5;
+    tick.enqueued = 2;
+    tick.entered = 2;
+    tick.departed = 0;
+    tick.queue_length_end = 1;
+
+    summary_to_save.total_ticks = 10;
+    summary_to_save.arrivals_total = 25;
+    summary_to_save.entered_total = 20;
+    summary_to_save.departed_total = 18;
+    summary_to_save.capacity_taken_percent_avg = 40.0f;
+    summary_to_save.capacity_taken_percent_peak = 75.0f;
+    summary_to_save.queue_length_avg = 1.5f;
+    summary_to_save.queue_wait_avg_ticks = 3;
+    summary_to_save.queue_wait_max_ticks = 9;
+    summary_to_save.bad_parking_share_percent = 2.0f;
+
+    full_path = savehandler_resolve_stats_path(dest_name);
+    remove(full_path);
+
+    assert(savehandler_save_tick(&sim, &tick, dest_name) == OK);
+    assert(savehandler_save_summary(&sim, &summary_to_save, dest_name) == OK);
+
+    list.p_summary = &loaded_summary;
+    assert(savehandler_load_and_print(dest_name, &list) == OK);
+
+    assert(list.p_tick_head != NULL);
+    assert(list.p_tick_tail != NULL);
+
+    assert(list.p_tick_head->current_tick == 1);
+    assert(list.p_tick_head->capacity_total == 20);
+    assert(list.p_tick_head->capacity_taken == 5);
+    assert(list.p_tick_head->capacity_free == 15);
+    assert(list.p_tick_head->enqueued == 2);
+    assert(list.p_tick_head->entered == 2);
+    assert(list.p_tick_head->departed == 0);
+    assert(list.p_tick_head->queue_length_end == 1);
+
+    assert(loaded_summary.total_ticks == 10);
+    assert(loaded_summary.arrivals_total == 25);
+    assert(loaded_summary.entered_total == 20);
+    assert(loaded_summary.departed_total == 18);
+    assert(loaded_summary.queue_wait_avg_ticks == 3);
+    assert(loaded_summary.queue_wait_max_ticks == 9);
+
+    cleanup_loaded_ticks(&list);
+    remove(full_path);
+}
+int main(void) {
+    test_resolve_stats_path_defaults();
+    test_save_tick_normal_writes_header_and_data();
+    test_save_summary_appends_summary_lines();
+    test_load_and_print_reads_tick_and_summary();
+
+    printf("All SaveHandler tests passed.\n");
+    return 0;
+}
