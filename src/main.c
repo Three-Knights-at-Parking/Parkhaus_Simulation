@@ -4,6 +4,7 @@
 #include "../include/ui/ui.h"
 #include "../include/Settings.h"
 #include "../include/Simulation.h"
+#include "utils/SafteyUtils.h"
 
 int main(void)
 {
@@ -42,6 +43,7 @@ int main(void)
             SETTINGS_DEFAULT_IS_LEAVABLE
         ) != OK)
     {
+        print_error_s("Failed to init settings object", HIGH);
         free(p_settings);
         free(p_simulation);
         return ERROR;
@@ -49,6 +51,7 @@ int main(void)
 
     if (simulation_init(p_simulation, p_settings, NULL) != OK)
     {
+        print_error_s("Failed to init simulation object", HIGH);
         delete_settings(p_settings);
         free(p_simulation);
         return ERROR;

@@ -87,6 +87,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
         return ERROR;
     }
     //Parkhaus initialisierung
+
     if (parkhouse_init(p_sim->parkhaus, p_sim->settings, gate_queues) != OK) {
         for (uint32_t i = 0; i < p_sim->settings->gates; ++i) {
             queue_free(gate_queues[i]);
@@ -134,8 +135,8 @@ void simulation_end(Simulation *p_sim) {
 
     if (p_sim->StatList != NULL) {
         StatsSummary summary;
-        if (stats_build_summary(p_sim->StatList, &p_sim->StatList->p_summary) == OK) {
-            savehandler_save_summary(p_sim, &p_sim->StatList->p_summary, NULL);
+        if (stats_build_summary(p_sim->StatList, p_sim->StatList->p_summary) == OK) {
+            savehandler_save_summary(p_sim, p_sim->StatList->p_summary, NULL);
         }
     }
 
@@ -182,4 +183,3 @@ static void simulation_cleanup_children(Simulation *p_sim) {
         p_sim->parkhaus = NULL;
     }
 }
-
