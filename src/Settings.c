@@ -178,6 +178,7 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
         print_error_s("Failed to write settings file. Ensure the directory exists.", HIGH);
         return ERROR;
     }
+    print_log_s("Saved settings to file.");
     return OK;
 }
 
@@ -203,19 +204,46 @@ int settings_init(Settings *p_settings,
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
+    if (settings_load_from_file(p_settings, SETTINGS_DEFAULT_PATH) == OK) {
+        print_warning_s("Settings file already exists, using existing settings.");
+        return OK;
+    }
+
     p_settings->name[0] = '\0';
     p_settings->src_path = NULL;
     p_settings->stats_path = NULL;
 
-    if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) return ERROR;
-    if (settings_set_gates(p_settings, gates) != OK) return ERROR;
-    if (settings_set_size(p_settings, capacity) != OK) return ERROR;
-    if (settings_set_floors(p_settings, floors) != OK) return ERROR;
-    if (settings_set_max_ticks(p_settings, max_ticks) != OK) return ERROR;
-    if (settings_set_rand_seed(p_settings, rand_seed) != OK) return ERROR;
-    if (settings_set_output_mode(p_settings, output_mode) != OK) return ERROR;
-    if (settings_set_name(p_settings, name) != OK) return ERROR;
-    if (settings_set_src_path(p_settings, src_path) != OK) return ERROR;
+    /**
+     * I really don't think using brackets is the more readable code in this case, but alas the requirements
+     * haveth forced my hand.
+     */
+    if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) {
+        return ERROR;
+    }
+    if (settings_set_gates(p_settings, gates) != OK) {
+        return ERROR;
+    }
+    if (settings_set_size(p_settings, capacity) != OK) {
+        return ERROR;
+    }
+    if (settings_set_floors(p_settings, floors) != OK) {
+        return ERROR;
+    }
+    if (settings_set_max_ticks(p_settings, max_ticks) != OK) {
+        return ERROR;
+    }
+    if (settings_set_rand_seed(p_settings, rand_seed) != OK) {
+        return ERROR;
+    }
+    if (settings_set_output_mode(p_settings, output_mode) != OK) {
+        return ERROR;
+    }
+    if (settings_set_name(p_settings, name) != OK) {
+        return ERROR;
+    }
+    if (settings_set_src_path(p_settings, src_path) != OK) {
+        return ERROR;
+    }
 
     p_settings->gate_entry_inSec = gate_entry_inSec;
     p_settings->tick_inSec = tick_inSec;
@@ -224,7 +252,6 @@ int settings_init(Settings *p_settings,
     p_settings->mode_select = mode_select;
     p_settings->entry_probability_perSec_prec = entry_probability_perSec_prec;
     p_settings->is_leavable = is_leavable;
-
     return OK;
 }
 
@@ -249,7 +276,8 @@ int settings_set_size(Settings *p_settings, const uint16_t size) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (size < SETTINGS_MINIMUM_CAPACITY || size > SETTINGS_MAXIMUM_CAPACITY) {        p_settings->capacity = 1;
+    if (size < SETTINGS_MINIMUM_CAPACITY || size > SETTINGS_MAXIMUM_CAPACITY) {
+        p_settings->capacity = 1;
         print_warning_s("Invalid capacity, setting to default (1).");
         return UNKNOWN;
     }
@@ -262,7 +290,8 @@ int settings_set_floors(Settings *p_settings, const uint8_t floors) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (floors < SETTINGS_MINIMUM_FLOORS || floors > SETTINGS_MAXIMUM_FLOORS) {        p_settings->floors = 1;
+    if (floors < SETTINGS_MINIMUM_FLOORS || floors > SETTINGS_MAXIMUM_FLOORS) {
+        p_settings->floors = 1;
         print_warning_s("Invalid number of floors, setting to default (1).");
         return UNKNOWN;
     }

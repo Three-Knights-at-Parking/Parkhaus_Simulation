@@ -31,7 +31,7 @@ int print_simulationscreen(const Settings *p_settings)
 
     printf("Current Settings\n");
     printf("------------------------------------\n");
-    printf("Name                 : %s\n", *p_settings->name);
+    printf("Name                 : %s\n", p_settings->name);
     printf("Capacity / Floor     : %u\n", (unsigned)p_settings->capacity);
     printf("Floors               : %u\n", (unsigned)p_settings->floors);
     printf("Gates                : %u\n", (unsigned)p_settings->gates);
@@ -92,7 +92,7 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
     if (choice == 1)
     {
         printf("Starting simulation...\n");
-
+        settings_save_to_file(p_settings, p_settings->src_path);
         ui_statistics_print_header(p_settings);
 
         if (simulation_start(p_simulation) != OK)

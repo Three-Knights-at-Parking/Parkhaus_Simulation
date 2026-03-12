@@ -3,6 +3,7 @@
 enum Severity{LOW, MEDIUM, HIGH};
 #define print_error_s(msg, severity) print_error_s_internal(msg, severity, __func__)
 #define print_warning_s(msg) print_warning_s_internal(msg, __func__)
+#define print_log_s(msg) print_warning_s_internal(msg, __func__)
 
 
 /**
@@ -47,5 +48,6 @@ void print_error_s_internal(const char *msg, enum Severity severity, const char 
  * @param func_name The function name this was called from. Will be autofilled by print_warning_s.
  */
 void print_warning_s_internal(const char *msg, const char *func_name);
+void print_log_s_internal(const char *msg, const char *func_name);
 
 #endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SAFTEYUTILS_H
