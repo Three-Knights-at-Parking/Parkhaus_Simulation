@@ -139,8 +139,8 @@ void simulation_end(Simulation *p_sim) {
 
     if (p_sim->StatList != NULL) {
         StatsSummary summary;
-        if (stats_build_summary(p_sim->StatList, &p_sim->StatList->p_summary) == OK) {
-            savehandler_save_summary(p_sim, &p_sim->StatList->p_summary, NULL);
+        if (stats_build_summary(p_sim->StatList, p_sim->StatList->p_summary) == OK) {
+            savehandler_save_summary(p_sim, p_sim->StatList->p_summary, NULL);
         }
     }
 

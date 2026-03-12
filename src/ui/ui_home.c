@@ -27,6 +27,7 @@ void print_homescreen(void)
     printf("1 - Simulation\n");
     printf("2 - Configuration\n");
     printf("3 - Storage\n");
+    printf("4 - Help\n");
     printf("0 - Quit\n");
     printf("\n");
 }
@@ -35,8 +36,7 @@ void print_homescreen(void)
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state home_menu(Settings *p_settings)
-{
+ui_state home_menu(Settings *p_settings) {
     int choice = 0;
     validation_flag valid = INVALID;
 
@@ -62,7 +62,11 @@ ui_state home_menu(Settings *p_settings)
     {
         return UI_STORAGE;
     }
-    else /* choice == 0 */
+    else if (choice == 4)
+    {
+        return UI_HELP;
+    }
+    else
     {
         return UI_EXIT;
     }
