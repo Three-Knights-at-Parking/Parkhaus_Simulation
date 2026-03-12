@@ -38,6 +38,13 @@ int simulation_tick(Simulation *p_sim);
 int simulation_start(Simulation *p_sim);
 
 /**
+ * @brief Runs the simulation for the configured duration in ticks.
+ * @author: ibach
+ * @param p_sim Pointer to the Simulation object.
+ */
+int simulation_run(Simulation *p_sim);
+
+/**
  * @brief Ends the simulation, persists summary data, and cleans up children.
  * @author: ibach
  * @param p_sim Pointer to the Simulation object.

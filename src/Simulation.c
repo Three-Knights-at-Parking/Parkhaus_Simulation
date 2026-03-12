@@ -114,7 +114,9 @@ int simulation_tick(Simulation *p_sim) {
         return ERROR;
     }
 
-    p_sim->parkhouse->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
+    if (parkhouse_tick((SimulationObject*) p_sim->parkhouse, p_sim->settings, p_sim->StatList, p_sim->current_tick) == ERROR) {
+        return ERROR;
+    }
 
     //FIXME either Tick record or direktes anhängen an die STATLISZ
     return OK;
@@ -124,11 +126,35 @@ int simulation_start(Simulation *p_sim) {
     if (checkNull(p_sim) || checkNull(p_sim->settings) || checkNull(p_sim->parkhouse) || checkNull(p_sim->StatList)) {
         return ERROR;
     }
-    //Simulation starting
-    int simulation_run
-
-
     p_sim->current_tick = 0U;
+
+    if (simulation_run(p_sim) != OK)
+    {
+        print_warning_s("SImulation failed, HIGH");
+        return ERROR;
+    }
+
+
+    return OK;
+}
+
+int simulation_run(Simulation *p_sim) {
+    if (checkNull(p_sim) || checkNull(p_sim->settings) || checkNull(p_sim->parkhouse) || checkNull(p_sim->StatList)) {
+        return ERROR;
+    }
+
+
+    if (p_sim->settings->max_ticks < 0) {
+        print_error("simulation_run: invalid max_ticks");
+        return ERROR;
+    }
+
+    for (p_sim->current_tick; p_sim->current_tick < p_sim->settings->max_ticks; p_sim->current_tick++;) {
+        if (simulation_tick(p_sim) == ERROR) {
+            return ERROR;
+        }
+    }
+
     return OK;
 }
 
