@@ -15,6 +15,11 @@
 #include "ui.h"
 #include "types.h"
 
+typedef enum {
+    SIMULATION_MENU_BACK = 0,
+    SIMULATION_MENU_START = 1,
+    SIMULATION_MENU_CONFIG = 2
+}simulation_menu_choice;
 /* ========================================================================= */
 /* Simulation menu limits                                                    */
 /* ========================================================================= */
@@ -57,5 +62,29 @@ int print_simulationscreen(const Settings *p_settings);
  * @return Next UI state depending on user selection.
  */
 ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation);
+
+/**
+ * @brief Prints one simulation tick from backend-triggered output.
+ *
+ * This function is intended to be called by the simulation backend
+ * during runtime to forward one tick of statistics to the UI layer.
+ *
+ * @param[in] p_current_tick Pointer to the current tick statistics.
+ * @param[in] p_settings Pointer to the active settings.
+ */
+void print_StatsTick_backend(const StatsTick *p_current_tick,
+                             const Settings *p_settings);
+
+/**
+ * @brief Prints the final simulation summary from backend-triggered output.
+ *
+ * This function is intended to be called by the simulation backend
+ * after the simulation has finished.
+ *
+ * @param[in] p_stats_summary Pointer to the final summary statistics.
+ * @param[in] p_settings Pointer to the active settings.
+ */
+void print_final_stats_backend(const StatsSummary *p_stats_summary,
+                               const Settings *p_settings);
 
 #endif /* UI_SIMULATION_H */

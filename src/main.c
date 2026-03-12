@@ -1,3 +1,11 @@
+/**
+* @file main.c
+ * @brief Program entry point for the parking garage simulation.
+ *
+ * Allocates and initializes the main Settings and Simulation objects,
+ * starts the terminal UI and performs final cleanup before exit.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 

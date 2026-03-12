@@ -1,13 +1,18 @@
+/**
+* @file ui_config.c
+ * @brief Configuration menu implementation for terminal-based settings editing.
+ *
+ * This module prints the configuration menu, validates user input
+ * and applies changes to the active Settings object.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <limits.h>
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_config.h"
-#include "../include/ui/ui_storage.h"
-#include "../include/ui/ui_simulation.h"
 
 #include "../include/Settings.h"
 #include "../include/types.h"
@@ -28,6 +33,7 @@ static int is_time_config_valid(uint16_t tick_in_sec, uint16_t gate_entry_in_sec
 static uint16_t find_prev_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
 static uint16_t find_next_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
 static int resolve_tick_gate_conflict(Settings *p_settings, int changed_field);
+static int is_parking_time_config_valid(const Settings *p_settings);
 
 
 static int parse_long(const char *p_text, long *p_out)
@@ -486,24 +492,24 @@ static int edit_arrival_rate_mode(void)
     }
 }
 
-uint16_t calc_max_possible_entries_per_tick(const Settings *p_settings)
+static int is_parking_time_config_valid(const Settings *p_settings)
 {
     if (p_settings == NULL)
     {
-        return 0U;
+        return ERROR;
     }
 
-    if (p_settings->gate_entry_inSec == 0U)
+    if (p_settings->min_parking_ticks < 1U)
     {
-        return 0U;
+        return ERROR;
     }
 
-    if ((p_settings->tick_inSec % p_settings->gate_entry_inSec) != 0U)
+    if (p_settings->max_parking_ticks < p_settings->min_parking_ticks)
     {
-        return 0U;
+        return ERROR;
     }
 
-    return (uint16_t)(p_settings->tick_inSec / p_settings->gate_entry_inSec);
+    return OK;
 }
 
 /* ========================================================================= */
@@ -516,8 +522,6 @@ int print_configscreen(const Settings *p_settings)
     {
         return ERROR;
     }
-
-    const uint16_t max_entries_per_tick = calc_max_possible_entries_per_tick(p_settings);
 
     clear_terminal();
 
@@ -533,20 +537,12 @@ int print_configscreen(const Settings *p_settings)
     printf("4  Gates                  : %u\n", (unsigned)p_settings->gates);
     printf("5  Gate Entry Time (sec)  : %u\n", (unsigned)p_settings->gate_entry_inSec);
     printf("6  Tick Length (sec)      : %u\n", (unsigned)p_settings->tick_inSec);
-
-    if (max_entries_per_tick > 0U)
-    {
-        printf("   Max Gate Entries / Tick: %u\n", (unsigned)max_entries_per_tick);
-    }
-    else
-    {
-        printf("   Max Gate Entries / Tick: INVALID CONFIG\n");
-    }
-
-    printf("7  Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
-    printf("8  Entry Prob / Sec (%%)    : %.2f\n", p_settings->entry_probability_perSec_prec);
-    printf("9  Max Ticks              : %ld\n", (long)p_settings->max_ticks);
-    printf("10 Random Seed            : %ld\n", (long)p_settings->rand_seed);
+    printf("7  Min Parking Ticks      : %lu\n", (unsigned long)p_settings->min_parking_ticks);
+    printf("8  Max Parking Ticks      : %lu\n", (unsigned long)p_settings->max_parking_ticks);
+    printf("9  Entry Prob / Sec (%%)    : %.2f\n", p_settings->entry_probability_perSec_prec);
+    printf("10 Max Ticks              : %ld\n", (long)p_settings->max_ticks);
+    printf("11 Random Seed            : %ld\n", (long)p_settings->rand_seed);
+    printf("12 Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
     printf("------------------------------------\n");
     printf("0  Back to Home\n\n");
 
@@ -584,11 +580,11 @@ ui_state config_menu(Settings *p_settings)
         valid = validate_user_input(choice, CONFIG_MAX_VALID_NUMBER);
     }
 
-    if (choice == 0)
+    if (choice == CONFIG_MENU_BACK)
     {
         return UI_HOME;
     }
-    else if (choice == 1)
+    else if (choice == CONFIG_MENU_NAME)
     {
         char name_buf[SETTINGS_NAME_MAX_LENGTH + 1];
 
@@ -604,14 +600,14 @@ ui_state config_menu(Settings *p_settings)
 
         if (ui_settings_set_name(p_settings, name_buf) != OK)
         {
-            printf("Failed to set name (out of memory?).\n");
+            printf("Failed to set name.\n");
             printf("Press ENTER to continue...\n");
             press_enter_to_continue();
         }
 
         return UI_KONFIG;
     }
-    else if (choice == 2)
+    else if (choice == CONFIG_MENU_CAPACITY)
     {
         long value = 0;
 
@@ -622,11 +618,14 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_size(p_settings, (uint16_t)value) != OK)
         {
-            printf("Failed to set capacity (out of memory?).\n");
+            printf("Failed to set capacity.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
-    else if (choice == 3)
+    else if (choice == CONFIG_MENU_FLOORS)
     {
         long value = 0;
 
@@ -637,11 +636,14 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_floors(p_settings, (uint8_t)value) != OK)
         {
-            printf("Failed to set floors (out of memory?).\n");
+            printf("Failed to set floors.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
-    else if (choice == 4)
+    else if (choice == CONFIG_MENU_GATES)
     {
         long value = 0;
 
@@ -652,14 +654,16 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_gates(p_settings, (uint8_t)value) != OK)
         {
-            printf("Failed to set gates (out of memory?).\n");
+            printf("Failed to set gates.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
-    else if (choice == 5)
+    else if (choice == CONFIG_MENU_GATE_ENTRY_TIME)
     {
         const uint16_t old_gate_entry = p_settings->gate_entry_inSec;
-
         long value = 0;
 
         (void)read_long_in_range("Enter gate entry time in seconds: ",
@@ -669,7 +673,7 @@ ui_state config_menu(Settings *p_settings)
 
         p_settings->gate_entry_inSec = (uint16_t)value;
 
-        if (resolve_tick_gate_conflict(p_settings, 5) != OK)
+        if (resolve_tick_gate_conflict(p_settings, CONFIG_MENU_GATE_ENTRY_TIME) != OK)
         {
             p_settings->gate_entry_inSec = old_gate_entry;
 
@@ -680,10 +684,9 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 6)
+    else if (choice == CONFIG_MENU_TICK_LENGTH)
     {
         const uint16_t old_tick = p_settings->tick_inSec;
-
         long value = 0;
 
         (void)read_long_in_range("Enter tick length in seconds: ",
@@ -693,7 +696,7 @@ ui_state config_menu(Settings *p_settings)
 
         p_settings->tick_inSec = (uint16_t)value;
 
-        if (resolve_tick_gate_conflict(p_settings, 6) != OK)
+        if (resolve_tick_gate_conflict(p_settings, CONFIG_MENU_TICK_LENGTH) != OK)
         {
             p_settings->tick_inSec = old_tick;
 
@@ -704,18 +707,55 @@ ui_state config_menu(Settings *p_settings)
 
         return UI_KONFIG;
     }
-    else if (choice == 7)
+    else if (choice == CONFIG_MENU_MIN_PARKING_TICKS)
     {
-        const int mode_select = edit_mode_select();
-        const enum OutputMode mode = apply_mode_select(mode_select);
+        const uint32_t old_min = p_settings->min_parking_ticks;
+        long value = 0;
 
-        if (settings_set_output_mode(p_settings, mode) != OK)
+        (void)read_long_in_range("Enter minimum parking ticks: ",
+                                  SETTINGS_MINIMUM_PARKING_TICKS,
+                                 SETTINGS_MAXIMUM_PARKING_TICKS,
+                                 &value);
+
+        p_settings->min_parking_ticks = (uint32_t)value;
+
+        if (is_parking_time_config_valid(p_settings) != OK)
         {
-            printf("Failed to set output mode (out of memory?).\n");
+            p_settings->min_parking_ticks = old_min;
+
+            printf("Invalid configuration.\n");
+            printf("Minimum parking ticks must be <= maximum parking ticks.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
-    else if (choice == 8)
+    else if (choice == CONFIG_MENU_MAX_PARKING_TICKS)
+    {
+        const uint32_t old_max = p_settings->max_parking_ticks;
+        long value = 0;
+
+        (void)read_long_in_range("Enter maximum parking ticks: ",
+                                  SETTINGS_MINIMUM_PARKING_TICKS,
+                                 SETTINGS_MAXIMUM_PARKING_TICKS,
+                                 &value);
+
+        p_settings->max_parking_ticks = (uint32_t)value;
+
+        if (is_parking_time_config_valid(p_settings) != OK)
+        {
+            p_settings->max_parking_ticks = old_max;
+
+            printf("Invalid configuration.\n");
+            printf("Maximum parking ticks must be >= minimum parking ticks.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
+        return UI_KONFIG;
+    }
+    else if (choice == CONFIG_MENU_ENTRY_PROBABILITY)
     {
         float vehicles = 0.0f;
         const rate_input_mode mode = (rate_input_mode)edit_arrival_rate_mode();
@@ -723,17 +763,16 @@ ui_state config_menu(Settings *p_settings)
         (void)read_float_nonnegative("Enter average arriving vehicles: ",
                                      &vehicles);
 
-        const float probability = convert_rate_to_prob_perc(vehicles, mode);
+        p_settings->entry_probability_perSec_prec = convert_rate_to_prob_perc(vehicles, mode);
 
-        p_settings->entry_probability_perSec_prec = probability;
-
-        printf("Converted probability per second: %.2f %%\n", probability);
+        printf("Converted probability per second: %.2f %%\n",
+               p_settings->entry_probability_perSec_prec);
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
 
         return UI_KONFIG;
     }
-    else if (choice == 9)
+    else if (choice == CONFIG_MENU_MAX_TICKS)
     {
         long value = 0;
 
@@ -744,11 +783,14 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_max_ticks(p_settings, (int32_t)value) != OK)
         {
-            printf("Failed to set max ticks (out of memory?).\n");
+            printf("Failed to set max ticks.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
         return UI_KONFIG;
     }
-    else if (choice == 10)
+    else if (choice == CONFIG_MENU_RANDOM_SEED)
     {
         long value = 0;
 
@@ -759,8 +801,25 @@ ui_state config_menu(Settings *p_settings)
 
         if (settings_set_rand_seed(p_settings, (int32_t)value) != OK)
         {
-            printf("Failed to set random seed (out of memory?).\n");
+            printf("Failed to set random seed.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
         }
+
+        return UI_KONFIG;
+    }
+    else if (choice == CONFIG_MENU_OUTPUT_MODE)
+    {
+        const int mode_select = edit_mode_select();
+        const enum OutputMode mode = apply_mode_select(mode_select);
+
+        if (settings_set_output_mode(p_settings, mode) != OK)
+        {
+            printf("Failed to set output mode.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
         return UI_KONFIG;
     }
 

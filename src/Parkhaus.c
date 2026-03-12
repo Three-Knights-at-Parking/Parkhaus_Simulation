@@ -171,7 +171,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
 
     queue_set_demand(p_gate_queue, demand);
     if (demand > 0U) {
-        status = open_demand(p_StatList, p_gate_queue, demand, current_tick, const p_settings);
+        status = open_demand(p_StatList, p_gate_queue, demand, current_tick,  p_settings);
         if (status == ERROR)
         {
             return ERROR;
@@ -424,8 +424,7 @@ uint16_t fill_from_queue(Parkhaus *p_parkhouse, Queue *p_gate_queue, GenericVehi
 
 //moving left demand into queue or add to rejections
 int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remaining,
-                uint32_t current_tick, Settings *p_settings) {
-
+                uint32_t current_tick, const Settings *p_settings){
     if (p_StatList == NULL || p_gate_queue == NULL || p_settings == NULL) {
         print_error("open_demand: central pointer error");
         return ERROR;

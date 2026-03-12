@@ -1,6 +1,14 @@
+/**
+* @file ui_storage.c
+ * @brief Storage menu implementation for loading saved statistics files.
+ *
+ * This module handles loading persisted statistics data and
+ * displaying it via the ui_statistics module.
+ */
+
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_statistics.h"
@@ -263,41 +271,15 @@ ui_state storage_menu(Settings *p_settings)
         valid = validate_user_input(choice, STORAGE_MAX_VALID_NUMBER);
     }
 
-    if (choice == 1)
+    if (choice == STORAGE_MENU_LOAD)
     {
         (void)load_statistics_file_prompt(p_settings);
         return UI_STORAGE;
     }
-    else if (choice == 0)
+    else if (choice == STORAGE_MENU_BACK)
     {
         return UI_HOME;
     }
 
     return UI_STORAGE;
 }
-
-
-
-/* This is a FEATURE, not part of the requirements
- * Actually not part of the UI
- * Adding a file browser should perhaps be checked to see if it falls out-of-scope.
-void browse_directory(const char *p_current_path) {
-}
-
-void directory_options(const char *p_dir_path) {
-}
-
-void file_options(const char *p_file_path) {
-}
-
-void deleting_verification(const char *p_object_path, const char *p_object_type) {
-}
-
-void print_file_to_terminal(const char *p_path) {
-}
-
-void delete_directory(const char *p_path) {
-}
-
-void delete_file(const char *p_path) {
-}*/

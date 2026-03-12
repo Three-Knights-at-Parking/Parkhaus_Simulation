@@ -130,7 +130,7 @@ int simulation_start(Simulation *p_sim) {
 
     if (simulation_run(p_sim) != OK)
     {
-        print_warning_s("SImulation failed, HIGH");
+        print_warning_s("Simulation failed");
         return ERROR;
     }
 
@@ -145,7 +145,7 @@ int simulation_run(Simulation *p_sim) {
 
 
     if (p_sim->settings->max_ticks < 0) {
-        print_error("simulation_run: invalid max_ticks");
+        print_error_s("invalid max_ticks", LOW);
         return ERROR;
     }
 

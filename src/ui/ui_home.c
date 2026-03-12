@@ -8,10 +8,10 @@
  * - returning the selected next UI state
  */
 
+#include <stdio.h>
+
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_home.h"
-
-#include <stdio.h>
 
 /* ========================================================================= */
 /* Screen printing                                                           */
@@ -36,7 +36,8 @@ void print_homescreen(void)
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state home_menu(Settings *p_settings) {
+ui_state home_menu(void)
+{
     int choice = 0;
     validation_flag valid = INVALID;
 
@@ -50,19 +51,19 @@ ui_state home_menu(Settings *p_settings) {
 
     /* Map numeric menu choice to UI state.
        The state machine in ui_start() will call the appropriate menu handler. */
-    if (choice == 1)
+    if (choice == HOME_MENU_SIMULATION)
     {
         return UI_SIMULATION;
     }
-    else if (choice == 2)
+    else if (choice == HOME_MENU_CONFIG)
     {
         return UI_KONFIG;
     }
-    else if (choice == 3)
+    else if (choice == HOME_MENU_STORAGE)
     {
         return UI_STORAGE;
     }
-    else if (choice == 4)
+    else if (choice == HOME_MENU_HELP)
     {
         return UI_HELP;
     }
