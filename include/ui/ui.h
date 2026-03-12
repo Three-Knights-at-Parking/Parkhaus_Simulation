@@ -24,6 +24,7 @@ typedef enum
     UI_SIMULATION,
     UI_KONFIG,
     UI_STORAGE,
+    UI_HELP,
     UI_EXIT
 } ui_state;
 
@@ -75,6 +76,9 @@ int user_input(void);
  * @return VALID if user_choice is within range, otherwise INVALID.
  */
 validation_flag validate_user_input(const int user_choice, const int max_valid_number);
+
+int trim_newline(char *p_text);
+int read_line(char *p_buffer, size_t buffer_len);
 
 /* ========================================================================= */
 /* UI state machine                                                          */

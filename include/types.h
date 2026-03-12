@@ -4,6 +4,12 @@
  */
 #ifndef TEIL1_PARKHAUS_SIMULATION_PLANNUNG_TYPES_H
 #define TEIL1_PARKHAUS_SIMULATION_PLANNUNG_TYPES_H
+#include "Settings.h"
+#include <ctype.h>
+#include <errno.h>
+#include <string.h>
+#include <time.h>
+#include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
 
@@ -28,19 +34,6 @@ typedef struct RNG RNG;
 enum ObjectType {CAR, PARKHAUS, QUEUE};
 
 /**
- * NONE - Here for completeness
- * NORMAL - The Normal mode, only the most import statistics and averages -> Minimum Required in "Teil 1"
- * VERBOSE - EVERYTHING, every single bit of data (this will dump performance)
- * DEBUG - NORMAL + Debug Messages (i.e. tick - enteredTick() debugInfo debugInfo)
- */
-enum OutputMode {NONE, NORMAL, VERBOSE, DEBUG};
-
-/**
- * Determines if vehicles can leave the queue early (at any position)
- */
-enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
-
-/**
  * Return values for functions/validation.
  */
 enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};
@@ -51,9 +44,8 @@ enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};
 
 enum MinimumSpace{ Bike_Space = 1, Car_Space = 2 };
 
+//FIXME Kannste das nächste mal auch selber machen :)  STRG+x STRG+v
 //important Backup defines
-#define DEFAULT_MAX_QUEUE_LENGTH 10 //standard limit für Queue length
-#define BAD_PARKING_CHANCE_PERCENT 2 // 2/100 -> annahme das 2% aller Fahrzeuge schlecht Parken
 
 
 /**
@@ -136,11 +128,6 @@ struct Car {
     uint8_t spaces_needed; // How many spaces this vehicle needs
 };
 
-struct RNG
-{
-    uint32_t seed;
-};
-
 // --- EXAMPLE OF ANOTHER VEHICLE TYPE ---
 //
 //
@@ -153,7 +140,8 @@ struct RNG
 
 struct Settings {
     char* src_path; // Relative path to settings file, if any. Settings takes ownership of the string.
-    char* name[20]; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
+    char* stats_path; // Relative path to the stats save location. Settings takes ownership of the string.
+    char name[20]; // The name of the parking complex. Empty if default ("Rauenegg") ##UI##
     uint16_t capacity; // Total parking spots per floor ##UI##
     uint8_t floors; // Number of floors. This is currently miscellaneous ##UI##
     uint8_t gates; // Number of gates. This will affect queue time. ##UI##
@@ -272,6 +260,7 @@ struct StatsSummary {
  */
 struct StatList {
     SimulationObject base;
+    StatsSummary* p_summary; //slot to link summary
     StatsTick *p_tick_head; /**< Erster Tick in der Verlaufsliste. */
     StatsTick *p_tick_tail; /**< Letzter Tick in der Verlaufsliste. */
     StatsTick *p_current_tick; /**< Tick-Builder fuer den aktuell laufenden Tick. */

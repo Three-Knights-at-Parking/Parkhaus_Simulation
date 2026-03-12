@@ -29,13 +29,19 @@ int car_destroy(Car *p_car) {
         printf("car_destroy: car pointer is NULL\n");
         return ERROR;
     }
+    free(&(p_car->base));
     free(p_car);
     return OK;
 }
 
 //FIXME Keep like this?
+// nope - This should probably look for slot / state changes too, unless you
+// plan on controlling it fully via Parkhaus.
 void car_tick(SimulationObject *p_self, uint32_t current_tick)
 {
     GenericVehicle *p_vehicle = (GenericVehicle *) p_self;
     p_vehicle->leaving_in_ticks--;
+    if (p_vehicle->leaving_in_ticks == 0) {
+        // TODO Leave Parkhaus
+    }
 }

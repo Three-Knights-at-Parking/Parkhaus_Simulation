@@ -74,10 +74,11 @@
      *  - Otherwise src_path is treated as a file name under ../stats/.
      *
      * @param src_path Optional file name under ../stats/ to load (may be NULL or empty).
+     * @param list The StatList to fill. with values. Ownership stays with the caller.
      *
      * @return OK (0) on success, ERROR (-1) on error.
      */
-    int savehandler_load_and_print(const char *src_path);
+    int savehandler_load_and_print(const char *src_path, StatList* list);
 
     /**
      * @brief Resolve and validate a statistics file path under the ../stats/ folder.

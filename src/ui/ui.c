@@ -9,6 +9,7 @@
 #include "../include/ui/ui_config.h"
 #include "../include/ui/ui_simulation.h"
 #include "../include/ui/ui_storage.h"
+#include "../include/ui/ui_help.h"
 
 /* ========================================================================= */
 /* Helper functions                                                          */
@@ -118,6 +119,57 @@ validation_flag validate_user_input(const int user_choice, const int max_valid_n
     return VALID;
 }
 
+int trim_newline(char *p_text)
+{
+    if (p_text == NULL)
+    {
+        return ERROR;
+    }
+
+    const size_t len = strlen(p_text);
+
+    if (len == 0U)
+    {
+        return ERROR;
+    }
+
+    if (p_text[len - 1U] == '\n')
+    {
+        p_text[len - 1U] = '\0';
+    }
+    return OK;
+}
+
+int read_line(char *p_buffer, const size_t buffer_len)
+{
+    if (p_buffer == NULL || buffer_len == 0U)
+    {
+        return ERROR;
+    }
+
+    if (fgets(p_buffer, buffer_len, stdin) == NULL)
+    {
+        return ERROR;
+    }
+
+    if (strchr(p_buffer, '\n') == NULL)
+    {
+        int c;
+
+        while ((c = getchar()) != '\n' && c != EOF)
+        {
+            /* discard */
+        }
+    }
+
+    if (trim_newline(p_buffer) != OK)
+    {
+        return ERROR;
+    }
+
+    return OK;
+}
+
 /* ========================================================================= */
 /* Welcome screen                                                            */
 /* ========================================================================= */
@@ -130,7 +182,17 @@ ui_state welcome_message(void)
     printf("     Parkhaus-Simulation Rauenegg\n");
     printf("=========================================\n\n");
 
-    printf("[Welcome Message with brief description]\n\n");
+    printf("Welcome!\n\n");
+    printf("This program simulates the behaviour of a parking garage.\n");
+    printf("Vehicles arrive, queue at gates, enter the garage,\n");
+    printf("occupy parking spaces and leave again after a parking time.\n\n");
+
+    printf("You can configure simulation parameters, run simulations\n");
+    printf("and inspect stored statistics.\n\n");
+
+    printf("For a short explanation of the simulation model and all\n");
+    printf("important settings, open the HELP menu from the Home Menu.\n\n");
+
     printf("Press ENTER to continue...\n");
 
     press_enter_to_continue();
@@ -162,7 +224,11 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
         }
         else if (state == UI_STORAGE)
         {
-            state = storage_menu();
+            state = storage_menu(p_settings);
+        }
+        else if (state == UI_HELP)
+        {
+            state = help_menu();
         }
         else
         {

@@ -21,7 +21,7 @@
  * Valid input range:
  * 0 .. HOME_MAX_VALID_NUMBER
  */
-#define HOME_MAX_VALID_NUMBER (3)
+#define HOME_MAX_VALID_NUMBER (4)
 
 /**
  * @brief Prints the Home menu screen.
@@ -41,6 +41,6 @@ void print_homescreen(void);
  *
  * @return Next UI state depending on user selection.
  */
-ui_state home_menu(Settings *p_settings);
+ui_state home_menu(Settings* settings);
 
 #endif /* UI_HOME_H */
