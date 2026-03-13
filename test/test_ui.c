@@ -131,3 +131,22 @@ static void test_validate_user_input(void)
     assert(validate_user_input(-1, 4) == INVALID);
     fclose(p_in);
 }
+
+static void test_trim_newline(void)
+{
+    char text_a[] = "Hello\n";
+    char text_b[] = "World";
+
+    // Test 1: A string ending with a newline should have the newline removed and return OK
+    assert(trim_newline(text_a) == OK);
+
+    // Test 2: A string without a trailing newline should remain unchanged and return OK
+    assert(trim_newline(text_b) == OK);
+
+    // Test 3: Passing NULL should be rejected and return ERROR
+    assert(trim_newline(NULL) == ERROR);
+
+    // Test 4: An empty string should be rejected and return ERROR
+    char empty[] = "";
+    assert(trim_newline(empty) == ERROR);
+}
