@@ -87,11 +87,16 @@ static void test_clear_terminal(void)
     clear_terminal();
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
 
-    // Test 1: Anzahl der Zeilenumbrüche
+    // Test 1: Count the number of newline characters
     int count = 0;
     for (size_t i = 0; buffer[i] != '\0'; i++)
         if (buffer[i] == '\n')
             count++;
 
     assert(count == 40);
+
+    // Test 2: Ensure no other characters are present
+    for (size_t i = 0; buffer[i] != '\0'; i++)
+        assert(buffer[i] == '\n');
+
 }
