@@ -5,7 +5,6 @@
 
 #include "io/SaveHandler.h"
 #include "types.h"
-#include "./test_settings.c"
 
 
 static void cleanup_loaded_ticks(StatList *list) {
@@ -232,36 +231,15 @@ static void test_load_and_print_reads_tick_and_summary(void) {
     cleanup_loaded_ticks(&list);
     remove(full_path);
 }
-int main(void) {
+
+void test_save_handler() {
     test_resolve_stats_path_defaults();
+    printf("Save Handler - test resolve default paths passed\n");
     test_save_tick_normal_writes_header_and_data();
+    printf("Save Handler - write header passed\n");
     test_save_summary_appends_summary_lines();
+    printf("Save Handler - Appends Summary Line passed\n");
     test_load_and_print_reads_tick_and_summary();
+    printf("Save Handler - Reads Tick and Summary passed\n");
     printf("All SaveHandler tests passed.\n");
-
-    printf("Running Settings.c tests...\n");
-
-    test_settings_init();
-    printf(" - test_settings_init passed.\n");
-
-    test_settings_setters_valid();
-    printf(" - test_settings_setters_valid passed.\n");
-
-    test_settings_setters_invalid();
-    printf(" - test_settings_setters_invalid passed.\n");
-
-    test_settings_path_validation();
-    printf(" - test_settings_path_validation passed.\n");
-
-    test_settings_to_parkhaus();
-    printf(" - test_settings_to_parkhaus passed.\n");
-
-    test_settings_save_and_load();
-    printf(" - test_settings_save_and_load passed.\n");
-
-    test_delete_settings();
-    printf(" - test_delete_settings passed.\n");
-
-    printf("All Settings.c tests passed successfully!\n");
-    return 0;
 }

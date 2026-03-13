@@ -52,6 +52,8 @@ enable_testing()
 
 add_executable(Parkhaus_Simulation_Tests
         ${PARKHAUS_TEST_SOURCES}
+        test/test_generics.c
+        test/main_test.c
 )
 
 target_link_libraries(Parkhaus_Simulation_Tests

@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "Settings.h"
@@ -20,8 +19,9 @@
 static void test_settings_init(void) {
     Settings s;
     memset(&s, 0, sizeof(s));
+    const char *dummy_path = "./test_dummy_config.json";
     int result = settings_init(&s,
-                               "./config.json",
+                               dummy_path,
                                "Raunegg Test",
                                100,
                                2,
@@ -39,8 +39,8 @@ static void test_settings_init(void) {
                                NON_LEAVABLE);
 
     assert(result == OK);
-    assert(strcmp(s.name, "Raunegg Test") == 0);
-    assert(strcmp(s.src_path, "./config.json") == 0);
+    assert(strcmp(s.name, "Raunegg Test") == OK);
+    assert(strcmp(s.src_path, "./test_dummy_config.json") == OK);
     assert(s.capacity == 100);
     assert(s.floors == 2);
     assert(s.gates == 3);
@@ -182,4 +182,25 @@ static void test_delete_settings(void) {
 
     assert(s.src_path == NULL);
     assert(s.name[0] == '\0');
+}
+
+
+void test_settings_all() {
+
+    printf("Running Settings.c tests...\n");
+    test_settings_init();
+    printf("Settings - test_settings_init passed\n");
+    test_settings_setters_valid();
+    printf("Settings - setters valid passed\n");
+    test_settings_setters_invalid();
+    printf("Settings - setters invalid passed\n");
+    test_settings_path_validation();
+    printf("Settings - path validation passed\n");
+    test_settings_to_parkhaus();
+    printf("Settings - conversion passed\n");
+    test_settings_save_and_load();
+    printf("Settings - save and load passed\n");
+    test_delete_settings();
+    printf("Settings - delete passed\n");
+    printf("All Settings.c tests passed successfully!\n");
 }

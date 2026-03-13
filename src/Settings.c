@@ -204,10 +204,18 @@ int settings_init(Settings *p_settings,
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (settings_load_from_file(p_settings, SETTINGS_DEFAULT_PATH) == OK) {
-        print_warning_s("Settings file already exists, using existing settings.");
-        return OK;
+    if (settings_is_valid_system_path_string(src_path) == OK) {
+        if (settings_load_from_file(p_settings, src_path) == OK) {
+            print_warning_s("Settings file already exists, using existing settings.");
+            return OK;
+        }
+    }else {
+        if (settings_load_from_file(p_settings, SETTINGS_DEFAULT_PATH) == OK) {
+            print_warning_s("Settings file already exists, using existing settings.");
+            return OK;
+        }
     }
+
 
     p_settings->name[0] = '\0';
     p_settings->src_path = NULL;

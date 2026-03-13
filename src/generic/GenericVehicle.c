@@ -1,6 +1,8 @@
 #include "GenericVehicle.h"
 #include <stdlib.h>
 
+#include "utils/SafteyUtils.h"
+
 
 void generic_vehicle_init(GenericVehicle *p_vehicle,
                           enum ObjectType type,
@@ -26,6 +28,9 @@ void generic_vehicle_init(GenericVehicle *p_vehicle,
 
 int get_vehicle_minimum_space(GenericVehicle *p_vehicle)
 {
+    if (checkNull(p_vehicle)) {
+        return ERROR;
+    }
     //if (p_vehicle.type == CAR) //future Feature
 
     Car *p_car = (Car *) p_vehicle;
@@ -36,6 +41,9 @@ int get_vehicle_minimum_space(GenericVehicle *p_vehicle)
 
 int get_vehicle_space_needed(GenericVehicle *p_vehicle)
 {
+    if (checkNull(p_vehicle)) {
+        return ERROR;
+    }
     //if (p_vehicle.type == CAR) //future Feature
 
     Car *p_car = (Car *) p_vehicle;
