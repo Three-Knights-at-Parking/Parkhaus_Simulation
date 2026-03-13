@@ -186,8 +186,6 @@ int read_line(char *p_buffer, const size_t buffer_len)
 
 ui_state welcome_message(void)
 {
-    clear_terminal();
-
     printf("=========================================\n");
     printf("     Parkhaus-Simulation Rauenegg\n");
     printf("=========================================\n\n");
@@ -203,7 +201,7 @@ ui_state welcome_message(void)
     printf("For a short explanation of the simulation model and all\n");
     printf("important settings, open the HELP menu from the Home Menu.\n\n");
 
-    printf("Press ENTER to continue...\n");
+    printf("Press ENTER to continue...");
 
     press_enter_to_continue();
 
@@ -222,7 +220,7 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
     {
         if (state == UI_HOME)
         {
-            state = home_menu(p_settings);
+            state = home_menu();
         }
         else if (state == UI_KONFIG)
         {
