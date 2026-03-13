@@ -175,16 +175,20 @@ static void test_trim_newline(void)
 
 static void test_read_line(void)
 {
+    FILE *p_in = NULL;
     char buffer[8];
-    FILE *p_in = set_stdin_text("Test\n");
 
-    // Test 1: read_line should successfully read a valid line into the buffer
+    /* Test 1: valid short line is read and trimmed */
+    p_in = set_stdin_text("Test\n");
     assert(read_line(buffer, sizeof(buffer)) == OK);
-
-    // Test 2: The buffer should contain the trimmed input without the newline
     assert(strcmp(buffer, "Test") == 0);
-
     fclose(p_in);
+
+    /* Test 2: NULL buffer is rejected */
+    assert(read_line(NULL, sizeof(buffer)) == ERROR);
+
+    /* Test 3: zero buffer length is rejected */
+    assert(read_line(buffer, 0U) == ERROR);
 }
 
 static void test_welcome_message(void)
