@@ -1,5 +1,5 @@
 /**
-* @file ui.c
+ * @file ui.c
  * @brief Core UI state machine and shared terminal/input helper functions.
  *
  * This module provides:
