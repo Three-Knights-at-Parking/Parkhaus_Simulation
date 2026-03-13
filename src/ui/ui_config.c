@@ -512,6 +512,45 @@ static int is_parking_time_config_valid(const Settings *p_settings)
     return OK;
 }
 
+static int load_custom_settings_prompt(Settings *p_settings)
+{
+    char file_path[256];
+
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("       LOAD SETTINGS FROM PATH\n");
+    printf("====================================\n\n");
+    printf("Enter a custom path to a settings file.\n");
+    printf("Example: ./config.json\n");
+    printf("         ../config.json\n");
+    printf("         /absolute/path/config.json\n\n");
+    printf("Path: ");
+
+    if (read_line(file_path, sizeof(file_path)) != OK)
+    {
+        printf("Input error.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    if (file_path[0] == '\0')
+    {
+        printf("No path entered.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    return load_settings_from_path(p_settings, file_path);
+}
+
 static int load_settings_menu_prompt(Settings *p_settings)
 {
     int choice = -1;
