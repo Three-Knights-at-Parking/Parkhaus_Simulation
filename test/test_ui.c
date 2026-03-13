@@ -151,7 +151,7 @@ static void test_trim_newline(void)
     assert(trim_newline(empty) == ERROR);
 }
 
-void test_read_line(void)
+static void test_read_line(void)
 {
     char buffer[8];
     FILE *p_in = set_stdin_text("Test\n");
@@ -163,4 +163,27 @@ void test_read_line(void)
     assert(strcmp(buffer, "Test") == 0);
 
     fclose(p_in);
+}
+
+static void test_welcome_message(void)
+{
+    // Test 1: The function should return UI_HOME after completing the welcome screen
+    FILE *p_in = set_stdin_text("\n");  //Simulate ENTER input for press_enter_to_continue()
+    assert(welcome_message() == UI_HOME);
+    fclose(p_in);
+
+    // Test 2: The function should print the expected welcome text to stdout
+    int saved_fd;
+    char buffer[2000];
+
+    FILE *p_out = begin_capture_stdout(&saved_fd);
+
+    p_in = set_stdin_text("\n");    // Again simulate ENTER input for press_enter_to_continue()
+    welcome_message();
+    fclose(p_in);
+
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    assert(strstr(buffer, "Welcome!") != NULL);
+    assert(strstr(buffer, "Parkhaus-Simulation") != NULL);
 }
