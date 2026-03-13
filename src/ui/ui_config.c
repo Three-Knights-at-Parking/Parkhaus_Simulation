@@ -575,6 +575,7 @@ static int load_custom_settings_prompt(Settings *p_settings)
     printf("Example: ./config.json\n");
     printf("         ../config.json\n");
     printf("         /absolute/path/config.json\n\n");
+    printf("Note: File must be a .json - otherwise default file will be loaded.\n");
     printf("Path: ");
 
     if (read_line(file_path, sizeof(file_path)) != OK)
