@@ -512,6 +512,17 @@ static int is_parking_time_config_valid(const Settings *p_settings)
     return OK;
 }
 
+static int load_previous_settings(Settings *p_settings)
+{
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("       LOAD PREVIOUS SETTINGS\n");
+    printf("====================================\n\n");
+
+    return load_settings_from_path(p_settings, NULL);
+}
+
 static int load_custom_settings_prompt(Settings *p_settings)
 {
     char file_path[256];
