@@ -156,18 +156,20 @@ static void test_trim_newline(void)
 {
     char text_a[] = "Hello\n";
     char text_b[] = "World";
+    char empty[] = "";
 
-    // Test 1: A string ending with a newline should have the newline removed and return OK
+    /* Test 1: trailing newline is removed */
     assert(trim_newline(text_a) == OK);
+    assert(strcmp(text_a, "Hello") == 0);
 
-    // Test 2: A string without a trailing newline should remain unchanged and return OK
+    /* Test 2: string without newline remains unchanged */
     assert(trim_newline(text_b) == OK);
+    assert(strcmp(text_b, "World") == 0);
 
-    // Test 3: Passing NULL should be rejected and return ERROR
+    /* Test 3: NULL is rejected */
     assert(trim_newline(NULL) == ERROR);
 
-    // Test 4: An empty string should be rejected and return ERROR
-    char empty[] = "";
+    /* Test 4: empty string is rejected */
     assert(trim_newline(empty) == ERROR);
 }
 
