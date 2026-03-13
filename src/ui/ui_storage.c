@@ -147,7 +147,7 @@ static void free_loaded_stat_list(StatList *p_stat_list)
 
 static int load_statistics_from_path(const char *p_path)
 {
-    enum OutputMode output_mode = NONE;
+    enum OutputMode output_mode = NORMAL;
     StatList *p_loaded_stats = NULL;
 
     p_loaded_stats = malloc(sizeof(StatList));
@@ -158,12 +158,20 @@ static int load_statistics_from_path(const char *p_path)
         press_enter_to_continue();
         return ERROR;
     }
+    p_loaded_stats->p_summary = malloc(sizeof(StatsSummary));
+    if (p_loaded_stats->p_summary == NULL)
+    {
+        printf("Memory allocation for StatsSummary failed.\n");
+        free(p_loaded_stats);
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+    memset(p_loaded_stats->p_summary, 0, sizeof(StatsSummary));
 
     p_loaded_stats->p_tick_head = NULL;
     p_loaded_stats->p_tick_tail = NULL;
     p_loaded_stats->p_current_tick = NULL;
-    p_loaded_stats->p_summary = NULL;
-
     if (savehandler_load_and_print(p_path, p_loaded_stats, &output_mode) != OK)
     {
         if (p_path == NULL)
