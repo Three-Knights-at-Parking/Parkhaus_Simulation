@@ -539,10 +539,11 @@ int print_configscreen(const Settings *p_settings)
     printf("6  Tick Length (sec)      : %u\n", (unsigned)p_settings->tick_inSec);
     printf("7  Min Parking Ticks      : %lu\n", (unsigned long)p_settings->min_parking_ticks);
     printf("8  Max Parking Ticks      : %lu\n", (unsigned long)p_settings->max_parking_ticks);
-    printf("9  Entry Prob / Sec (%%)    : %.2f\n", p_settings->entry_probability_perSec_prec);
+    printf("9  Entry Prob / Sec (%%)  : %.2f\n", p_settings->entry_probability_perSec_prec);
     printf("10 Max Ticks              : %ld\n", (long)p_settings->max_ticks);
     printf("11 Random Seed            : %ld\n", (long)p_settings->rand_seed);
     printf("12 Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
+    printf("13 Load Settings from file\n");
     printf("------------------------------------\n");
     printf("0  Back to Home\n\n");
 
@@ -820,6 +821,11 @@ ui_state config_menu(Settings *p_settings)
             press_enter_to_continue();
         }
 
+        return UI_KONFIG;
+    }
+    else if (choice == CONFIG_MENU_LOAD_SETTINGS)
+    {
+        (void)load_settings_menu_prompt(p_settings);
         return UI_KONFIG;
     }
 
