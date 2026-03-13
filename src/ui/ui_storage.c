@@ -272,7 +272,7 @@ void print_storagescreen(void)
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state storage_menu(Settings *p_settings)
+ui_state storage_menu(void)
 {
     int choice = 0;
     validation_flag valid = INVALID;
