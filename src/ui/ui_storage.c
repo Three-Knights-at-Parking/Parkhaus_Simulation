@@ -229,6 +229,17 @@ static int load_statistics_file_prompt(const Settings *p_settings)
     return OK;
 }
 
+static int load_default_statistics_file(const Settings *p_settings)
+{
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("     LOAD DEFAULT STATISTICS FILE\n");
+    printf("====================================\n\n");
+
+    return load_statistics_from_path(p_settings, NULL);
+}
+
 /* ========================================================================= */
 /* Main storage menu                                                         */
 /* ========================================================================= */
