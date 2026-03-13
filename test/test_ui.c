@@ -193,21 +193,23 @@ static void test_read_line(void)
 
 static void test_welcome_message(void)
 {
-    // Test 1: The function should return UI_HOME after completing the welcome screen
-    FILE *p_in = set_stdin_text("\n");  //Simulate ENTER input for press_enter_to_continue()
+    FILE *p_in = NULL;
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[2000];
+
+    /* Test 1: function returns UI_HOME */
+    p_in = set_stdin_text("\n");
     assert(welcome_message() == UI_HOME);
     fclose(p_in);
 
-    // Test 2: The function should print the expected welcome text to stdout
-    int saved_fd;
-    char buffer[2000];
+    /* Test 2: expected welcome text is printed */
+    p_out = begin_capture_stdout(&saved_fd);
+    p_in = set_stdin_text("\n");
 
-    FILE *p_out = begin_capture_stdout(&saved_fd);
+    assert(welcome_message() == UI_HOME);
 
-    p_in = set_stdin_text("\n");    // Again simulate ENTER input for press_enter_to_continue()
-    welcome_message();
     fclose(p_in);
-
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
 
     assert(strstr(buffer, "Welcome!") != NULL);
