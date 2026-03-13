@@ -118,3 +118,16 @@ static void test_user_input(void)
     assert(user_input() == -7);
     fclose(p_in);
 }
+
+static void test_validate_user_input(void)
+{
+    // Test 1: A valid number within the allowed range should be accepted
+    FILE *p_in = set_stdin_text("\n");   // Prepare stdin for potential press_enter_to_continue()
+    assert(validate_user_input(1, 4) == VALID);
+    fclose(p_in);
+
+    // Test 2: A negative number should be rejected and return INVALID
+    p_in = set_stdin_text("\n");         // Needed because INVALID triggers press_enter_to_continue()
+    assert(validate_user_input(-1, 4) == INVALID);
+    fclose(p_in);
+}
