@@ -199,7 +199,7 @@ ui_state welcome_message(void)
     printf("and inspect stored statistics.\n\n");
 
     printf("For a short explanation of the simulation model and all\n");
-    printf("important settings, open the HELP menu from the Home Menu.\n\n");
+    printf("important settings, open the HELP menu from the Home Menu.\n");
 
     printf("Press ENTER to continue...");
 
