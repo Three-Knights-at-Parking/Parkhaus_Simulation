@@ -32,7 +32,7 @@ static int load_statistics_from_path(const char *p_path);
 
 static int load_default_statistics_file(void);
 
-static int load_custom_statistics_file_prompt(const Settings *p_settings);
+static int load_custom_statistics_file_prompt();
 
 /* ========================================================================= */
 /* Local helper functions                                                    */
