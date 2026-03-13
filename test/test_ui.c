@@ -1,3 +1,21 @@
+/**
+ * @file Test_ui.c
+ * @brief Unit tests for the core UI module.
+ *
+ * This file contains assert-based unit tests for the functions implemented
+ * in ui.c. The tests verify correct behaviour of shared terminal helpers,
+ * input parsing utilities and the UI state machine.
+ *
+ * Tested functionality includes:
+ * - terminal helper functions (press_enter_to_continue, clear_terminal)
+ * - user input parsing and validation
+ * - string processing utilities
+ * - UI startup and navigation logic
+ *
+ * All tests simulate stdin and stdout using temporary files in order to
+ * provide deterministic input sequences and to capture terminal output.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
