@@ -23,7 +23,7 @@
 
 static int ask_tick_output_mode(int *p_print_all);
 
-static int print_loaded_statistics(enum OutputMode *p_output_mode,
+static int print_loaded_statistics(enum OutputMode output_mode,
                                    const StatList *p_stat_list);
 
 static void free_loaded_stat_list(StatList *p_stat_list);
@@ -74,7 +74,7 @@ static int ask_tick_output_mode(int *p_print_all)
     }
 }
 
-static int print_loaded_statistics(enum OutputMode *p_output_mode,
+static int print_loaded_statistics(enum OutputMode output_mode,
                                    const StatList *p_stat_list)
 {
     const StatsTick *p_current_tick = NULL;
@@ -85,13 +85,13 @@ static int print_loaded_statistics(enum OutputMode *p_output_mode,
         return ERROR;
     }
 
-    ui_statistics_print_header(*p_output_mode);
+    ui_statistics_print_header(output_mode);
 
     p_current_tick = p_stat_list->p_tick_head;
 
     while (p_current_tick != NULL)
     {
-        ui_statistics_print_tick(p_current_tick, *p_output_mode);
+        ui_statistics_print_tick(p_current_tick, output_mode);
 
         if (print_all_remaining == 0 && p_current_tick->p_next != NULL)
         {
@@ -106,7 +106,7 @@ static int print_loaded_statistics(enum OutputMode *p_output_mode,
 
     if (p_stat_list->p_summary != NULL)
     {
-        ui_statistics_print_final(p_stat_list->p_summary, *p_output_mode);
+        ui_statistics_print_final(p_stat_list->p_summary, output_mode);
     }
     else
     {
@@ -190,7 +190,7 @@ static int load_statistics_from_path(const Settings *p_settings,
 
     clear_terminal();
 
-    if (print_loaded_statistics(&output_mode, p_loaded_stats) != OK)
+    if (print_loaded_statistics(output_mode, p_loaded_stats) != OK)
     {
         printf("Printing loaded statistics failed.\n");
         free_loaded_stat_list(p_loaded_stats);
