@@ -241,7 +241,8 @@ void print_storagescreen(void)
     printf("            STORAGE MENU\n");
     printf("====================================\n");
     printf("\n");
-    printf("1 Load statistics file\n");
+    printf("1 Load default statistics file\n");
+    printf("2 Load statistics file from custom path\n");
     printf("0 Back to Home\n");
     printf("\n");
 }
