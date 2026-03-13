@@ -100,3 +100,16 @@ static void test_clear_terminal(void)
         assert(buffer[i] == '\n');
 
 }
+
+static void test_user_input(void)
+{
+    // Test 1: Valid integer input should be accepted
+    FILE *p_in = set_stdin_text("77\n");
+    assert(user_input() == 77);
+    fclose(p_in);
+
+    // Test 2: Garbage input should be rejected and return -1
+    p_in = set_stdin_text("123ABC\n");
+    assert(user_input() == ERROR);
+    fclose(p_in);
+}
