@@ -352,7 +352,7 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
     printf("tick_inSec must be a multiple of gate_entry_inSec.\n");
     printf("Otherwise fractional entries per tick would occur.\n\n");
 
-    if (changed_field == 6)
+    if (changed_field == CONFIG_MENU_TICK_LENGTH)
     {
         prev_valid = find_prev_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
         next_valid = find_next_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
@@ -383,7 +383,7 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
         return ERROR;
     }
 
-    if (changed_field == 5)
+    if (changed_field == CONFIG_MENU_GATE_ENTRY_TIME)
     {
         printf("The new gate entry time does not divide the current tick length.\n");
         printf("Please choose one of the following options:\n");
