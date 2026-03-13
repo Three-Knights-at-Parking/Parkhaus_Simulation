@@ -136,14 +136,19 @@ static void test_user_input(void)
 
 static void test_validate_user_input(void)
 {
-    // Test 1: A valid number within the allowed range should be accepted
-    FILE *p_in = set_stdin_text("\n");   // Prepare stdin for potential press_enter_to_continue()
+    FILE *p_in = NULL;
+
+    /* Test 1: valid number inside range */
     assert(validate_user_input(1, 4) == VALID);
+
+    /* Test 2: negative number is invalid */
+    p_in = set_stdin_text("\n");
+    assert(validate_user_input(-1, 4) == INVALID);
     fclose(p_in);
 
-    // Test 2: A negative number should be rejected and return INVALID
-    p_in = set_stdin_text("\n");         // Needed because INVALID triggers press_enter_to_continue()
-    assert(validate_user_input(-1, 4) == INVALID);
+    /* Test 3: number above maximum is invalid */
+    p_in = set_stdin_text("\n");
+    assert(validate_user_input(5, 4) == INVALID);
     fclose(p_in);
 }
 
