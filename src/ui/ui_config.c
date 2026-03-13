@@ -713,9 +713,9 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter minimum parking ticks: ",
-                                  SETTINGS_MINIMUM_PARKING_TICKS,
-                                 SETTINGS_MAXIMUM_PARKING_TICKS,
-                                 &value);
+                                    SETTINGS_DEFAULT_MINIMUM_PARKING_TICKS,
+                                    SETTINGS_DEFAULT_MAXIMUM_PARKING_TICKS,
+                                    &value);
 
         p_settings->min_parking_ticks = (uint32_t)value;
 
@@ -737,8 +737,8 @@ ui_state config_menu(Settings *p_settings)
         long value = 0;
 
         (void)read_long_in_range("Enter maximum parking ticks: ",
-                                  SETTINGS_MINIMUM_PARKING_TICKS,
-                                 SETTINGS_MAXIMUM_PARKING_TICKS,
+                                  SETTINGS_DEFAULT_MINIMUM_PARKING_TICKS,
+                                 SETTINGS_DEFAULT_MAXIMUM_PARKING_TICKS,
                                  &value);
 
         p_settings->max_parking_ticks = (uint32_t)value;
