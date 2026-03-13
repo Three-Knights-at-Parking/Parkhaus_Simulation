@@ -150,3 +150,17 @@ static void test_trim_newline(void)
     char empty[] = "";
     assert(trim_newline(empty) == ERROR);
 }
+
+void test_read_line(void)
+{
+    char buffer[8];
+    FILE *p_in = set_stdin_text("Test\n");
+
+    // Test 1: read_line should successfully read a valid line into the buffer
+    assert(read_line(buffer, sizeof(buffer)) == OK);
+
+    // Test 2: The buffer should contain the trimmed input without the newline
+    assert(strcmp(buffer, "Test") == 0);
+
+    fclose(p_in);
+}
