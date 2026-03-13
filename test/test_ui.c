@@ -77,4 +77,21 @@ static void test_press_enter_to_continue()
     assert(1);
 }
 
+static void test_clear_terminal(void)
+{
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[256];
 
+    p_out = begin_capture_stdout(&saved_fd);
+    clear_terminal();
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    // Test 1: Anzahl der Zeilenumbrüche
+    int count = 0;
+    for (size_t i = 0; buffer[i] != '\0'; i++)
+        if (buffer[i] == '\n')
+            count++;
+
+    assert(count == 40);
+}
