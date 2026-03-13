@@ -22,6 +22,7 @@
 #define DEFAULT_STATS_FILE "stats.csv"
 #define DEFAULT_STATS_PATH "./stats/stats.csv"
 #define MAX_PATH_LENGTH 512
+#define POSITION_OF_CARRET 13 // this is utterly retarded but alas
 
 static int savehandler_parse_tick_line(const char *line, StatsTick *tick);
 static void savehandler_append_tick(StatList *list, StatsTick *tick);
@@ -87,7 +88,6 @@ int savehandler_save_tick(const Simulation *p_sim, const StatsTick *p_tickstats,
     if (p_sim == NULL || p_tickstats == NULL || p_sim->settings == NULL) {
         return ERROR;
     }
-    // TODO: Adjust this field access based on your exact Settings struct definition!
     const enum OutputMode mode = p_sim->settings->output_mode;
 
     if (mode == NONE) {
@@ -125,7 +125,7 @@ int savehandler_save_tick(const Simulation *p_sim, const StatsTick *p_tickstats,
     }
 
     fclose(f);
-    ui_statistics_print_tick(p_tickstats, p_sim->settings);
+    ui_statistics_print_tick(p_tickstats, p_sim->settings->output_mode);
 
     return OK;
 }
@@ -160,11 +160,11 @@ int savehandler_save_summary(const Simulation *p_sim, const StatsSummary *p_summ
     fprintf(f, "Bad Parking Share (%%),%.2f\n", p_summary->bad_parking_share_percent);
 
     fclose(f);
-    ui_statistics_print_final(p_summary, p_sim->settings);
+    ui_statistics_print_final(p_summary, p_sim->settings->output_mode);
     return OK;
 }
 
-int savehandler_load_and_print(const char *src_path, StatList* list) {
+int savehandler_load_and_print(const char *src_path, StatList* list, enum OutputMode* p_output_mode) {
     if (list == NULL) {
         return ERROR;
     }
@@ -202,6 +202,17 @@ int savehandler_load_and_print(const char *src_path, StatList* list) {
         }
 
         if (buffer[0] == '#') {
+
+            if (p_output_mode != NULL && strncmp(buffer, "# OutputMode,", POSITION_OF_CARRET) == 0) {
+                char *end_ptr = NULL;
+                const long parsed_mode = strtol(buffer + 13, &end_ptr, 10); // Parse base-10 integer starting right after the comma
+                if (end_ptr != buffer + POSITION_OF_CARRET) {
+                    *p_output_mode = (enum OutputMode)parsed_mode;
+                } else {
+                    print_warning_s("Failed to parse OutputMode from header. Defaulting to NORMAL.");
+                    *p_output_mode = NORMAL;
+                }
+            }
             continue;
         }
 

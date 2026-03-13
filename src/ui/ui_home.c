@@ -36,7 +36,7 @@ void print_homescreen(void)
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state home_menu(Settings* p_settings)
+ui_state home_menu()
 {
     int choice = 0;
     validation_flag valid = INVALID;

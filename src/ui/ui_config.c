@@ -573,8 +573,8 @@ static int load_custom_settings_prompt(Settings *p_settings)
     printf("====================================\n\n");
     printf("Enter a custom path to a settings file.\n");
     printf("Example: ./config.json\n");
-    printf("         ../config.json\n");
-    printf("         /absolute/path/config.json\n\n");
+    printf("         /some/path/config.json\n\n");
+    printf("         /some/path/config.json\n\n");
     printf("Note: File must be a .json - otherwise default file will be loaded.\n");
     printf("Path: ");
 
@@ -765,8 +765,7 @@ ui_state config_menu(Settings *p_settings)
         }
 
         return UI_KONFIG;
-    }
-    else if (choice == CONFIG_MENU_GATES)
+    } else if (choice == CONFIG_MENU_GATES)
     {
         long value = 0;
 

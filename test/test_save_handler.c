@@ -158,6 +158,7 @@ static void test_load_and_print_reads_tick_and_summary(void) {
     StatList list;
     const char *dest_name = "test_load.csv";
     const char *full_path;
+    enum OutputMode mode;
 
     memset(&settings, 0, sizeof(settings));
     memset(&sim, 0, sizeof(sim));
@@ -207,7 +208,7 @@ static void test_load_and_print_reads_tick_and_summary(void) {
     assert(savehandler_save_summary(&sim, &summary_to_save, dest_name) == OK);
 
     list.p_summary = &loaded_summary;
-    assert(savehandler_load_and_print(dest_name, &list) == OK);
+    assert(savehandler_load_and_print(dest_name, &list, &mode) == OK);
 
     assert(list.p_tick_head != NULL);
     assert(list.p_tick_tail != NULL);

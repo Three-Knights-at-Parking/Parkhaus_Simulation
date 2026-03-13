@@ -247,7 +247,7 @@ static int load_custom_statistics_file_prompt(const Settings *p_settings)
     printf("      LOAD STATISTICS FROM PATH\n");
     printf("====================================\n\n");
     printf("Enter a custom file path.\n");
-    printf("Example: ../stats/stats.csv\n");
+
     printf("         ./stats.csv\n");
     printf("         /absolute/path/stats.csv\n\n");
     printf("Note: The file name must be a .csv - otherwise the default file will be loaded\n");   //Ist das so?
