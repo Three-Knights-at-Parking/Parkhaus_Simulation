@@ -149,7 +149,7 @@ static void free_loaded_stat_list(StatList *p_stat_list)
 static int load_statistics_from_path(const Settings *p_settings,
                                      const char *p_path)
 {
-    enum OutputMode *p_output_mode = NULL;
+    enum OutputMode output_mode = NONE;
     StatList *p_loaded_stats = NULL;
 
     if (p_settings == NULL)
@@ -157,13 +157,6 @@ static int load_statistics_from_path(const Settings *p_settings,
         return ERROR;
     }
 
-    p_output_mode = malloc(sizeof(enum OutputMode));
-    if (p_output_mode == NULL) {
-        printf("Memory allocation for OutputMode failed.\n");
-        printf("Press ENTER to continue...\n");
-        press_enter_to_continue();
-        return ERROR;
-    }
     p_loaded_stats = malloc(sizeof(StatList));
     if (p_loaded_stats == NULL)
     {
@@ -178,7 +171,7 @@ static int load_statistics_from_path(const Settings *p_settings,
     p_loaded_stats->p_current_tick = NULL;
     p_loaded_stats->p_summary = NULL;
 
-    if (savehandler_load_and_print(p_path, p_loaded_stats, p_output_mode) != OK)
+    if (savehandler_load_and_print(p_path, p_loaded_stats, &output_mode) != OK)
     {
         if (p_path == NULL)
         {
@@ -190,7 +183,6 @@ static int load_statistics_from_path(const Settings *p_settings,
         }
 
         free(p_loaded_stats);
-        free(p_output_mode);
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
         return ERROR;
@@ -198,12 +190,11 @@ static int load_statistics_from_path(const Settings *p_settings,
 
     clear_terminal();
 
-    if (print_loaded_statistics(p_output_mode, p_loaded_stats) != OK)
+    if (print_loaded_statistics(&output_mode, p_loaded_stats) != OK)
     {
         printf("Printing loaded statistics failed.\n");
         free_loaded_stat_list(p_loaded_stats);
         free(p_loaded_stats);
-        free(p_output_mode);
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
         return ERROR;
@@ -211,7 +202,6 @@ static int load_statistics_from_path(const Settings *p_settings,
 
     free_loaded_stat_list(p_loaded_stats);
     free(p_loaded_stats);
-    free(p_output_mode);
 
     printf("\n");
     printf("Finished displaying loaded statistics.\n");
