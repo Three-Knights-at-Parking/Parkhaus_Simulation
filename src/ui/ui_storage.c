@@ -271,9 +271,14 @@ ui_state storage_menu(Settings *p_settings)
         valid = validate_user_input(choice, STORAGE_MAX_VALID_NUMBER);
     }
 
-    if (choice == STORAGE_MENU_LOAD)
+    if (choice == STORAGE_MENU_LOAD_DEFAULT)
     {
-        (void)load_statistics_file_prompt(p_settings);
+        (void)load_default_statistics_file(p_settings);
+        return UI_STORAGE;
+    }
+    else if (choice == STORAGE_MENU_LOAD_CUSTOM)
+    {
+        (void)load_custom_statistics_file_prompt(p_settings);
         return UI_STORAGE;
     }
     else if (choice == STORAGE_MENU_BACK)
