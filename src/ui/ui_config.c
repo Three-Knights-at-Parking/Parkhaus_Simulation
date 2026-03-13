@@ -34,6 +34,10 @@ static uint16_t find_prev_valid_tick(uint16_t current_tick, uint16_t gate_entry_
 static uint16_t find_next_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
 static int resolve_tick_gate_conflict(Settings *p_settings, int changed_field);
 static int is_parking_time_config_valid(const Settings *p_settings);
+static int load_settings_from_path(Settings *p_settings, const char *p_path);
+static int load_previous_settings(Settings *p_settings);
+static int load_custom_settings_prompt(Settings *p_settings);
+static int load_settings_menu_prompt(Settings *p_settings);
 
 
 static int parse_long(const char *p_text, long *p_out)
