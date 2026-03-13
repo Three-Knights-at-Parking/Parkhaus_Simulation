@@ -91,23 +91,27 @@ static void test_clear_terminal(void)
     FILE *p_out = NULL;
     int saved_fd = -1;
     char buffer[256];
+    size_t count = 0U;
 
     p_out = begin_capture_stdout(&saved_fd);
     clear_terminal();
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
 
-    // Test 1: Count the number of newline characters
-    int count = 0;
-    for (size_t i = 0; buffer[i] != '\0'; i++)
+    /* Test 1: exactly 40 newline characters */
+    for (size_t i = 0U; buffer[i] != '\0'; i++)
+    {
         if (buffer[i] == '\n')
+        {
             count++;
+        }
+    }
+    assert(count == 40U);
 
-    assert(count == 40);
-
-    // Test 2: Ensure no other characters are present
-    for (size_t i = 0; buffer[i] != '\0'; i++)
+    /* Test 2: no other characters are printed */
+    for (size_t i = 0U; buffer[i] != '\0'; i++)
+    {
         assert(buffer[i] == '\n');
-
+    }
 }
 
 static void test_user_input(void)
