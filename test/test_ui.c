@@ -232,3 +232,16 @@ static void test_ui_start(void)
     assert(ui_start(&settings, &simulation) == UI_EXIT);
     fclose(p_in);
 }
+
+void test_ui(void)
+{
+    test_press_enter_to_continue();
+    test_clear_terminal();
+    test_user_input();
+    test_validate_user_input();
+    test_trim_newline();
+    test_read_line();
+    test_welcome_message();
+    test_ui_start();
+    printf("All ui.c tests passed successfully!\n");
+}
