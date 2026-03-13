@@ -68,7 +68,7 @@ int user_input(void)
 
     if (fgets(buffer, sizeof(buffer), stdin) == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     errno = 0;
@@ -77,13 +77,13 @@ int user_input(void)
     /* Overflow/underflow */
     if (errno != 0)
     {
-        return -1;
+        return ERROR;
     }
 
     /* No digits were found */
     if (endptr == buffer)
     {
-        return -1;
+        return ERROR;
     }
 
     /* Skip trailing whitespace */
@@ -95,13 +95,13 @@ int user_input(void)
     /* Reject trailing garbage, e.g. "12abc" */
     if (*endptr != '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     /* Range check before cast */
     if (value < INT_MIN || value > INT_MAX)
     {
-        return -1;
+        return ERROR;
     }
 
     return (int)value;
