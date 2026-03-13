@@ -6,7 +6,7 @@
  * @brief Terminal output for simulation statistics.
  *
  * This module is responsible for:
- * - printing a statistics header/legend
+ * - printing a statistics header / legend
  * - printing tick-by-tick simulation statistics
  * - printing the final simulation summary
  *
@@ -39,9 +39,9 @@
  * - VERBOSE: prints verbose legend
  * - DEBUG: uses NORMAL legend
  *
- * @param[in] p_settings Pointer to active settings.
+ * @param[in] output_mode Selected output mode.
  */
-void ui_statistics_print_header(const Settings *p_settings);
+void ui_statistics_print_header(enum OutputMode output_mode);
 
 /**
  * @brief Prints one tick of simulation statistics depending on output mode.
@@ -53,20 +53,20 @@ void ui_statistics_print_header(const Settings *p_settings);
  * - DEBUG: compact tick output plus debug line
  *
  * @param[in] p_stats_tick Pointer to tick statistics.
- * @param[in] p_settings Pointer to active settings.
+ * @param[in] output_mode  Selected output mode.
  */
 void ui_statistics_print_tick(const StatsTick *p_stats_tick,
-                              const Settings *p_settings);
+                              enum OutputMode output_mode);
 
 /**
- * @brief Prints the final simulation summary.
+ * @brief Prints the final simulation summary depending on output mode.
  *
  * For output mode NONE, nothing is printed.
  *
  * @param[in] p_stats_summary Pointer to final summary statistics.
- * @param[in] p_settings Pointer to active settings.
+ * @param[in] output_mode     Selected output mode.
  */
 void ui_statistics_print_final(const StatsSummary *p_stats_summary,
-                               const Settings *p_settings);
+                               enum OutputMode output_mode);
 
 #endif /* UI_STATISTICS_H */

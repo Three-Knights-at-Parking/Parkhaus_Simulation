@@ -39,7 +39,8 @@ typedef enum
     CONFIG_MENU_ENTRY_PROBABILITY = 9,
     CONFIG_MENU_MAX_TICKS = 10,
     CONFIG_MENU_RANDOM_SEED = 11,
-    CONFIG_MENU_OUTPUT_MODE = 12
+    CONFIG_MENU_OUTPUT_MODE = 12,
+    CONFIG_MENU_LOAD_SETTINGS = 13
 } config_menu_choice;
 
 /* ========================================================================= */
@@ -52,7 +53,7 @@ typedef enum
  * Valid user input range:
  * 0 .. CONFIG_MAX_VALID_NUMBER
  */
-#define CONFIG_MAX_VALID_NUMBER (12)
+#define CONFIG_MAX_VALID_NUMBER (13)
 
 /* ========================================================================= */
 /* Numeric limits                                                            */

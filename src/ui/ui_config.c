@@ -34,6 +34,10 @@ static uint16_t find_prev_valid_tick(uint16_t current_tick, uint16_t gate_entry_
 static uint16_t find_next_valid_tick(uint16_t current_tick, uint16_t gate_entry_in_sec);
 static int resolve_tick_gate_conflict(Settings *p_settings, int changed_field);
 static int is_parking_time_config_valid(const Settings *p_settings);
+static int load_settings_from_path(Settings *p_settings, const char *p_path);
+static int load_previous_settings(Settings *p_settings);
+static int load_custom_settings_prompt(Settings *p_settings);
+static int load_settings_menu_prompt(Settings *p_settings);
 
 
 static int parse_long(const char *p_text, long *p_out)
@@ -348,7 +352,7 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
     printf("tick_inSec must be a multiple of gate_entry_inSec.\n");
     printf("Otherwise fractional entries per tick would occur.\n\n");
 
-    if (changed_field == 6)
+    if (changed_field == CONFIG_MENU_TICK_LENGTH)
     {
         prev_valid = find_prev_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
         next_valid = find_next_valid_tick(p_settings->tick_inSec, p_settings->gate_entry_inSec);
@@ -379,7 +383,7 @@ static int resolve_tick_gate_conflict(Settings *p_settings,
         return ERROR;
     }
 
-    if (changed_field == 5)
+    if (changed_field == CONFIG_MENU_GATE_ENTRY_TIME)
     {
         printf("The new gate entry time does not divide the current tick length.\n");
         printf("Please choose one of the following options:\n");
@@ -512,6 +516,124 @@ static int is_parking_time_config_valid(const Settings *p_settings)
     return OK;
 }
 
+static int load_settings_from_path(Settings *p_settings, const char *p_path)
+{
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    if (settings_load_from_file(p_settings, p_path) != OK)
+    {
+        if (p_path == NULL)
+        {
+            printf("Loading previous simulation settings failed.\n");
+        }
+        else
+        {
+            printf("Loading settings from custom path failed.\n");
+        }
+
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    printf("Settings loaded successfully.\n");
+    printf("Press ENTER to continue...\n");
+    press_enter_to_continue();
+
+    return OK;
+}
+
+static int load_previous_settings(Settings *p_settings)
+{
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("       LOAD PREVIOUS SETTINGS\n");
+    printf("====================================\n\n");
+
+    return load_settings_from_path(p_settings, NULL);
+}
+
+static int load_custom_settings_prompt(Settings *p_settings)
+{
+    char file_path[256];
+
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("       LOAD SETTINGS FROM PATH\n");
+    printf("====================================\n\n");
+    printf("Enter a custom path to a settings file.\n");
+    printf("Example: ./config.json\n");
+    printf("         ../config.json\n");
+    printf("         /absolute/path/config.json\n\n");
+    printf("Note: File must be a .json - otherwise default file will be loaded.\n");
+    printf("Path: ");
+
+    if (read_line(file_path, sizeof(file_path)) != OK)
+    {
+        printf("Input error.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    if (file_path[0] == '\0')
+    {
+        printf("No path entered.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    return load_settings_from_path(p_settings, file_path);
+}
+
+static int load_settings_menu_prompt(Settings *p_settings)
+{
+    int choice = -1;
+    validation_flag valid = INVALID;
+
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("           LOAD SETTINGS\n");
+    printf("====================================\n\n");
+    printf("1 Load previous simulation settings\n");
+    printf("2 Load settings from custom path\n");
+    printf("0 Cancel\n\n");
+
+    while (valid != VALID)
+    {
+        choice = user_input();
+        valid = validate_user_input(choice, 2);
+    }
+
+    if (choice == 1)
+    {
+        return load_previous_settings(p_settings);
+    }
+    else if (choice == 2)
+    {
+        return load_custom_settings_prompt(p_settings);
+    }
+
+    return OK;
+}
+
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
@@ -539,10 +661,11 @@ int print_configscreen(const Settings *p_settings)
     printf("6  Tick Length (sec)      : %u\n", (unsigned)p_settings->tick_inSec);
     printf("7  Min Parking Ticks      : %lu\n", (unsigned long)p_settings->min_parking_ticks);
     printf("8  Max Parking Ticks      : %lu\n", (unsigned long)p_settings->max_parking_ticks);
-    printf("9  Entry Prob / Sec (%%)    : %.2f\n", p_settings->entry_probability_perSec_prec);
+    printf("9  Entry Prob / Sec (%%)  : %.2f\n", p_settings->entry_probability_perSec_prec);
     printf("10 Max Ticks              : %ld\n", (long)p_settings->max_ticks);
     printf("11 Random Seed            : %ld\n", (long)p_settings->rand_seed);
     printf("12 Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
+    printf("13 Load Settings from file\n");
     printf("------------------------------------\n");
     printf("0  Back to Home\n\n");
 
@@ -820,6 +943,11 @@ ui_state config_menu(Settings *p_settings)
             press_enter_to_continue();
         }
 
+        return UI_KONFIG;
+    }
+    else if (choice == CONFIG_MENU_LOAD_SETTINGS)
+    {
+        (void)load_settings_menu_prompt(p_settings);
         return UI_KONFIG;
     }
 

@@ -17,7 +17,8 @@
 typedef enum
 {
  STORAGE_MENU_BACK = 0,
- STORAGE_MENU_LOAD = 1
+ STORAGE_MENU_LOAD_DEFAULT = 1,
+ STORAGE_MENU_LOAD_CUSTOM = 2
 } storage_menu_choice;
 
 /* ========================================================================= */
@@ -30,7 +31,7 @@ typedef enum
  * Valid range:
  * 0 .. STORAGE_MAX_VALID_NUMBER
  */
-#define STORAGE_MAX_VALID_NUMBER (1)
+#define STORAGE_MAX_VALID_NUMBER (2)
 
 /* ========================================================================= */
 /* Public interface                                                          */
