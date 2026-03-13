@@ -28,7 +28,12 @@ static int print_loaded_statistics(const Settings *p_settings,
 
 static void free_loaded_stat_list(StatList *p_stat_list);
 
-static int load_statistics_file_prompt(const Settings *p_settings);
+static int load_statistics_from_path(const Settings *p_settings,
+                                     const char *p_path);
+
+static int load_default_statistics_file(const Settings *p_settings);
+
+static int load_custom_statistics_file_prompt(const Settings *p_settings);
 
 /* ========================================================================= */
 /* Local helper functions                                                    */
@@ -141,31 +146,13 @@ static void free_loaded_stat_list(StatList *p_stat_list)
     p_stat_list->p_current_tick = NULL;
 }
 
-static int load_statistics_file_prompt(const Settings *p_settings)
+static int load_statistics_from_path(const Settings *p_settings,
+                                     const char *p_path)
 {
-    char file_name[128];
     StatList *p_loaded_stats = NULL;
 
     if (p_settings == NULL)
     {
-        return ERROR;
-    }
-
-    clear_terminal();
-
-    printf("====================================\n");
-    printf("         LOAD STATISTICS FILE\n");
-    printf("====================================\n\n");
-    printf("Enter a file name from ../stats/\n");
-    printf("Example: stats.csv\n");
-    printf("Leave empty for default file.\n\n");
-    printf("File name: ");
-
-    if (read_line(file_name, sizeof(file_name)) != OK)
-    {
-        printf("Input error.\n");
-        printf("Press ENTER to continue...\n");
-        press_enter_to_continue();
         return ERROR;
     }
 
@@ -183,27 +170,21 @@ static int load_statistics_file_prompt(const Settings *p_settings)
     p_loaded_stats->p_current_tick = NULL;
     p_loaded_stats->p_summary = NULL;
 
-    if (file_name[0] == '\0')
+    if (savehandler_load_and_print(p_path, p_loaded_stats) != OK)
     {
-        if (savehandler_load_and_print(NULL, p_loaded_stats) != OK)
+        if (p_path == NULL)
         {
             printf("Loading default statistics file failed.\n");
-            free(p_loaded_stats);
-            printf("Press ENTER to continue...\n");
-            press_enter_to_continue();
-            return ERROR;
         }
-    }
-    else
-    {
-        if (savehandler_load_and_print(file_name, p_loaded_stats) != OK)
+        else
         {
             printf("Loading statistics file failed.\n");
-            free(p_loaded_stats);
-            printf("Press ENTER to continue...\n");
-            press_enter_to_continue();
-            return ERROR;
         }
+
+        free(p_loaded_stats);
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
     }
 
     clear_terminal();
