@@ -512,6 +512,43 @@ static int is_parking_time_config_valid(const Settings *p_settings)
     return OK;
 }
 
+static int load_settings_menu_prompt(Settings *p_settings)
+{
+    int choice = -1;
+    validation_flag valid = INVALID;
+
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("           LOAD SETTINGS\n");
+    printf("====================================\n\n");
+    printf("1 Load previous simulation settings\n");
+    printf("2 Load settings from custom path\n");
+    printf("0 Cancel\n\n");
+
+    while (valid != VALID)
+    {
+        choice = user_input();
+        valid = validate_user_input(choice, 2);
+    }
+
+    if (choice == 1)
+    {
+        return load_previous_settings(p_settings);
+    }
+    else if (choice == 2)
+    {
+        return load_custom_settings_prompt(p_settings);
+    }
+
+    return OK;
+}
+
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
