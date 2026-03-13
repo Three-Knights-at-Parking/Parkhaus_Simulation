@@ -22,7 +22,7 @@ typedef enum
     HOME_MENU_CONFIG = 2,
     HOME_MENU_STORAGE = 3,
     HOME_MENU_HELP = 4
-}home_menu_choice;
+} home_menu_choice;
 
 /**
  * @brief Maximum valid menu number on the Home screen.
