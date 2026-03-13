@@ -161,19 +161,14 @@ static void ui_statistics_print_header_verbose(void)
     printf("\n");
 }
 
-void ui_statistics_print_header(const Settings *p_settings)
+void ui_statistics_print_header(enum OutputMode output_mode)
 {
-    if (p_settings == NULL)
+    if (output_mode == NONE)
     {
         return;
     }
 
-    if (p_settings->output_mode == NONE)
-    {
-        return;
-    }
-
-    if (p_settings->output_mode == VERBOSE)
+    if (output_mode == VERBOSE)
     {
         ui_statistics_print_header_verbose();
     }
@@ -274,19 +269,19 @@ static void ui_statistics_print_tick_verbose(const StatsTick *p_stats_tick)
 }
 
 void ui_statistics_print_tick(const StatsTick *p_stats_tick,
-                              const Settings *p_settings)
+                              enum OutputMode output_mode)
 {
-    if (p_stats_tick == NULL || p_settings == NULL)
+    if (p_stats_tick == NULL)
     {
         return;
     }
 
-    if (p_settings->output_mode == NONE)
+    if (output_mode == NONE)
     {
         return;
     }
 
-    if (p_settings->output_mode == VERBOSE)
+    if (output_mode == VERBOSE)
     {
         ui_statistics_print_tick_verbose(p_stats_tick);
         return;
@@ -294,7 +289,7 @@ void ui_statistics_print_tick(const StatsTick *p_stats_tick,
 
     ui_statistics_print_tick_normal(p_stats_tick);
 
-    if (p_settings->output_mode == DEBUG)
+    if (output_mode == DEBUG)
     {
         printf("DEBUG: blocker_full_active=%u\n",
                (unsigned)p_stats_tick->blocker_full_active);
@@ -306,14 +301,9 @@ void ui_statistics_print_tick(const StatsTick *p_stats_tick,
 /* ========================================================================= */
 
 void ui_statistics_print_final(const StatsSummary *p_stats_summary,
-                               const Settings *p_settings)
+                               enum OutputMode output_mode)
 {
-    if (p_settings == NULL)
-    {
-        return;
-    }
-
-    if (p_settings->output_mode == NONE)
+    if (output_mode == NONE)
     {
         return;
     }

@@ -81,7 +81,7 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
     {
         printf("Starting simulation...\n");
         settings_save_to_file(p_settings, p_settings->src_path);
-        ui_statistics_print_header(p_settings);
+        ui_statistics_print_header(p_settings->output_mode);
 
         if (simulation_start(p_simulation) != OK)
         {
@@ -112,12 +112,12 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
 /* ========================================================================= */
 /* Statistics-print functions - used by Backend                                */
 /* ========================================================================= */
-void print_StatsTick_backend(const StatsTick *p_current_tick, const Settings *p_settings)
+void print_StatsTick_backend(const StatsTick *p_current_tick, enum OutputMode output_mode)
 {
-    ui_statistics_print_tick(p_current_tick, p_settings);
+    ui_statistics_print_tick(p_current_tick, output_mode);
 }
 
-void print_final_stats_backend(const StatsSummary *p_stats_summary, const Settings *p_settings)
+void print_final_stats_backend(const StatsSummary *p_stats_summary, enum OutputMode output_mode)
 {
-    ui_statistics_print_final(p_stats_summary, p_settings);
+    ui_statistics_print_final(p_stats_summary, output_mode);
 }
