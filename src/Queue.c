@@ -11,15 +11,7 @@ int queue_init(Queue *p_self, uint16_t max_size) {
     p_self->p_head = NULL;
     p_self->p_tail = NULL;
     p_self->demand = 0;
-
-    if (max_size <= 0)
-    {
-        p_self->max_size = DEFAULT_MAX_QUEUE_LENGTH;
-    }
-    else
-    {
-        p_self->max_size = max_size;
-    }
+    p_self->max_size = max_size;
 
     return OK;
 }

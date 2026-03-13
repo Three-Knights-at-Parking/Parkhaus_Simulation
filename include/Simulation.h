@@ -3,46 +3,52 @@
 
 #include "types.h"
 /**
- * Base Simulation Object acting as an overarching parent for all other child objects. This represents one
- * Simulation that carries its own parking complex, queue and statistics. Future usage might be to parallel
- * / multithread with multiple Simulations.
+ * Simulation root object.
+ * Owns settings, Parkhaus, queues, and statistics for one simulation run.
  */
 
-    /**
-     * Initialize a Simulation with Settings.
-     * @param p_sim Pointer to the Simulation object to initialize.
-     * @param p_settings Pointer to the Settings used to configure the Simulation.
-     * @param StatList FIXME @Maupher du brauchst hier deine StatList nh? - ja
-     * @return 0 on success, non-zero on error.
-     */
-    int simulation_init(Simulation *p_sim, const Settings *p_settings, const StatList *p_StatList); //statistik Hinzufügen zu initialisierung?
+/**
+ * @brief Initializes simulation state, RNG, queues, and Parkhaus.
+ * @author: ibach
+ * @param p_sim Pointer to the Simulation object to initialize.
+ * @param p_settings Pointer to simulation settings.
+ * @param p_StatList Pointer to the statistics list.
+ */
+int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_StatList);
 
-    /**
-     * Progress the Simulation by one tick.
-     * @param p_sim Pointer to the Simulation object to tick.
-     * @return Short Status / Success of the tick (0 on success, non-zero on error or stop condition).
-     */
-    int simulation_tick(Simulation *p_sim);
+/**
+ * @brief Frees child objects owned by the Simulation.
+ * @author: ibach
+ * @param p_sim Pointer to the Simulation object.
+ */
+static void simulation_cleanup_children(Simulation *p_sim);
 
-    /**
-     * Start a Simulation with given settings.
-     * @param p_sim Pointer to the Simulation object to run.
-     * @return 0 on success, non-zero on error.
-     */
-    int simulation_start(Simulation *p_sim);
+/**
+ * @brief Advances the simulation by one tick.
+ * @author: ibach
+ * @param p_sim Pointer to the Simulation object.
+ */
+int simulation_tick(Simulation *p_sim);
 
-    /**
-     * End the Simulation and free up its memory. Simulation takes ownership of its children, freeing them too.
-     * @param p_sim Pointer to the Simulation object to stop.
-     */
-    void simulation_end(Simulation *p_sim);
+/**
+ * @brief Starts the simulation and resets runtime tick state.
+ * @author: ibach
+ * @param p_sim Pointer to the Simulation object.
+ */
+int simulation_start(Simulation *p_sim);
 
-    /**
-     * Free this Simulation-Object's memory. Simulation takes ownership of its children, freeing them too. In general,
-     * freeing the Simulation-Object without ending it is not useful. Rather call simulation_end.
-     * @param p_sim Pointer to the Simulation object to stop.
-     * @return 0 on success, non-zero on error.
-     */
-    int free_simulation(Simulation *p_sim);
+/**
+ * @brief Ends the simulation, persists summary data, and cleans up children.
+ * @author: ibach
+ * @param p_sim Pointer to the Simulation object.
+ */
+void simulation_end(Simulation *p_sim);
+
+/**
+ * @brief Frees the Simulation object and owned Parkhaus resources.
+ * @author: ibach
+ * @param p_sim Pointer to the Simulation object.
+ */
+int free_simulation(Simulation *p_sim);
 
 #endif // TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SIMULATION_H
