@@ -7,7 +7,8 @@
  *
  * This module is responsible for:
  * - printing the storage menu
- * - loading a saved statistics file
+ * - loading the default statistics file
+ * - loading a statistics file from a custom path
  * - displaying loaded statistics via ui_statistics
  * - returning the next UI state
  */
@@ -48,10 +49,10 @@ void print_storagescreen(void);
  * @brief Handles user interaction in the storage menu.
  *
  * This function:
- * - prints the storage screen
+ * - prints the storage menu
  * - reads and validates the user's menu selection
- * - loads a saved statistics file if requested
- * - prints the loaded statistics
+ * - loads the default statistics file or a custom statistics file
+ * - displays the loaded statistics
  * - returns the next UI state
  *
  * @param[in] p_settings Pointer to the current settings object.

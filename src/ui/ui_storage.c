@@ -1,5 +1,5 @@
 /**
-* @file ui_storage.c
+ * @file ui_storage.c
  * @brief Storage menu implementation for loading saved statistics files.
  *
  * This module handles loading persisted statistics data and
