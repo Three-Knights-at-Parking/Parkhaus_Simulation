@@ -15,11 +15,18 @@
 
 #include "ui.h"
 
+/* ========================================================================= */
+/* Storage menu selection                                                    */
+/* ========================================================================= */
+
+/**
+ * @brief Menu entries for the storage menu.
+ */
 typedef enum
 {
- STORAGE_MENU_BACK = 0,
- STORAGE_MENU_LOAD_DEFAULT = 1,
- STORAGE_MENU_LOAD_CUSTOM = 2
+    STORAGE_MENU_BACK = 0,
+    STORAGE_MENU_LOAD_DEFAULT = 1,
+    STORAGE_MENU_LOAD_CUSTOM = 2
 } storage_menu_choice;
 
 /* ========================================================================= */
@@ -55,9 +62,8 @@ void print_storagescreen(void);
  * - displays the loaded statistics
  * - returns the next UI state
  *
- * @param[in] p_settings Pointer to the current settings object.
  * @return Next UI state depending on user selection.
  */
-ui_state storage_menu(Settings *p_settings);
+ui_state storage_menu(void);
 
 #endif /* UI_STORAGE_H */
