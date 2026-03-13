@@ -50,6 +50,6 @@ void print_homescreen(void);
  *
  * @return Next UI state depending on user selection.
  */
-ui_state home_menu(Settings* settings);
+ui_state home_menu(void);
 
 #endif /* UI_HOME_H */
