@@ -2,18 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 #include "ui/ui.h"
-
 
 /* ------------------------------------------------------------------------- */
 /* Small test helpers                                                        */
 /* ------------------------------------------------------------------------- */
 
-/*Helper function generated with ChatGPT
- *Simulating read stdin, stdout with temporary files
- */
+/* Simulates stdin via a temporary file. */
 static FILE *set_stdin_text(const char *p_text)
 {
     FILE *p_tmp = tmpfile();
@@ -30,6 +26,7 @@ static FILE *set_stdin_text(const char *p_text)
     return p_tmp;
 }
 
+/* begin_capture_stdout and end_capture_stdout simulate stdout via a temporary file. */
 static FILE *begin_capture_stdout(int *p_saved_stdout_fd)
 {
     FILE *p_tmp = tmpfile();
@@ -44,7 +41,8 @@ static FILE *begin_capture_stdout(int *p_saved_stdout_fd)
     return p_tmp;
 }
 
-static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd, char *p_buffer, size_t buffer_len)
+static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
+                               char *p_buffer, size_t buffer_len)
 {
     size_t read_len = 0U;
 
@@ -59,22 +57,33 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd, char *p_buffer,
 }
 
 /* ------------------------------------------------------------------------- */
-/* Tests                                                                     */
+/* Tests for ui.c                                                            */
+/* Tested functions:                                                         */
+/*   - press_enter_to_continue()                                             */
+/*   - clear_terminal()                                                      */
+/*   - user_input()                                                          */
+/*   - validate_user_input()                                                 */
+/*   - trim_newline()                                                        */
+/*   - read_line()                                                           */
+/*   - welcome_message()                                                     */
+/*   - ui_start()                                                            */
 /* ------------------------------------------------------------------------- */
 
-static void test_press_enter_to_continue()
+static void test_press_enter_to_continue(void)
 {
-    // Test 1: Only ENTER
-    FILE *p_in = set_stdin_text("\n");
-    press_enter_to_continue();
-    fclose(p_in);
-    assert(1);
+    FILE *p_in = NULL;
 
-    // Test 2: Characters before ENTER
+    /* Test 1: only ENTER */
+    p_in = set_stdin_text("\n");
+    press_enter_to_continue();
+    assert(1);
+    fclose(p_in);
+
+    /* Test 2: characters before ENTER */
     p_in = set_stdin_text("01234ABCD*#'+ \n");
     press_enter_to_continue();
-    fclose(p_in);
     assert(1);
+    fclose(p_in);
 }
 
 static void test_clear_terminal(void)
