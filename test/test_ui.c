@@ -187,3 +187,29 @@ static void test_welcome_message(void)
     assert(strstr(buffer, "Welcome!") != NULL);
     assert(strstr(buffer, "Parkhaus-Simulation") != NULL);
 }
+
+static void test_ui_start(void)
+{
+    Settings settings = {0};
+    Simulation simulation = {0};
+
+    // Test 1: User immediately exits the UI
+    // Simulated input sequence:
+    //   "\n" → press_enter_to_continue() in welcome screen
+    //   "0\n" → choose "Exit" in the main menu
+    FILE *p_in = set_stdin_text("\n0\n");
+    assert(ui_start(&settings, &simulation) == UI_EXIT);
+    fclose(p_in);
+
+    // Test 2: User navigates through multiple menu options before exiting
+    // Simulated input sequence:
+    //   "\n" → press_enter_to_continue() in welcome screen
+    //   "1\n0\n" → open simulation_menu, then return
+    //   "2\n0\n" → open configuration_menu, then return
+    //   "3\n0\n" → open storage_menu, then return
+    //   "4\n0\n" → open help_menu, then return
+    //   "0\n"    → finally choose "Exit"
+    p_in = set_stdin_text("\n1\n0\n2\n0\n3\n0\n4\n0\n0\n");
+    assert(ui_start(&settings, &simulation) == UI_EXIT);
+    fclose(p_in);
+}
