@@ -240,6 +240,46 @@ static int load_default_statistics_file(const Settings *p_settings)
     return load_statistics_from_path(p_settings, NULL);
 }
 
+static int load_custom_statistics_file_prompt(const Settings *p_settings)
+{
+    char file_path[256];
+
+    if (p_settings == NULL)
+    {
+        return ERROR;
+    }
+
+    clear_terminal();
+
+    printf("====================================\n");
+    printf("      LOAD STATISTICS FROM PATH\n");
+    printf("====================================\n\n");
+    printf("Enter a custom file path.\n");
+    printf("Example: ../stats/stats.csv\n");
+    printf("         ./stats.csv\n");
+    printf("         /absolute/path/stats.csv\n\n");
+    printf("Note: The file name must be a .csv - otherwise the default file will be loaded\n");   //Ist das so?
+    printf("Path: ");
+
+    if (read_line(file_path, sizeof(file_path)) != OK)
+    {
+        printf("Input error.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    if (file_path[0] == '\0')
+    {
+        printf("No path entered.\n");
+        printf("Press ENTER to continue...\n");
+        press_enter_to_continue();
+        return ERROR;
+    }
+
+    return load_statistics_from_path(p_settings, file_path);
+}
+
 /* ========================================================================= */
 /* Main storage menu                                                         */
 /* ========================================================================= */
