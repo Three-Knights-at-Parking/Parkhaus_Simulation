@@ -1,5 +1,5 @@
 /**
-* @file ui_storage.c
+ * @file ui_storage.c
  * @brief Storage menu implementation for loading saved statistics files.
  *
  * This module handles loading persisted statistics data and
@@ -23,15 +23,14 @@
 
 static int ask_tick_output_mode(int *p_print_all);
 
-static int print_loaded_statistics(enum OutputMode *p_output_mode,
+static int print_loaded_statistics(enum OutputMode output_mode,
                                    const StatList *p_stat_list);
 
 static void free_loaded_stat_list(StatList *p_stat_list);
 
-static int load_statistics_from_path(const Settings *p_settings,
-                                     const char *p_path);
+static int load_statistics_from_path(const char *p_path);
 
-static int load_default_statistics_file(const Settings *p_settings);
+static int load_default_statistics_file(void);
 
 static int load_custom_statistics_file_prompt(const Settings *p_settings);
 
@@ -74,7 +73,7 @@ static int ask_tick_output_mode(int *p_print_all)
     }
 }
 
-static int print_loaded_statistics(enum OutputMode *p_output_mode,
+static int print_loaded_statistics(enum OutputMode output_mode,
                                    const StatList *p_stat_list)
 {
     const StatsTick *p_current_tick = NULL;
@@ -85,13 +84,13 @@ static int print_loaded_statistics(enum OutputMode *p_output_mode,
         return ERROR;
     }
 
-    ui_statistics_print_header(*p_output_mode);
+    ui_statistics_print_header(output_mode);
 
     p_current_tick = p_stat_list->p_tick_head;
 
     while (p_current_tick != NULL)
     {
-        ui_statistics_print_tick(p_current_tick, *p_output_mode);
+        ui_statistics_print_tick(p_current_tick, output_mode);
 
         if (print_all_remaining == 0 && p_current_tick->p_next != NULL)
         {
@@ -106,7 +105,7 @@ static int print_loaded_statistics(enum OutputMode *p_output_mode,
 
     if (p_stat_list->p_summary != NULL)
     {
-        ui_statistics_print_final(p_stat_list->p_summary, *p_output_mode);
+        ui_statistics_print_final(p_stat_list->p_summary, output_mode);
     }
     else
     {
@@ -146,24 +145,11 @@ static void free_loaded_stat_list(StatList *p_stat_list)
     p_stat_list->p_current_tick = NULL;
 }
 
-static int load_statistics_from_path(const Settings *p_settings,
-                                     const char *p_path)
+static int load_statistics_from_path(const char *p_path)
 {
-    enum OutputMode *p_output_mode = NULL;
+    enum OutputMode output_mode = NONE;
     StatList *p_loaded_stats = NULL;
 
-    if (p_settings == NULL)
-    {
-        return ERROR;
-    }
-
-    p_output_mode = malloc(sizeof(enum OutputMode));
-    if (p_output_mode == NULL) {
-        printf("Memory allocation for OutputMode failed.\n");
-        printf("Press ENTER to continue...\n");
-        press_enter_to_continue();
-        return ERROR;
-    }
     p_loaded_stats = malloc(sizeof(StatList));
     if (p_loaded_stats == NULL)
     {
@@ -178,7 +164,7 @@ static int load_statistics_from_path(const Settings *p_settings,
     p_loaded_stats->p_current_tick = NULL;
     p_loaded_stats->p_summary = NULL;
 
-    if (savehandler_load_and_print(p_path, p_loaded_stats, p_output_mode) != OK)
+    if (savehandler_load_and_print(p_path, p_loaded_stats, &output_mode) != OK)
     {
         if (p_path == NULL)
         {
@@ -190,7 +176,6 @@ static int load_statistics_from_path(const Settings *p_settings,
         }
 
         free(p_loaded_stats);
-        free(p_output_mode);
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
         return ERROR;
@@ -198,12 +183,11 @@ static int load_statistics_from_path(const Settings *p_settings,
 
     clear_terminal();
 
-    if (print_loaded_statistics(p_output_mode, p_loaded_stats) != OK)
+    if (print_loaded_statistics(output_mode, p_loaded_stats) != OK)
     {
         printf("Printing loaded statistics failed.\n");
         free_loaded_stat_list(p_loaded_stats);
         free(p_loaded_stats);
-        free(p_output_mode);
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
         return ERROR;
@@ -211,7 +195,6 @@ static int load_statistics_from_path(const Settings *p_settings,
 
     free_loaded_stat_list(p_loaded_stats);
     free(p_loaded_stats);
-    free(p_output_mode);
 
     printf("\n");
     printf("Finished displaying loaded statistics.\n");
@@ -221,7 +204,7 @@ static int load_statistics_from_path(const Settings *p_settings,
     return OK;
 }
 
-static int load_default_statistics_file(const Settings *p_settings)
+static int load_default_statistics_file(void)
 {
     clear_terminal();
 
@@ -229,17 +212,12 @@ static int load_default_statistics_file(const Settings *p_settings)
     printf("     LOAD DEFAULT STATISTICS FILE\n");
     printf("====================================\n\n");
 
-    return load_statistics_from_path(p_settings, NULL);
+    return load_statistics_from_path(NULL);
 }
 
-static int load_custom_statistics_file_prompt(const Settings *p_settings)
+static int load_custom_statistics_file_prompt(void)
 {
     char file_path[256];
-
-    if (p_settings == NULL)
-    {
-        return ERROR;
-    }
 
     clear_terminal();
 
@@ -267,7 +245,7 @@ static int load_custom_statistics_file_prompt(const Settings *p_settings)
         return ERROR;
     }
 
-    return load_statistics_from_path(p_settings, file_path);
+    return load_statistics_from_path(file_path);
 }
 
 /* ========================================================================= */
@@ -315,12 +293,12 @@ ui_state storage_menu(Settings *p_settings)
 
     if (choice == STORAGE_MENU_LOAD_DEFAULT)
     {
-        (void)load_default_statistics_file(p_settings);
+        (void)load_default_statistics_file();
         return UI_STORAGE;
     }
     else if (choice == STORAGE_MENU_LOAD_CUSTOM)
     {
-        (void)load_custom_statistics_file_prompt(p_settings);
+        (void)load_custom_statistics_file_prompt();
         return UI_STORAGE;
     }
     else if (choice == STORAGE_MENU_BACK)

@@ -1,3 +1,11 @@
+/**
+* @file ui_simulation.c
+ * @brief Simulation menu implementation and backend statistics forwarding.
+ *
+ * This module prints the simulation menu, starts the simulation
+ * and forwards backend-triggered statistics output to ui_statistics.
+ */
+
 #include <stdio.h>
 
 #include "../include/ui/ui.h"
