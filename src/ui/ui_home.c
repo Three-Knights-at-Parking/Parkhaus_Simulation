@@ -21,15 +21,15 @@ void print_homescreen(void)
 {
     clear_terminal();
 
-    printf("==============================\n");
-    printf("         Home-Menu\n");
-    printf("==============================\n");
-    printf("1 - Simulation\n");
-    printf("2 - Configuration\n");
-    printf("3 - Storage\n");
-    printf("4 - Help\n");
-    printf("0 - Quit\n");
-    printf("\n");
+    printf("====================================\n");
+    printf("             HOME MENU\n");
+    printf("====================================\n\n");
+    printf("What would you like to do?\n\n");
+    printf("  1 - Simulation    (Run the parking simulation)\n");
+    printf("  2 - Configuration (Edit settings like capacity, ticks, etc.)\n");
+    printf("  3 - Storage       (Load and view past simulation statistics)\n");
+    printf("  4 - Help          (View instructions and documentation)\n");
+    printf("  0 - Quit          (Exit the application)\n\n");
 }
 
 /* ========================================================================= */

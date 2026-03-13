@@ -21,7 +21,8 @@ typedef enum
 {
     HELP_MENU_BACK = 0,
     HELP_MENU_SIMULATION = 1,
-    HELP_MENU_SETTINGS = 2
+    HELP_MENU_SETTINGS = 2,
+    HELP_MENU_FILE_HANDLING = 3
 } help_menu_choice;
 
 /* ========================================================================= */
@@ -34,7 +35,7 @@ typedef enum
  * Valid input range:
  * 0 .. HELP_MAX_VALID_NUMBER
  */
-#define HELP_MAX_VALID_NUMBER (2)
+#define HELP_MAX_VALID_NUMBER (3)
 
 /* ========================================================================= */
 /* Public interface                                                          */
