@@ -62,6 +62,19 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd, char *p_buffer,
 /* Tests                                                                     */
 /* ------------------------------------------------------------------------- */
 
+static void test_press_enter_to_continue()
+{
+    // Test 1: Only ENTER
+    FILE *p_in = set_stdin_text("\n");
+    press_enter_to_continue();
+    fclose(p_in);
+    assert(1);
 
+    // Test 2: Characters before ENTER
+    p_in = set_stdin_text("01234ABCD*#'+ \n");
+    press_enter_to_continue();
+    fclose(p_in);
+    assert(1);
+}
 
 
