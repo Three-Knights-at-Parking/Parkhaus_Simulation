@@ -1,11 +1,3 @@
-/**
-* @file ui_simulation.c
- * @brief Simulation menu implementation and backend print forwarding.
- *
- * This module prints the simulation menu, starts the simulation
- * and forwards backend-triggered statistics output to ui_statistics.
- */
-
 #include <stdio.h>
 
 #include "../include/ui/ui.h"
@@ -88,7 +80,7 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
     if (choice == SIMULATION_MENU_START)
     {
         printf("Starting simulation...\n");
-
+        settings_save_to_file(p_settings, p_settings->src_path);
         ui_statistics_print_header(p_settings);
 
         if (simulation_start(p_simulation) != OK)

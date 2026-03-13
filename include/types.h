@@ -95,7 +95,7 @@ struct Simulation {
     SimulationObject base;
     Settings* settings; // The underlying
     uint32_t current_tick; // Current tick time.
-    Parkhaus* parkhaus; // The Parkhaus for this Simulation
+    Parkhaus* parkhouse; // The Parkhouse for this Simulation
     StatList* StatList; // Statistikcontainer fuer Tick- und Gesamtwerte
 };
 

@@ -13,7 +13,7 @@ void print_warning(const char *msg) {
 }
 
 void print_warning_s_internal(const char *msg, const char *func_name) {
-    printf("[Warning] Warning in function: %s(): %s\n", func_name, msg);
+    printf("[Warning] Warning in %s(): %s\n", func_name, msg);
 
 }
 
@@ -35,4 +35,9 @@ void print_error_s_internal(const char *msg, const enum Severity severity, const
     }
 }
 
+int checkEmptyString(const char *src) {
+}
 
+void print_log_s_internal(const char *msg, const char *func_name) {
+    printf("[Log / %s()]: %s\n", func_name, msg);
+}

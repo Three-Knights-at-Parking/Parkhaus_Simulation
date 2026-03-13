@@ -79,23 +79,22 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
     }
 
     //alocation of Parkhouse
-    p_sim->parkhaus = calloc(1U, sizeof(Parkhaus));
-    if (p_sim->parkhaus == NULL) {
+    p_sim->parkhouse = calloc(1U, sizeof(Parkhaus));
+    if (p_sim->parkhouse == NULL) {
 
         free(gate_queues);
         simulation_cleanup_children(p_sim);
         return ERROR;
     }
     //Parkhaus initialisierung
-
-    if (parkhouse_init(p_sim->parkhaus, p_sim->settings, gate_queues) != OK) {
+    if (parkhouse_init(p_sim->parkhouse, p_sim->settings, gate_queues) != OK) {
         for (uint32_t i = 0; i < p_sim->settings->gates; ++i) {
             queue_free(gate_queues[i]);
             free(gate_queues[i]);
         }
         free(gate_queues);
-        free(p_sim->parkhaus);
-        p_sim->parkhaus = NULL;
+        free(p_sim->parkhouse);
+        p_sim->parkhouse = NULL;
         simulation_cleanup_children(p_sim);
         return ERROR;
     }
@@ -106,25 +105,56 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
 
 //FIXME LUCA IMPLEMENT
 int simulation_tick(Simulation *p_sim) {
-    if (checkNull(p_sim) || checkNull(p_sim->StatList) || checkNull(p_sim->parkhaus) || checkNull(p_sim->settings)) {
+    if (checkNull(p_sim) || checkNull(p_sim->StatList) || checkNull(p_sim->parkhouse) || checkNull(p_sim->settings)) {
         return ERROR;
     }
 
     p_sim->current_tick++;
-    if (StatsTick_init(p_sim, p_sim->parkhaus->capacity, p_sim->current_tick) == ERROR) {
+    if (StatsTick_init(p_sim, p_sim->parkhouse->capacity, p_sim->current_tick) == ERROR) {
         return ERROR;
     }
 
-    p_sim->parkhaus->base.tick((SimulationObject*) p_sim, p_sim->current_tick);
+    if (parkhouse_tick((SimulationObject*) p_sim->parkhouse, p_sim->settings, p_sim->StatList, p_sim->current_tick) == ERROR) {
+        return ERROR;
+    }
+
+    //FIXME either Tick record or direktes anhängen an die STATLISZ
     return OK;
 }
 
 int simulation_start(Simulation *p_sim) {
-    if (checkNull(p_sim) || checkNull(p_sim->settings) || checkNull(p_sim->parkhaus) || checkNull(p_sim->StatList)) {
+    if (checkNull(p_sim) || checkNull(p_sim->settings) || checkNull(p_sim->parkhouse) || checkNull(p_sim->StatList)) {
+        return ERROR;
+    }
+    p_sim->current_tick = 0U;
+
+    if (simulation_run(p_sim) != OK)
+    {
+        print_warning_s("Simulation failed");
         return ERROR;
     }
 
-    p_sim->current_tick = 0U;
+
+    return OK;
+}
+
+int simulation_run(Simulation *p_sim) {
+    if (checkNull(p_sim) || checkNull(p_sim->settings) || checkNull(p_sim->parkhouse) || checkNull(p_sim->StatList)) {
+        return ERROR;
+    }
+
+
+    if (p_sim->settings->max_ticks < 0) {
+        print_error_s("invalid max_ticks", LOW);
+        return ERROR;
+    }
+
+    for (p_sim->current_tick; p_sim->current_tick < p_sim->settings->max_ticks; p_sim->current_tick++) {
+        if (simulation_tick(p_sim) == ERROR) {
+            return ERROR;
+        }
+    }
+
     return OK;
 }
 
@@ -149,8 +179,8 @@ int free_simulation(Simulation *p_sim) {
         print_warning_s("pointer error");
         return ERROR;
     }
-    parkhouse_free(p_sim->parkhaus);
-    free(p_sim->parkhaus);
+    parkhouse_free(p_sim->parkhouse);
+    free(p_sim->parkhouse);
     free(p_sim);
     return OK;
 }
@@ -161,25 +191,26 @@ static void simulation_cleanup_children(Simulation *p_sim) {
         return;
     }
 
-    if (p_sim->parkhaus != NULL) {
+    if (p_sim->parkhouse != NULL) {
 
-        if (p_sim->parkhaus->gate_queues != NULL && p_sim->settings != NULL) {
+        if (p_sim->parkhouse->gate_queues != NULL && p_sim->settings != NULL) {
 
             for (uint32_t i = 0; i < p_sim->settings->gates; ++i) {
 
-                if (p_sim->parkhaus->gate_queues[i] != NULL) {
+                if (p_sim->parkhouse->gate_queues[i] != NULL) {
 
-                    queue_free(p_sim->parkhaus->gate_queues[i]);
-                    free(p_sim->parkhaus->gate_queues[i]);
-                    p_sim->parkhaus->gate_queues[i] = NULL;
+                    queue_free(p_sim->parkhouse->gate_queues[i]);
+                    free(p_sim->parkhouse->gate_queues[i]);
+                    p_sim->parkhouse->gate_queues[i] = NULL;
 
                 }
             }
-            free(p_sim->parkhaus->gate_queues);
-            p_sim->parkhaus->gate_queues = NULL;
+            free(p_sim->parkhouse->gate_queues);
+            p_sim->parkhouse->gate_queues = NULL;
         }
-        parkhouse_free(p_sim->parkhaus);
-        free(p_sim->parkhaus);
-        p_sim->parkhaus = NULL;
+        parkhouse_free(p_sim->parkhouse);
+        free(p_sim->parkhouse);
+        p_sim->parkhouse = NULL;
     }
 }
+

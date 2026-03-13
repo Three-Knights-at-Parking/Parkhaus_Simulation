@@ -9,11 +9,11 @@
 /**
  * @brief Initializes a Parkhaus from settings and gate queues.
  * @author: ibach
- * @param p_parkhaus Pointer to the Parkhaus to initialize.
+ * @param p_parkhouse Pointer to the Parkhaus to initialize.
  * @param p_settings Pointer to simulation settings.
  * @param p_gate_queues Pointer to the gate queue array.
  */
-int parkhouse_init(Parkhaus* p_parkhaus,
+int parkhouse_init(Parkhaus* p_parkhouse,
                    const Settings* p_settings,
                    Queue** p_gate_queues);
 
@@ -39,9 +39,9 @@ int remove_vehicle(GenericVehicle* p_vehicle);
 /**
  * @brief Frees parked vehicles and resets Parkhaus-owned references.
  * @author: ibach
- * @param p_parkhaus Pointer to the Parkhaus to free.
+ * @param p_parkhouse Pointer to the Parkhaus to free.
  */
-int parkhouse_free(Parkhaus* p_parkhaus);
+int parkhouse_free(Parkhaus* p_parkhouse);
 
 
 /**
@@ -97,11 +97,11 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse,
 /**
  * @brief Takes one vehicle from a queue and computes required parking space.
  * @author: ibach
- * @param p_parkhaus Pointer to the Parkhaus.
+ * @param p_parkhouse Pointer to the Parkhaus.
  * @param p_gate_queue Pointer to the gate queue.
  * @param pp_vehicle Output pointer for the dequeued vehicle.
  */
-uint16_t fill_from_queue(Parkhaus* p_parkhaus, Queue* p_gate_queue, GenericVehicle** pp_vehicle);
+uint16_t fill_from_queue(Parkhaus* p_parkhouse, Queue* p_gate_queue, GenericVehicle** pp_vehicle);
 
 /**
  * @brief Stores remaining demand in queue and records queue rejections.
@@ -148,10 +148,10 @@ GenericVehicle* create_random_vehicle(uint32_t current_tick, const Settings* p_s
 /**
  * @brief Appends a vehicle to the parked vehicle list.
  * @author: ibach
- * @param p_parkhaus Pointer to the Parkhaus.
+ * @param p_parkhouse Pointer to the Parkhaus.
  * @param p_vehicle Pointer to the vehicle to park.
  */
-int park_vehicle(Parkhaus* p_parkhaus, GenericVehicle* p_vehicle);
+int park_vehicle(Parkhaus* p_parkhouse, GenericVehicle* p_vehicle);
 
 
 /**
