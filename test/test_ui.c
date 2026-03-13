@@ -112,4 +112,9 @@ static void test_user_input(void)
     p_in = set_stdin_text("123ABC\n");
     assert(user_input() == ERROR);
     fclose(p_in);
+
+    // Test 3: Input with surrounding whitespace and a negative number should be accepted
+    p_in = set_stdin_text("   -7  \n");
+    assert(user_input() == -7);
+    fclose(p_in);
 }
