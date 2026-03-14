@@ -87,6 +87,7 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 /* Helper Function                                                           */
 /* ------------------------------------------------------------------------- */
 
+/* Initializes a Settings object with valid default values for testing. */
 static void init_test_settings(Settings *p_settings)
 {
     assert(p_settings != NULL);
@@ -107,6 +108,15 @@ static void init_test_settings(Settings *p_settings)
     p_settings->rand_seed = 1;
     p_settings->output_mode = NORMAL;
 }
+
+/* ------------------------------------------------------------------------- */
+/* Tests for ui_simulation.c                                                 */
+/* Tested functions:                                                         */
+/*   - print_simulationscreen()                                              */
+/*   - simulation_menu()                                                     */
+/*   - print_StatsTick_backend()                                             */
+/*   - print_final_stats_backend()                                           */
+/* ------------------------------------------------------------------------- */
 
 static void test_print_simulationscreen(void)
 {
@@ -142,16 +152,12 @@ static void test_simulation_menu(void)
 
     init_test_settings(&settings);
 
-    /* Input sequence:
-     * - 0 -> select "Back to Home"
-     */
+    /* Test 1: user selects "Back to Home" */
     p_in = set_stdin_text("0\n");
     assert(simulation_menu(&settings, &simulation) == UI_HOME);
     fclose(p_in);
 
-    /* Input sequence:
-     * - 2 -> select "Go to Configuration"
-     */
+    /* Test 2: user selects "Go to Configuration" */
     p_in = set_stdin_text("2\n");
     assert(simulation_menu(&settings, &simulation) == UI_KONFIG);
     fclose(p_in);
