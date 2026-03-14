@@ -88,3 +88,29 @@ static void init_test_settings(Settings *p_settings)
     p_settings->rand_seed = 1;
     p_settings->output_mode = NORMAL;
 }
+
+static void test_print_simulationscreen(void)
+{
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[5000];
+    Settings settings = {0};
+
+    init_test_settings(&settings);
+
+    p_out = begin_capture_stdout(&saved_fd);
+
+    assert(print_simulationscreen(&settings) == OK);
+
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    /* Test 1: title should be printed */
+    assert(strstr(buffer, "SIMULATION MENU") != NULL);
+
+    /* Test 2: settings name should be printed */
+    assert(strstr(buffer, "SimTest") != NULL);
+
+    /* Additional checks */
+    assert(strstr(buffer, "Start Simulation") != NULL);
+    assert(strstr(buffer, "Go to Configuration") != NULL);
+}
