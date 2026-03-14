@@ -67,3 +67,27 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 
     fclose(p_tmp);
 }
+
+/* ------------------------------------------------------------------------- */
+/* Tests                                                                     */
+/* ------------------------------------------------------------------------- */
+
+static void test_print_homescreen(void)
+{
+    FILE *p_out = NULL;
+
+    int saved_fd = -1;
+    char buffer[2000];
+
+    p_out = begin_capture_stdout(&saved_fd);
+
+    print_homescreen();
+
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    /* Test 1: Title should be printed */
+    assert(strstr(buffer, "HOME MENU") != NULL);
+
+    /* Test 2: Menu option should appear */
+    assert(strstr(buffer, "1 - Simulation") != NULL);
+}
