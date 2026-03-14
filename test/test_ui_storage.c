@@ -86,3 +86,19 @@ static void test_print_storagescreen(void)
     /* Additional check */
     assert(strstr(buffer, "0 Back to Home") != NULL);
 }
+
+static void test_storage_menu(void) {
+    FILE *p_in = NULL;
+
+    /* Test 1: go back to home
+     *
+     * Input sequence:
+     * - 0 -> select "Back to Home"
+     *
+     * Indirectly covers:
+     * - verifies basic menu handling in storage_menu()
+     */
+    p_in = set_stdin_text("0\n");
+    assert(storage_menu() == UI_HOME);
+    fclose(p_in);
+}
