@@ -81,3 +81,39 @@ static void test_output_mode_to_string(void)
     assert(strcmp(output_mode_to_string(NONE), "NONE") == 0);
     assert(strcmp(output_mode_to_string(DEBUG), "DEBUG") == 0);
 }
+
+static void test_print_configscreen(void) {
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[5000];
+    Settings settings = {0};
+
+    strcpy(settings.name, "TestConfig");
+    settings.capacity = 100;
+    settings.floors = 3;
+    settings.gates = 2;
+    settings.gate_entry_inSec = 5;
+    settings.tick_inSec = 10;
+    settings.min_parking_ticks = 2;
+    settings.max_parking_ticks = 20;
+    settings.entry_probability_perSec_prec = 12.5f;
+    settings.max_ticks = 500;
+    settings.rand_seed = 42;
+    settings.output_mode = NORMAL;
+
+    p_out = begin_capture_stdout(&saved_fd);
+
+    assert(print_configscreen(&settings) == OK);
+
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    /* Test 1: title should be printed */
+    assert(strstr(buffer, "CONFIG MENU") != NULL);
+
+    /* Test 2: settings name should be printed */
+    assert(strstr(buffer, "TestConfig") != NULL);
+
+    /* Additional checks */
+    assert(strstr(buffer, "Capacity / Floor") != NULL);
+    assert(strstr(buffer, "Output Mode") != NULL);
+}
