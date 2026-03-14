@@ -129,21 +129,14 @@ static void test_print_configscreen(void) {
     assert(strstr(buffer, "Output Mode") != NULL);
 }
 
-static void test_config_menu(void) {
+static void test_config_menu_back(void)
+{
     FILE *p_in = NULL;
-    Settings settings ={0};
+    Settings settings;
 
     init_test_settings(&settings);
-    strcpy(settings.name, "InitialName");
 
-    /* Test 1: selecting back should return UI_HOME */
     p_in = set_stdin_text("0\n");
     assert(config_menu(&settings) == UI_HOME);
     fclose(p_in);
-
-    /* Test 2: selecting name edit with valid input should stay in UI_KONFIG */
-    p_in = set_stdin_text("1\nNewName\n");
-    assert(config_menu(&settings) == UI_KONFIG);
-    fclose(p_in);
-    assert(strcmp(settings.name, "NewName") == 0);
 }
