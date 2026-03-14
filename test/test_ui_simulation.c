@@ -94,8 +94,11 @@ static void init_test_settings(Settings *p_settings)
 
     memset(p_settings, 0, sizeof(*p_settings));
 
-    strcpy(p_settings->name, "SimTest");
-    strcpy(p_settings->src_path, "./config.json");
+    p_settings->src_path = strdup("./config.json");
+    p_settings->stats_path = strdup("./stats.txt");
+
+    strcpy(p_settings->name, "InitialName");
+
     p_settings->capacity = 100U;
     p_settings->floors = 2U;
     p_settings->gates = 1U;
@@ -128,16 +131,14 @@ static void test_print_simulationscreen(void)
     init_test_settings(&settings);
 
     p_out = begin_capture_stdout(&saved_fd);
-
     assert(print_simulationscreen(&settings) == OK);
-
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
 
     /* Test 1: title should be printed */
     assert(strstr(buffer, "SIMULATION MENU") != NULL);
 
     /* Test 2: settings name should be printed */
-    assert(strstr(buffer, "SimTest") != NULL);
+    assert(strstr(buffer, "InitialName") != NULL);
 
     /* Additional checks */
     assert(strstr(buffer, "Start Simulation") != NULL);
