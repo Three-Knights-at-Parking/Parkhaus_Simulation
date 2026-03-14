@@ -232,3 +232,34 @@ static void test_config_menu_parking_time_validation(void)
 
     assert(settings.max_parking_ticks == 25U);
 }
+
+static void test_config_menu_entry_probability(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    /* Input sequence:
+     * - 9  → select "Entry Probability"
+     * - 2  → choose "Rate per minute"
+     * - 60 → enter 60 vehicles/min
+     * - \n → acknowledge conversion message
+     *
+     * Indirectly covers:
+     * - edit_arrival_mode
+     * - read_float_nonnegative
+     * - parse_float
+     * - convert_rate_to_prob_perc
+     */
+    p_in = set_stdin_text("9\n2\n60\n\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+
+    /* Expected result:
+     * - probability > 0
+     * - 60/min → 100% per second
+     */
+    assert(settings.entry_probability_perSec_prec > 0.0f);
+    assert(settings.entry_probability_perSec_prec == 100.0f);
+}
