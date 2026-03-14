@@ -59,3 +59,30 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 
     fclose(p_tmp);
 }
+
+/* ------------------------------------------------------------------------- */
+/* Tests for ui_storage.c                                                    */
+/* Tested functions:                                                         */
+/*   - print_storagescreen()                                                 */
+/*   - storage_menu()                                                        */
+/* ------------------------------------------------------------------------- */
+
+static void test_print_storagescreen(void)
+{
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[3000];
+
+    p_out = begin_capture_stdout(&saved_fd);
+    print_storagescreen();
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    /* Test 1: title should be printed */
+    assert(strstr(buffer, "STORAGE MENU") != NULL);
+
+    /* Test 2: menu option should be printed */
+    assert(strstr(buffer, "1 Load default statistics file") != NULL);
+
+    /* Additional check */
+    assert(strstr(buffer, "0 Back to Home") != NULL);
+}
