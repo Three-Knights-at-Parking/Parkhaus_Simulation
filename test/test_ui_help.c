@@ -139,3 +139,18 @@ static void test_print_help_file_handling(void)
     /* Test 2: path restriction text should appear */
     assert(strstr(buffer, "Absolute paths") != NULL);
 }
+
+static void test_help_menu(void)
+{
+    FILE *p_in = NULL;
+
+    /* Test 1: directly go back to home */
+    p_in = set_stdin_text("0\n");
+    assert(help_menu() == UI_HOME);
+    fclose(p_in);
+
+    /* Test 2: open simulation help, return, then go back to home */
+    p_in = set_stdin_text("1\n\n0\n");
+    assert(help_menu() == UI_HOME);
+    fclose(p_in);
+}
