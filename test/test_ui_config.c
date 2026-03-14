@@ -207,3 +207,28 @@ static void test_config_menu_gate_conflict_resolution(void)
     assert(settings.gate_entry_inSec == 6U);
     assert(settings.tick_inSec == 12U);
 }
+
+static void test_config_menu_parking_time_validation(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    /* Set minimum parking ticks to a value greater than current max (=10).
+     * This triggers is_parking_time_config_valid() and restores the old value.
+     * An extra ENTER is needed for press_enter_to_continue().
+     */
+    p_in = set_stdin_text("7\n20\n\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+
+    assert(settings.min_parking_ticks == 2U);
+
+    /* Set maximum parking ticks to a valid new value. */
+    p_in = set_stdin_text("8\n25\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+
+    assert(settings.max_parking_ticks == 25U);
+}
