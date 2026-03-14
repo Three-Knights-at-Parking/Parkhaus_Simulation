@@ -150,3 +150,16 @@ static void test_print_StatsTick_backend(void)
     print_StatsTick_backend(&current_tick, VERBOSE);
     assert(1);
 }
+
+static void test_print_final_stats_backend(void)
+{
+    StatsSummary stats_summary = {0};
+
+    /* Test 1: call with NORMAL output mode */
+    print_final_stats_backend(&stats_summary, NORMAL);
+    assert(1);
+
+    /* Test 2: call with VERBOSE output mode */
+    print_final_stats_backend(&stats_summary, VERBOSE);
+    assert(1);
+}
