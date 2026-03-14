@@ -281,3 +281,18 @@ static void test_config_menu_max_ticks_and_seed(void)
     fclose(p_in);
     assert(settings.rand_seed == 123);
 }
+
+static void test_config_menu_output_mode(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    p_in = set_stdin_text("12\n2\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+
+    assert(settings.output_mode == VERBOSE);
+}
+
