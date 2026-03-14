@@ -99,7 +99,7 @@ static void test_print_help_simulation(void)
     assert(strstr(buffer, "HELP: SIMULATION MODEL") != NULL);
 
     /* Test 2: return hint should be printed */
-    assert(strstr(buffer, "Press ENTER to return to the Help Menu..."));
+    assert(strstr(buffer, "Press ENTER to return to the Help Menu...") != NULL);
 }
 
 static void test_print_help_settings(void)
