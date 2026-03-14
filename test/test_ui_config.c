@@ -120,8 +120,11 @@ static void init_test_settings(Settings *p_settings)
 
     memset(p_settings, 0, sizeof(*p_settings));
 
+    p_settings->src_path = strdup("./config.json");
+    p_settings->stats_path = strdup("./stats.txt");
+
     strcpy(p_settings->name, "InitialName");
-    strcpy(p_settings->src_path, "./config.json");
+
     p_settings->capacity = 100U;
     p_settings->floors = 2U;
     p_settings->gates = 1U;
