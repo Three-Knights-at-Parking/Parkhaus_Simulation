@@ -154,3 +154,29 @@ static void test_config_menu_name_edit(void)
 
     assert(strcmp(settings.name, "NewName") == 0);
 }
+
+static void test_config_menu_numeric_edits(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    /* Capacity -> parse_long(), read_long_in_range() */
+    p_in = set_stdin_text("2\n50\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(settings.capacity == 50U);
+
+    /* Floors -> parse_long(), read_long_in_range() */
+    p_in = set_stdin_text("3\n4\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(settings.floors == 4U);
+
+    /* Gates -> parse_long(), read_long_in_range() */
+    p_in = set_stdin_text("4\n2\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(settings.gates == 2U);
+}
