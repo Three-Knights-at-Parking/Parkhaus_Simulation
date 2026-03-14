@@ -328,3 +328,21 @@ static void test_config_menu_load_custom_settings(void)
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 }
+
+void test_ui_config(void)
+{
+    test_output_mode_to_string();
+    test_print_configscreen();
+    test_config_menu_back();
+    test_config_menu_name_edit();
+    test_config_menu_numeric_edits();
+    test_config_menu_gate_conflict_resolution();
+    test_config_menu_parking_time_validation();
+    test_config_menu_entry_probability();
+    test_config_menu_max_ticks_and_seed();
+    test_config_menu_output_mode();
+    test_config_menu_load_previous_settings();
+    test_config_menu_load_custom_settings();
+
+    printf("All ui_config.c tests passed successfully!\n");
+}
