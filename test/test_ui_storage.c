@@ -169,7 +169,7 @@ static void test_storage_menu(void)
      *
      * Input sequence:
      * - 1  -> select "Load default statistics file"
-     * - \n -> acknowledge possible message (in this case: Error message)
+     * - \n -> acknowledge the expected error message
      *
      * Indirectly covers:
      * - load_default_statistics_file()
@@ -191,7 +191,7 @@ static void test_storage_menu(void)
      * Input sequence:
      * - 2        -> select "Load statistics file from custom path"
      * - test.csv -> enter custom file path
-     * - \n       -> acknowledge possible message (in this case: Error message)
+     * - \n -> acknowledge the expected error message
      *
      * Indirectly covers:
      * - load_custom_statistics_file_prompt()
