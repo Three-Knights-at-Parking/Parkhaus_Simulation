@@ -55,7 +55,7 @@ static FILE *begin_capture_stdout(int *p_saved_stdout_fd)
 static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
                                char *p_buffer, size_t buffer_len)
 {
-    size_t read_len;
+    size_t read_len = 0U;
 
     fflush(stdout);
     assert(dup2(saved_stdout_fd, fileno(stdout)) >= 0);
