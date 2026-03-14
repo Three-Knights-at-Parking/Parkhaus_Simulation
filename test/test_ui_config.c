@@ -87,12 +87,8 @@ static void init_test_settings(Settings *p_settings)
 }
 
 /* ------------------------------------------------------------------------- */
-/* Tests for ui_config.c                                                     */
-/* Tested functions:                                                         */
-/*   - output_mode_to_string()                                               */
-/*   - print_configscreen()                                                  */
-/*   - config_menu()                                                         */
-/* ------------------------------------------------------------------------- */
+/* Tests                                                                     */
+/*-------------------------------------------------------------------------- */
 
 static void test_output_mode_to_string(void)
 {
@@ -113,18 +109,8 @@ static void test_print_configscreen(void) {
     char buffer[5000];
     Settings settings = {0};
 
-    strcpy(settings.name, "TestConfig");
-    settings.capacity = 100;
-    settings.floors = 3;
-    settings.gates = 2;
-    settings.gate_entry_inSec = 5;
-    settings.tick_inSec = 10;
-    settings.min_parking_ticks = 2;
-    settings.max_parking_ticks = 20;
-    settings.entry_probability_perSec_prec = 12.5f;
-    settings.max_ticks = 500;
-    settings.rand_seed = 42;
-    settings.output_mode = NORMAL;
+    init_test_settings(&settings);
+    strcpy(settings.name, "InitialName");
 
     p_out = begin_capture_stdout(&saved_fd);
 
@@ -145,20 +131,10 @@ static void test_print_configscreen(void) {
 
 static void test_config_menu(void) {
     FILE *p_in = NULL;
-    Settings settings = {0};
+    Settings settings ={0};
 
+    init_test_settings(&settings);
     strcpy(settings.name, "InitialName");
-    settings.capacity = 100;
-    settings.floors = 2;
-    settings.gates = 1;
-    settings.gate_entry_inSec = 5;
-    settings.tick_inSec = 10;
-    settings.min_parking_ticks = 2;
-    settings.max_parking_ticks = 10;
-    settings.entry_probability_perSec_prec = 5.0f;
-    settings.max_ticks = 100;
-    settings.rand_seed = 1;
-    settings.output_mode = NORMAL;
 
     /* Test 1: selecting back should return UI_HOME */
     p_in = set_stdin_text("0\n");
