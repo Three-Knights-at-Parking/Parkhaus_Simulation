@@ -154,3 +154,14 @@ static void test_help_menu(void)
     assert(help_menu() == UI_HOME);
     fclose(p_in);
 }
+
+void test_ui_help(void)
+{
+    test_print_helpscreen();
+    test_print_help_simulation();
+    test_print_help_settings();
+    test_print_help_file_handling();
+    test_help_menu();
+
+    printf("All ui_help.c tests passed successfully!\n");
+}
