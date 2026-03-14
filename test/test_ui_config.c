@@ -163,19 +163,16 @@ static void test_print_configscreen(void)
     Settings settings = {0};
 
     init_test_settings(&settings);
-    strcpy(settings.name, "TestConfig");
 
     p_out = begin_capture_stdout(&saved_fd);
-
     assert(print_configscreen(&settings) == OK);
-
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
 
     /* Test 1: title should be printed */
     assert(strstr(buffer, "CONFIG MENU") != NULL);
 
     /* Test 2: settings name should be printed */
-    assert(strstr(buffer, "TestConfig") != NULL);
+    assert(strstr(buffer, "InitialName") != NULL);
 
     /* Additional checks */
     assert(strstr(buffer, "Capacity / Floor") != NULL);
