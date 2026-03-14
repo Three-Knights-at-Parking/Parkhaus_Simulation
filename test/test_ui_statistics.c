@@ -44,3 +44,30 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 
     fclose(p_tmp);
 }
+
+/* ------------------------------------------------------------------------- */
+/* Tests                                                                     */
+/* ------------------------------------------------------------------------- */
+
+static void test_ui_statistics_print_header(void)
+{
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[3000];
+
+    /* Test 1: NORMAL header */
+    p_out = begin_capture_stdout(&saved_fd);
+    ui_statistics_print_header(NORMAL);
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    assert(strstr(buffer, "PARKHAUS - TICK STATISTICS (NORMAL)") != NULL);
+    assert(strstr(buffer, "Legend:") != NULL);
+
+    /* Test 2: VERBOSE header */
+    p_out = begin_capture_stdout(&saved_fd);
+    ui_statistics_print_header(VERBOSE);
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    assert(strstr(buffer, "PARKHAUS - TICK STATISTICS (VERBOSE)") != NULL);
+    assert(strstr(buffer, "All available raw metrics per tick are printed.") != NULL);
+}
