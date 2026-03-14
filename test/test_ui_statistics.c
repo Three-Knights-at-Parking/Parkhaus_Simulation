@@ -115,3 +115,49 @@ static void test_ui_statistics_print_tick(void)
     assert(strstr(buffer, "Capacity: total=100 | taken=25 | free=75 | util%=25.00") != NULL);
     assert(strstr(buffer, "avgWaitEntered=2.00") != NULL);
 }
+
+static void test_ui_statistics_print_final(void)
+{
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[5000];
+    StatsSummary summary = {0};
+
+    summary.total_ticks = 100U;
+    summary.capacity_taken_percent_avg = 45.678f;
+    summary.capacity_taken_percent_peak = 88.888f;
+    summary.capacity_taken_peak_tick = 42U;
+    summary.first_full_tick = 12;
+    summary.full_ticks = 7U;
+    summary.arrivals_total = 200U;
+    summary.entered_total = 180U;
+    summary.departed_total = 170U;
+    summary.queue_length_avg = 3.333f;
+    summary.queue_length_peak = 9U;
+    summary.queue_length_peak_tick = 55U;
+    summary.queue_rejections_total = 4U;
+    summary.queue_wait_avg_ticks = 2U;
+    summary.queue_wait_max_ticks = 8U;
+    summary.parking_duration_avg_ticks = 15U;
+    summary.blocker_full_ratio_percent = 11.119f;
+    summary.bad_parking_cases_total = 2U;
+    summary.bad_parking_share_percent = 1.555f;
+
+    /* Test 1: valid summary should be printed */
+    p_out = begin_capture_stdout(&saved_fd);
+    ui_statistics_print_final(&summary, NORMAL);
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    assert(strstr(buffer, "SIMULATION SUMMARY") != NULL);
+    assert(strstr(buffer, "Total ticks            : 100") != NULL);
+    assert(strstr(buffer, "Avg utilization (%)    : 45.68") != NULL);
+    assert(strstr(buffer, "Bad parking share (%)  : 1.56") != NULL);
+
+    /* Test 2: NULL summary should print fallback message */
+    p_out = begin_capture_stdout(&saved_fd);
+    ui_statistics_print_final(NULL, NORMAL);
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    assert(strstr(buffer, "No summary statistics available.") != NULL);
+    assert(strstr(buffer, "SIMULATION SUMMARY") == NULL);
+}
