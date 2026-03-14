@@ -1,3 +1,31 @@
+/**
+ * @file test_ui_statistics.c
+ * @brief Unit tests for the statistics output module.
+ *
+ * This file contains assert-based unit tests for the public functions
+ * implemented in ui_statistics.c.
+ *
+ * Directly tested functions:
+ * - ui_statistics_print_header()
+ * - ui_statistics_print_tick()
+ * - ui_statistics_print_final()
+ *
+ * Indirectly tested behaviour:
+ * The module contains several static helper functions for formatting,
+ * clamping, occupancy bar rendering, status derivation and statistics
+ * calculation. These functions are declared static and are therefore
+ * private to ui_statistics.c. Because of this, they cannot be accessed
+ * directly from this test translation unit.
+ *
+ * Instead, their behaviour is verified indirectly through the public
+ * printing functions. The tests execute normal and verbose output paths
+ * in order to trigger the internal helper functions during regular
+ * statistics formatting.
+ *
+ * All tests capture stdout using temporary files in order to verify
+ * deterministic terminal output.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -46,7 +74,11 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 }
 
 /* ------------------------------------------------------------------------- */
-/* Tests                                                                     */
+/* Tests for ui_statistics.c                                                 */
+/* Tested functions:                                                         */
+/*   - ui_statistics_print_header()                                          */
+/*   - ui_statistics_print_tick()                                            */
+/*   - ui_statistics_print_final()                                           */
 /* ------------------------------------------------------------------------- */
 
 static void test_ui_statistics_print_header(void)
@@ -55,7 +87,11 @@ static void test_ui_statistics_print_header(void)
     int saved_fd = -1;
     char buffer[3000];
 
-    /* Test 1: NORMAL header */
+    /* Test 1: NORMAL header
+     *
+     * Indirectly covers:
+     * - ui_statistics_print_header_normal()
+     */
     p_out = begin_capture_stdout(&saved_fd);
     ui_statistics_print_header(NORMAL);
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
@@ -63,7 +99,11 @@ static void test_ui_statistics_print_header(void)
     assert(strstr(buffer, "PARKHAUS - TICK STATISTICS (NORMAL)") != NULL);
     assert(strstr(buffer, "Legend:") != NULL);
 
-    /* Test 2: VERBOSE header */
+    /* Test 2: VERBOSE header
+     *
+     * Indirectly covers:
+     * - ui_statistics_print_header_verbose()
+     */
     p_out = begin_capture_stdout(&saved_fd);
     ui_statistics_print_header(VERBOSE);
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
@@ -96,7 +136,18 @@ static void test_ui_statistics_print_tick(void)
     tick.blocker_full_active = 0U;
     tick.bad_parking_cases = 0U;
 
-    /* Test 1: NORMAL tick output */
+    /* Test 1: NORMAL tick output
+     *
+     * Indirectly covers:
+     * - ui_statistics_print_tick_normal()
+     * - derive_status_text()
+     * - calc_util_percent()
+     * - calc_avg_queue_wait_entered()
+     * - build_occupancy_bar()
+     * - clamp_int()
+     * - repeat_char()
+     * - format_float_1()
+     */
     p_out = begin_capture_stdout(&saved_fd);
     ui_statistics_print_tick(&tick, NORMAL);
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
@@ -106,7 +157,15 @@ static void test_ui_statistics_print_tick(void)
     assert(strstr(buffer, "25.0%") != NULL);
     assert(strstr(buffer, "Avg Queue Wait (entered): 2.00 ticks") != NULL);
 
-    /* Test 2: VERBOSE tick output */
+    /* Test 2: VERBOSE tick output
+     *
+     * Indirectly covers:
+     * - ui_statistics_print_tick_verbose()
+     * - derive_status_text()
+     * - calc_util_percent()
+     * - calc_avg_queue_wait_entered()
+     * - format_float_2()
+     */
     p_out = begin_capture_stdout(&saved_fd);
     ui_statistics_print_tick(&tick, VERBOSE);
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
@@ -143,7 +202,11 @@ static void test_ui_statistics_print_final(void)
     summary.bad_parking_cases_total = 2U;
     summary.bad_parking_share_percent = 1.555f;
 
-    /* Test 1: valid summary should be printed */
+    /* Test 1: valid summary should be printed
+     *
+     * Indirectly covers:
+     * - format_float_2()
+     */
     p_out = begin_capture_stdout(&saved_fd);
     ui_statistics_print_final(&summary, NORMAL);
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
@@ -153,7 +216,12 @@ static void test_ui_statistics_print_final(void)
     assert(strstr(buffer, "Avg utilization (%)    : 45.68") != NULL);
     assert(strstr(buffer, "Bad parking share (%)  : 1.56") != NULL);
 
-    /* Test 2: NULL summary should print fallback message */
+    /* Test 2: NULL summary should print fallback message
+     *
+     * Indirectly covers:
+     * - no local static helper function directly
+     * - verifies NULL handling in ui_statistics_print_final()
+     */
     p_out = begin_capture_stdout(&saved_fd);
     ui_statistics_print_final(NULL, NORMAL);
     end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
@@ -162,7 +230,7 @@ static void test_ui_statistics_print_final(void)
     assert(strstr(buffer, "SIMULATION SUMMARY") == NULL);
 }
 
-void test_ui_statisitcs(void)
+void test_ui_statistics(void)
 {
     test_ui_statistics_print_header();
     test_ui_statistics_print_tick();
