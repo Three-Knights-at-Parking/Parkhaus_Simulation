@@ -75,16 +75,7 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 }
 
 /* ------------------------------------------------------------------------- */
-/* Tests for ui.c                                                            */
-/* Tested functions:                                                         */
-/*   - press_enter_to_continue()                                             */
-/*   - clear_terminal()                                                      */
-/*   - user_input()                                                          */
-/*   - validate_user_input()                                                 */
-/*   - trim_newline()                                                        */
-/*   - read_line()                                                           */
-/*   - welcome_message()                                                     */
-/*   - ui_start()                                                            */
+/* Tests                                                                     */
 /* ------------------------------------------------------------------------- */
 
 static void test_press_enter_to_continue(void)

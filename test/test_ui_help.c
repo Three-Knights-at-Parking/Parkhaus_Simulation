@@ -1,3 +1,22 @@
+/**
+ * @file Test_ui_help.c
+ * @brief Unit tests for the help menu module.
+ *
+ * This file contains assert-based unit tests for the functions implemented
+ * in ui_help.c. The tests verify correct behaviour of the help menu screen,
+ * the help page output functions and the help menu navigation logic.
+ *
+ * Tested functionality includes:
+ * - help menu screen printing
+ * - simulation help page printing
+ * - settings help page printing
+ * - file handling help page printing
+ * - returning from the help menu to the home menu
+ *
+ * All tests simulate stdin and stdout using temporary files in order to
+ * provide deterministic input sequences and to capture terminal output.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>

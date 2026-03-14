@@ -1,3 +1,20 @@
+/**
+ * @file Test_ui_home.c
+ * @brief Unit tests for the home menu module.
+ *
+ * This file contains assert-based unit tests for the functions implemented
+ * in ui_home.c. The tests verify correct behaviour of the home menu screen
+ * output and the main navigation logic.
+ *
+ * Tested functionality includes:
+ * - home screen printing
+ * - menu choice handling
+ * - UI state transitions from the home menu
+ *
+ * All tests simulate stdin and stdout using temporary files in order to
+ * provide deterministic input sequences and to capture terminal output.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,18 +22,6 @@
 
 #include "ui/ui.h"
 #include "ui/ui_home.h"
-
-/**
- * @file test_ui_home.c
- * @brief Unit tests for the home menu module.
- *
- * This file contains assert-based unit tests for the functions implemented
- * in ui_home.c.
- *
- * Tested functions:
- * - print_homescreen()
- * - home_menu()
- */
 
 /* ------------------------------------------------------------------------- */
 /* Test helpers (copied from Test_ui.c)                                      */
