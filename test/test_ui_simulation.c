@@ -6,9 +6,7 @@
 #include "ui/ui.h"
 #include "ui/ui_config.h"
 #include "ui/ui_simulation.h"
-#include "ui/ui_statistics.h"
 #include "Settings.h"
-#include "Simulation.h"
 
 /* ------------------------------------------------------------------------- */
 /* Test helpers (copied from test_ui.c)                                      */
@@ -162,4 +160,14 @@ static void test_print_final_stats_backend(void)
     /* Test 2: call with VERBOSE output mode */
     print_final_stats_backend(&stats_summary, VERBOSE);
     assert(1);
+}
+
+void test_ui_simulation(void)
+{
+    test_print_simulationscreen();
+    test_simulation_menu();
+    test_print_StatsTick_backend();
+    test_print_final_stats_backend();
+
+    printf("All ui_simulation.c tests passed successfully!\n");
 }
