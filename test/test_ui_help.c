@@ -182,5 +182,5 @@ void test_ui_help(void)
     test_print_help_file_handling();
     test_help_menu();
 
-    printf("All ui_help.c tests passed successfully!\n");
+    printf("\nAll ui_help.c tests passed successfully!\n");
 }

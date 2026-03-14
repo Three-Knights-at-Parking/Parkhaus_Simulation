@@ -117,5 +117,5 @@ void test_ui_home(void)
     test_print_homescreen();
     test_home_menu();
 
-    printf("All ui_home.c tests passed successfully!\n");
+    printf("\nAll ui_home.c tests passed successfully!\n");
 }
