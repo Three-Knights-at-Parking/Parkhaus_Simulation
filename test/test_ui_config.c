@@ -162,23 +162,35 @@ static void test_config_menu_numeric_edits(void)
 
     init_test_settings(&settings);
 
-    /* Capacity -> parse_long(), read_long_in_range() */
+    /* Test 1: capacity edit */
     p_in = set_stdin_text("2\n50\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.capacity == 50U);
 
-    /* Floors -> parse_long(), read_long_in_range() */
+    /* Test 2: floors edit */
     p_in = set_stdin_text("3\n4\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.floors == 4U);
 
-    /* Gates -> parse_long(), read_long_in_range() */
+    /* Test 3: gates edit */
     p_in = set_stdin_text("4\n2\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.gates == 2U);
+
+    /* Test 4: max ticks edit */
+    p_in = set_stdin_text("10\n200\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(settings.max_ticks == 200);
+
+    /* Test 5: random seed edit */
+    p_in = set_stdin_text("11\n123\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(settings.rand_seed == 123);
 }
 
 static void test_config_menu_gate_conflict_resolution(void)
@@ -264,24 +276,6 @@ static void test_config_menu_entry_probability(void)
     assert(settings.entry_probability_perSec_prec == 100.0f);
 }
 
-static void test_config_menu_max_ticks_and_seed(void)
-{
-    FILE *p_in = NULL;
-    Settings settings;
-
-    init_test_settings(&settings);
-
-    p_in = set_stdin_text("10\n200\n");
-    assert(config_menu(&settings) == UI_KONFIG);
-    fclose(p_in);
-    assert(settings.max_ticks == 200);
-
-    p_in = set_stdin_text("11\n123\n");
-    assert(config_menu(&settings) == UI_KONFIG);
-    fclose(p_in);
-    assert(settings.rand_seed == 123);
-}
-
 static void test_config_menu_output_mode(void)
 {
     FILE *p_in = NULL;
@@ -339,7 +333,6 @@ void test_ui_config(void)
     test_config_menu_gate_conflict_resolution();
     test_config_menu_parking_time_validation();
     test_config_menu_entry_probability();
-    test_config_menu_max_ticks_and_seed();
     test_config_menu_output_mode();
     test_config_menu_load_previous_settings();
     test_config_menu_load_custom_settings();
