@@ -7,7 +7,7 @@
 #include "ui/ui_home.h"
 
 /**
- * @file Test_ui_home.c
+ * @file test_ui_home.c
  * @brief Unit tests for the home menu module.
  *
  * This file contains assert-based unit tests for the functions implemented
