@@ -263,3 +263,21 @@ static void test_config_menu_entry_probability(void)
     assert(settings.entry_probability_perSec_prec > 0.0f);
     assert(settings.entry_probability_perSec_prec == 100.0f);
 }
+
+static void test_config_menu_max_ticks_and_seed(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    p_in = set_stdin_text("10\n200\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(settings.max_ticks == 200);
+
+    p_in = set_stdin_text("11\n123\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(settings.rand_seed == 123);
+}
