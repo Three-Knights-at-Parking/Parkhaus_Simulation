@@ -296,3 +296,18 @@ static void test_config_menu_output_mode(void)
     assert(settings.output_mode == VERBOSE);
 }
 
+static void test_config_menu_load_previous_settings(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    /* 13 -> load settings menu
+     * 1  -> load previous settings
+     * \n -> acknowledge success/failure message in load_settings_from_path()
+     */
+    p_in = set_stdin_text("13\n1\n\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+}
