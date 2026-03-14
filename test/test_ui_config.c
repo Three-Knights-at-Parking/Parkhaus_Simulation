@@ -117,3 +117,21 @@ static void test_print_configscreen(void) {
     assert(strstr(buffer, "Capacity / Floor") != NULL);
     assert(strstr(buffer, "Output Mode") != NULL);
 }
+
+static void test_config_menu(void) {
+    FILE *p_in = NULL;
+    Settings settings = {0};
+
+    strcpy(settings.name, "InitialName");
+    settings.capacity = 100;
+    settings.floors = 2;
+    settings.gates = 1;
+    settings.gate_entry_inSec = 5;
+    settings.tick_inSec = 10;
+    settings.min_parking_ticks = 2;
+    settings.max_parking_ticks = 10;
+    settings.entry_probability_perSec_prec = 5.0f;
+    settings.max_ticks = 100;
+    settings.rand_seed = 1;
+    settings.output_mode = NORMAL;
+}
