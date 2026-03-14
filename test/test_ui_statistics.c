@@ -71,3 +71,47 @@ static void test_ui_statistics_print_header(void)
     assert(strstr(buffer, "PARKHAUS - TICK STATISTICS (VERBOSE)") != NULL);
     assert(strstr(buffer, "All available raw metrics per tick are printed.") != NULL);
 }
+
+static void test_ui_statistics_print_tick(void)
+{
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[5000];
+    StatsTick tick = {0};
+
+    tick.current_tick = 5U;
+    tick.capacity_total = 100U;
+    tick.capacity_taken = 25U;
+    tick.capacity_free = 75U;
+    tick.queue_length_end = 3U;
+    tick.arrivals_generated = 10U;
+    tick.enqueued = 4U;
+    tick.entered = 6U;
+    tick.departed = 2U;
+    tick.queue_rejections = 1U;
+    tick.queue_wait_entered_sum_ticks = 12U;
+    tick.queue_wait_entered_count = 6U;
+    tick.parking_duration_departed_sum_ticks = 30U;
+    tick.parking_duration_departed_count = 2U;
+    tick.blocker_full_active = 0U;
+    tick.bad_parking_cases = 0U;
+
+    /* Test 1: NORMAL tick output */
+    p_out = begin_capture_stdout(&saved_fd);
+    ui_statistics_print_tick(&tick, NORMAL);
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    assert(strstr(buffer, "Tick: 5") != NULL);
+    assert(strstr(buffer, "Status: OK") != NULL);
+    assert(strstr(buffer, "25.0%") != NULL);
+    assert(strstr(buffer, "Avg Queue Wait (entered): 2.00 ticks") != NULL);
+
+    /* Test 2: VERBOSE tick output */
+    p_out = begin_capture_stdout(&saved_fd);
+    ui_statistics_print_tick(&tick, VERBOSE);
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    assert(strstr(buffer, "Tick = 5 | Status = OK") != NULL);
+    assert(strstr(buffer, "Capacity: total=100 | taken=25 | free=75 | util%=25.00") != NULL);
+    assert(strstr(buffer, "avgWaitEntered=2.00") != NULL);
+}
