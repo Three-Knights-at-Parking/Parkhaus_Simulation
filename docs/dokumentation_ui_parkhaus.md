@@ -1,236 +1,386 @@
-Dokumentation der Projektumsetzung – Benutzeroberfläche der
-Parkhaus-Simulation
+# Parkhaus‑Simulation -- UI Dokumentation
 
-1.  Lösung der Aufgabenstellung
+**Projekt:** Programmieren I -- Parkhaus‑Simulation\
+**Komponente:** Terminalbasierte Benutzeroberfläche (UI)
 
-Im Rahmen des Projekts wurde eine Parkhaus-Simulation in der
-Programmiersprache C entwickelt. Der Schwerpunkt dieses Beitrags liegt
-auf der Konzeption und Implementierung der terminalbasierten
-Benutzeroberfläche (UI), welche als zentrale Schnittstelle zwischen
-Benutzer und Simulationsbackend dient.
+------------------------------------------------------------------------
 
-Die Benutzeroberfläche ermöglicht es, die Simulation zu konfigurieren,
-auszuführen sowie Simulationsergebnisse darzustellen und gespeicherte
-Simulationen zu laden. Ziel der Implementierung war eine robuste,
-übersichtliche und erweiterbare Bedienstruktur.
+## Inhaltsverzeichnis
 
-Architektur der Benutzeroberfläche
+1.  [Lösung der Aufgabenstellung](#lösung-der-aufgabenstellung)
+2.  [Architektur der
+    Benutzeroberfläche](#architektur-der-benutzeroberfläche)
+3.  [Interaktion mit dem
+    Simulationsbackend](#interaktion-mit-dem-simulationsbackend)
+4.  [Eingabeverarbeitung und
+    Validierung](#eingabeverarbeitung-und-validierung)
+5.  [Diskutierte alternative
+    Lösungsansätze](#diskutierte-alternative-lösungsansätze)
+6.  [Begründung der gewählten
+    Architektur](#begründung-der-gewählten-architektur)
+7.  [Herausforderungen während der
+    Zusammenarbeit](#herausforderungen-während-der-zusammenarbeit)
+8.  [Positive Aspekte der Teamarbeit](#positive-aspekte-der-teamarbeit)
+9.  [Zusammenfassung](#zusammenfassung)
 
-Die UI wurde modular aufgebaut und in mehrere spezialisierte Module
-unterteilt. Jedes Modul übernimmt eine klar definierte Aufgabe:
+------------------------------------------------------------------------
 
-ui.c – Zentrale Steuerung der Benutzeroberfläche sowie Implementierung
-der UI-State-Machine.
+# Lösung der Aufgabenstellung
 
-ui_home.c – Startmenü und Navigation innerhalb der Anwendung.
+Im Rahmen des Projekts wurde eine **Parkhaus‑Simulation in C**
+entwickelt.\
+Der Schwerpunkt dieser Dokumentation liegt auf der **Konzeption und
+Implementierung der terminalbasierten Benutzeroberfläche (UI)**.
 
-ui_config.c – Konfiguration der Simulationseinstellungen.
+Die Benutzeroberfläche dient als zentrale Schnittstelle zwischen:
 
-ui_simulation.c – Starten der Simulation.
+-   Benutzer
+-   Simulationsbackend
+-   Statistiksystem
+-   Speicher‑ bzw. Dateiverwaltung
 
-ui_statistics.c – Formatierung und Darstellung der Simulationsergebnisse
-im Terminal.
+Die UI ermöglicht:
 
-ui_storage.c – Laden gespeicherter Simulationen aus CSV-Dateien.
+-   Konfiguration der Simulation
+-   Starten der Simulation
+-   Darstellung der Simulationsergebnisse
+-   Laden gespeicherter Simulationen
 
-ui_help.c – Bereitstellung erklärender Hilfetexte zur Anwendung und zu
-den Simulationseinstellungen.
+Ziel der Implementierung war eine **robuste, übersichtliche und
+erweiterbare Bedienstruktur**.
 
-Die Navigation zwischen diesen Modulen basiert auf einer
-Zustandsmaschine (State Machine). Der aktuelle Zustand wird durch ein
-Enum (ui_state) repräsentiert. Abhängig vom Zustand wird das
-entsprechende Menü aufgerufen und anschließend der nächste Zustand
-zurückgegeben.
+------------------------------------------------------------------------
 
-Der Einstiegspunkt der UI ist die Funktion ui_start(), welche eine
-zentrale Steuerschleife enthält. Diese Struktur sorgt für eine klar
-definierte Navigation zwischen den einzelnen Programmteilen und
-erleichtert zukünftige Erweiterungen. Gleichzeitig wird dadurch der
-Programmfluss zentral kontrolliert, wodurch unerwartete Zustandswechsel
-vermieden werden.
+# Architektur der Benutzeroberfläche
 
-Interaktion mit dem Simulationsbackend
+Die Benutzeroberfläche wurde **modular aufgebaut** und in mehrere
+Komponenten unterteilt.
 
-Die eigentliche Simulation ist vollständig vom UI-Code getrennt
-implementiert. Die Benutzeroberfläche übernimmt lediglich folgende
-Aufgaben:
+  -----------------------------------------------------------------------
+  Modul                               Aufgabe
+  ----------------------------------- -----------------------------------
+  `ui.c`                              Zentrale Steuerung der
+                                      Benutzeroberfläche und
+                                      Implementierung der State Machine
 
-- Konfiguration der Simulationseinstellungen
-- Starten der Simulation
-- Darstellung der Tick-Statistiken sowie der abschließenden
-  Zusammenfassung
-- Laden gespeicherter Simulationsergebnisse
+  `ui_home.c`                         Hauptmenü und Navigation
 
-Die Simulation selbst erzeugt statistische Daten pro Tick (StatsTick).
-Zusätzlich wird am Ende der Simulation eine aggregierte Zusammenfassung
-(StatsSummary) berechnet.
+  `ui_config.c`                       Konfiguration der Simulation
 
-Diese Daten werden vom Statistikmodul der UI formatiert und im Terminal
-ausgegeben. Während der laufenden Simulation werden die entsprechenden
-Ausgabefunktionen vom Backend aufgerufen. Beim Laden gespeicherter
-Simulationen werden die aus der Datei gelesenen Datenstrukturen
-(StatList) an die UI übergeben und dort ausgegeben.
+  `ui_simulation.c`                   Start und Steuerung der Simulation
 
-Die Darstellung kann abhängig vom gewählten Output-Modus variieren (z.
-B. NORMAL, VERBOSE oder DEBUG). Zusätzlich wird eine visuelle
-Darstellung über ASCII-basierte Balkenanzeigen verwendet, beispielsweise
-zur Anzeige der aktuellen Parkhausauslastung.
+  `ui_statistics.c`                   Darstellung der
+                                      Simulationsergebnisse
 
-Eingabeverarbeitung und Validierung
+  `ui_storage.c`                      Laden gespeicherter Simulationen
 
-Ein besonderer Fokus lag auf der robusten Verarbeitung von
-Benutzereingaben. Anstelle der häufig fehleranfälligen Funktion scanf()
-wurde eine Kombination aus fgets(), strtol() und strtof() verwendet.
+  `ui_help.c`                         Hilfetexte und
+                                      Programmdokumentation
+  -----------------------------------------------------------------------
 
-Dabei wird zunächst eine vollständige Eingabezeile gelesen und
-anschließend kontrolliert in numerische Werte umgewandelt. Dadurch
-können ungültige Eingaben (z. B. Buchstaben statt Zahlen oder Werte
-außerhalb des erlaubten Bereichs) zuverlässig erkannt werden.
+Die Navigation basiert auf einer **State Machine**.
 
-Zusätzlich wurden mehrere Hilfsfunktionen implementiert, um Eingaben zu
-validieren, beispielsweise Funktionen zur Prüfung von Ganzzahlen,
-Prozentwerten oder Strings.
+``` c
+ui_state ui_start(Settings *settings, Simulation *simulation)
+```
 
-Diese Strategie erhöht die Stabilität der Anwendung und verhindert
-unerwartete Programmzustände durch fehlerhafte Eingaben. Gleichzeitig
-ermöglicht sie eine konsistente Fehlerbehandlung für sämtliche
-Benutzereingaben.
+Die Funktion enthält die zentrale Programmschleife und ruft abhängig vom
+aktuellen Zustand das entsprechende Menü auf.
 
-2.  Diskutierte alternative Lösungsansätze
+Vorteile dieser Architektur:
 
-Während der Entwicklung wurden mehrere alternative
-Implementierungsstrategien diskutiert und miteinander verglichen.
+-   klare Programmstruktur
+-   einfache Erweiterbarkeit
+-   zentral kontrollierter Programmfluss
+-   geringere Fehleranfälligkeit
 
-Monolithische UI-Struktur
+------------------------------------------------------------------------
 
-Eine mögliche Lösung wäre gewesen, die gesamte Benutzeroberfläche in
-einer einzigen Datei zu implementieren. Dieser Ansatz hätte zwar den
-initialen Implementierungsaufwand reduziert, wäre jedoch schnell
-unübersichtlich geworden und hätte die Wartbarkeit des Codes erheblich
-verschlechtert.
+# Interaktion mit dem Simulationsbackend
 
-Direkte Ausgabe aus dem Simulationsbackend
+Die Simulation selbst ist **vollständig vom UI-Code getrennt**.
 
-Eine weitere diskutierte Option bestand darin, dass das
-Simulationsbackend die Statistiken direkt über printf() im Terminal
-ausgibt. Diese Lösung hätte weniger Schnittstellen benötigt, hätte
-jedoch zu einer starken Kopplung zwischen Simulation und
-Benutzeroberfläche geführt. Darüber hinaus würden dadurch die
-Verantwortungsbereiche der einzelnen Programmkomponenten vermischt, da
-die Interaktion mit dem Benutzer klar in den Zuständigkeitsbereich der
-UI fällt.
+Die Benutzeroberfläche übernimmt lediglich:
 
-Speicherung von Tick-Statistiken in Arrays
+-   Konfiguration der Simulation
+-   Starten der Simulation
+-   Darstellung der Tick‑Statistiken
+-   Anzeige der finalen Zusammenfassung
+-   Laden gespeicherter Simulationsergebnisse
 
-Für die Speicherung der Statistikdaten wurde auch eine arraybasierte
-Lösung diskutiert. Da die Anzahl der Simulationsticks jedoch zur
-Laufzeit variieren kann, wurde stattdessen eine dynamische Datenstruktur
-(verkettete Liste) bevorzugt.
+Die Simulation erzeugt statistische Daten pro Tick:
 
-Direkte Eingabe mit scanf()
+``` c
+StatsTick
+```
 
-Eine einfache Implementierung der Benutzereingaben hätte auf scanf()
-basieren können. Aufgrund der eingeschränkten Fehlerbehandlung und
-möglicher Probleme mit Eingabepuffern wurde diese Lösung jedoch
-verworfen.
+Am Ende der Simulation wird eine Zusammenfassung erzeugt:
 
-3.  Begründung der gewählten Architektur
+``` c
+StatsSummary
+```
 
-Die finale Architektur wurde gewählt, weil sie mehrere zentrale
-Anforderungen erfüllt.
+Diese Daten werden vom Modul **`ui_statistics`** formatiert und im
+Terminal ausgegeben.
 
-Modularität
+Während der Simulation:
 
-Die klare Aufteilung der Benutzeroberfläche in mehrere Module verbessert
-die Lesbarkeit und Wartbarkeit des Codes. Jedes Modul besitzt eine klar
-definierte Aufgabe und Verantwortlichkeit.
+-   werden die Ausgabefunktionen vom Backend aufgerufen
 
-Geringe Kopplung zwischen UI und Backend
+Beim Laden gespeicherter Simulationen:
 
-Die Simulation selbst ist vollständig von der Benutzeroberfläche
-getrennt implementiert. Dadurch bleibt das Backend unabhängig von der
-konkreten Darstellungslogik und kann prinzipiell auch mit anderen
-Benutzeroberflächen verwendet werden.
+-   werden Datenstrukturen (`StatList`) aus CSV-Dateien geladen
+-   anschließend über die UI dargestellt
 
-Erweiterbarkeit
+Unterstützte **Output‑Modi**:
 
-Die modulare Struktur ermöglicht es, neue Funktionen relativ einfach zu
-ergänzen, beispielsweise zusätzliche Statistikformate, weitere
-Konfigurationsoptionen oder alternative Ausgabemethoden.
+-   `NORMAL`
+-   `VERBOSE`
+-   `DEBUG`
 
-Auch die Menüstruktur lässt sich problemlos erweitern. Ein praktisches
-Beispiel hierfür ist das nachträglich implementierte Help-Menü, das dem
-Benutzer zusätzliche Informationen zur Bedienung des Programms
-bereitstellt. Die Erweiterung konnte ohne größere Änderungen an der
-bestehenden Architektur erfolgen, da lediglich eine neue C-Datei ergänzt
-und die Menüauswahl im Hauptmenü erweitert werden musste.
+Zusätzlich verwendet die UI **ASCII‑Balkenanzeigen**, z. B. für die
+Darstellung der aktuellen Parkhausauslastung.
 
-Robuste Benutzereingaben
+------------------------------------------------------------------------
 
-Durch die Implementierung eigener Validierungsfunktionen konnte eine
-stabile und kontrollierte Eingabeverarbeitung realisiert werden.
+# Eingabeverarbeitung und Validierung
 
-4.  Herausforderungen während der Zusammenarbeit
+Ein wichtiger Schwerpunkt lag auf der **robusten Verarbeitung von
+Benutzereingaben**.
 
-Während der Projektarbeit traten mehrere organisatorische und technische
-Herausforderungen auf.
+Anstelle von
 
-Abstimmung der Schnittstellen
+``` c
+scanf()
+```
 
-Da Simulation, Statistiksystem und Benutzeroberfläche von
-unterschiedlichen Teammitgliedern entwickelt wurden, mussten die
-Schnittstellen zwischen diesen Komponenten mehrfach abgestimmt werden.
-Besonders die Übergabe der Statistikdaten erforderte eine klare
-Definition der verwendeten Datenstrukturen.
+wurde folgende Strategie verwendet:
 
-Synchronisation der Projektstruktur
+``` c
+fgets()
+strtol()
+strtof()
+```
 
-Mehrere Personen arbeiteten parallel an unterschiedlichen Modulen. Daher
-war es notwendig, eine konsistente Struktur der Header-Dateien,
-Datentypen und Funktionssignaturen sicherzustellen.
+Vorgehensweise:
 
-Umgang mit komplexen Datenstrukturen
+1.  Eingabezeile mit `fgets()` einlesen
+2.  Umwandlung mit `strtol()` oder `strtof()`
+3.  Validierung des Wertebereichs
 
-Die Simulation verwendet mehrere miteinander verbundene Strukturen wie
-Settings, Simulation, StatList, StatsTick und StatsSummary. Das korrekte
-Zusammenspiel dieser Strukturen musste im Verlauf der Entwicklung
-mehrfach angepasst und abgestimmt werden.
+Dadurch können zuverlässig erkannt werden:
 
-5.  Positive Aspekte der Teamarbeit
+-   ungültige Zeichen
+-   falsche Datentypen
+-   Werte außerhalb erlaubter Bereiche
 
-Trotz der genannten Herausforderungen verlief die Zusammenarbeit im Team
-insgesamt sehr erfolgreich.
+Zusätzlich wurden **Hilfsfunktionen zur Validierung** implementiert.
 
-Klare Aufgabenverteilung
+Vorteile:
 
-Die Entwicklung wurde in mehrere Teilbereiche aufgeteilt, darunter
-Simulation, Benutzeroberfläche, Statistiksystem und Dateiverwaltung.
-Jedes Teammitglied erhielt einen klar definierten Aufgabenbereich.
-Dadurch konnten mehrere Teammitglieder parallel und größtenteils
-unabhängig voneinander arbeiten.
+-   höhere Stabilität
+-   bessere Fehlerbehandlung
+-   konsistente Eingabelogik
 
-Modulare Softwarearchitektur
+------------------------------------------------------------------------
 
-Die modulare Struktur des Programms erleichterte sowohl die parallele
-Entwicklung als auch die spätere Integration der einzelnen Komponenten
-sowie zusätzlicher Funktionen.
+# Diskutierte alternative Lösungsansätze
 
-Gemeinsame Architekturentscheidungen
+Während der Entwicklung wurden mehrere alternative Implementierungen
+diskutiert.
 
-Wichtige Designentscheidungen wurden im Team gemeinsam diskutiert und
-bewertet. Dadurch konnten verschiedene Lösungsansätze miteinander
-verglichen und anschließend die sinnvollste Variante ausgewählt werden.
+## Monolithische UI
 
-Iterative Verbesserung
+Eine Möglichkeit wäre gewesen, die gesamte UI in einer einzigen Datei zu
+implementieren.
+
+Nachteile:
+
+-   schlechte Wartbarkeit
+-   unübersichtlicher Code
+-   erschwerte Teamarbeit
+
+------------------------------------------------------------------------
+
+## Ausgabe direkt im Backend
+
+Alternative:
+
+``` c
+printf()
+```
+
+direkt aus der Simulation heraus.
+
+Probleme:
+
+-   starke Kopplung zwischen Simulation und UI
+-   Vermischung der Verantwortlichkeiten
+-   geringere Flexibilität
+
+------------------------------------------------------------------------
+
+## Speicherung der Statistikdaten in Arrays
+
+Alternative Struktur:
+
+``` c
+StatsTick ticks[MAX_TICKS];
+```
+
+Problem:
+
+Die Anzahl der Ticks ist zur Laufzeit variabel.
+
+Daher wurde eine **verkettete Liste** verwendet.
+
+------------------------------------------------------------------------
+
+## Eingabe mit scanf()
+
+Diese Variante wurde verworfen wegen:
+
+-   schlechter Fehlerbehandlung
+-   Probleme mit Eingabepuffern
+-   höherer Fehleranfälligkeit
+
+------------------------------------------------------------------------
+
+# Begründung der gewählten Architektur
+
+## Modularität
+
+Die modulare Struktur verbessert:
+
+-   Lesbarkeit
+-   Wartbarkeit
+-   Erweiterbarkeit
+
+Jedes Modul besitzt eine klar definierte Aufgabe.
+
+------------------------------------------------------------------------
+
+## Geringe Kopplung
+
+Simulation und UI sind klar getrennt.
+
+Dadurch bleibt das Backend unabhängig von der Darstellung.
+
+------------------------------------------------------------------------
+
+## Erweiterbarkeit
+
+Neue Funktionen können leicht ergänzt werden, z. B.:
+
+-   zusätzliche Statistikformate
+-   neue Konfigurationsoptionen
+-   alternative Ausgabemethoden
+
+Ein Beispiel ist das **nachträglich implementierte Help‑Menü**.
+
+Dieses konnte ergänzt werden durch:
+
+-   eine zusätzliche `.c` Datei
+-   Erweiterung des Hauptmenüs
+
+------------------------------------------------------------------------
+
+## Robuste Benutzereingaben
+
+Die Validierungsfunktionen sorgen für eine stabile und kontrollierte
+Eingabeverarbeitung.
+
+------------------------------------------------------------------------
+
+# Herausforderungen während der Zusammenarbeit
+
+## Abstimmung der Schnittstellen
+
+Simulation, Statistiksystem und UI wurden von unterschiedlichen
+Teammitgliedern entwickelt.
+
+Daher mussten Schnittstellen mehrfach abgestimmt werden.
+
+Besonders relevant war:
+
+-   Definition gemeinsamer Datenstrukturen
+-   Übergabe der Statistikdaten
+
+------------------------------------------------------------------------
+
+## Synchronisation der Projektstruktur
+
+Mehrere Entwickler arbeiteten parallel am Code.
+
+Daher mussten folgende Punkte konsistent gehalten werden:
+
+-   Header‑Dateien
+-   Datentypen
+-   Funktionssignaturen
+
+------------------------------------------------------------------------
+
+## Komplexe Datenstrukturen
+
+Das System nutzt mehrere miteinander verbundene Strukturen:
+
+-   `Settings`
+-   `Simulation`
+-   `StatList`
+-   `StatsTick`
+-   `StatsSummary`
+
+Das Zusammenspiel dieser Strukturen erforderte wiederholte Anpassungen.
+
+------------------------------------------------------------------------
+
+# Positive Aspekte der Teamarbeit
+
+## Klare Aufgabenverteilung
+
+Das Projekt wurde in mehrere Bereiche aufgeteilt:
+
+-   Simulation
+-   Benutzeroberfläche
+-   Statistiksystem
+-   Dateiverwaltung
+
+Dadurch konnten Teammitglieder **parallel arbeiten**.
+
+------------------------------------------------------------------------
+
+## Modulare Softwarearchitektur
+
+Die Architektur erleichterte:
+
+-   parallele Entwicklung
+-   Integration neuer Funktionen
+-   Wartung des Codes
+
+------------------------------------------------------------------------
+
+## Iterative Verbesserung
 
 Während der Entwicklung wurde der Code mehrfach überarbeitet und
-vereinfacht. Diese iterative Vorgehensweise führte zu einer stabileren
-und besser wartbaren finalen Implementierung.
+vereinfacht.
 
-Zusammenfassung
+Diese iterative Vorgehensweise führte zu einer stabileren und besser
+wartbaren finalen Implementierung.
+
+------------------------------------------------------------------------
+
+# Zusammenfassung
 
 Die entwickelte Benutzeroberfläche erfüllt die Anforderungen der
 Aufgabenstellung und stellt eine strukturierte Schnittstelle zur
-Parkhaus-Simulation dar. Durch den modularen Aufbau, die klare Trennung
-zwischen UI und Backend sowie eine robuste Eingabeverarbeitung konnte
-eine stabile und erweiterbare Lösung realisiert werden.
+Parkhaus‑Simulation dar.
+
+Wichtige Eigenschaften der Lösung:
+
+-   modulare Architektur
+-   klare Trennung von UI und Backend
+-   robuste Eingabeverarbeitung
+-   einfache Erweiterbarkeit
+
+Dadurch konnte eine **stabile und wartbare Lösung** für die Steuerung
+der Simulation entwickelt werden.
