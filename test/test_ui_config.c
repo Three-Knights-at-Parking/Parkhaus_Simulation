@@ -103,7 +103,8 @@ static void test_output_mode_to_string(void)
     assert(strcmp(output_mode_to_string(DEBUG), "DEBUG") == 0);
 }
 
-static void test_print_configscreen(void) {
+static void test_print_configscreen(void)
+{
     FILE *p_out = NULL;
     int saved_fd = -1;
     char buffer[5000];
