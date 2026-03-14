@@ -1,3 +1,52 @@
+/**
+ * @file Test_ui_config.c
+ * @brief Unit tests for the configuration menu module.
+ *
+ * This file contains assert-based unit tests for the public functions
+ * implemented in ui_config.c. The tests verify correct behaviour of the
+ * configuration screen, menu navigation, and modification of the active
+ * Settings object.
+ *
+ * Directly tested functionality includes:
+ * - conversion of OutputMode values to readable strings
+ * - printing the configuration screen
+ * - editing configuration values via the config menu
+ * - validation and update of Settings fields
+ * - loading settings through the configuration menu
+ *
+ * Indirectly tested functionality:
+ * The module ui_config.c contains a large number of static helper functions
+ * used internally for parsing, validation and menu handling. Since static
+ * functions are not visible outside their translation unit, they cannot be
+ * called directly from this test file. Instead, their behaviour is verified
+ * indirectly by executing the corresponding config_menu() code paths that
+ * rely on them.
+ *
+ * Indirectly covered static helper functions include:
+ * - parse_long()
+ * - parse_float()
+ * - read_long_in_range()
+ * - read_float_nonnegative()
+ * - ui_settings_set_name()
+ * - apply_mode_select()
+ * - edit_mode_select()
+ * - is_time_config_valid()
+ * - find_prev_valid_tick()
+ * - find_next_valid_tick()
+ * - resolve_tick_gate_conflict()
+ * - is_parking_time_config_valid()
+ * - load_settings_from_path()
+ * - load_previous_settings()
+ * - load_custom_settings_prompt()
+ * - load_settings_menu_prompt()
+ *
+ * These helpers are exercised through targeted input sequences that trigger
+ * the corresponding configuration menu branches.
+ *
+ * All tests simulate stdin and stdout using temporary files in order to
+ * provide deterministic input sequences and to capture terminal output.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -88,7 +137,7 @@ static void init_test_settings(Settings *p_settings)
 
 /* ------------------------------------------------------------------------- */
 /* Tests                                                                     */
-/*-------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 
 static void test_output_mode_to_string(void)
 {
@@ -139,6 +188,10 @@ static void test_config_menu_back(void)
 
     /* Input sequence:
      * - 0 -> select "Back to Home"
+     *
+     * Indirectly covers:
+     * - no local static helper function directly
+     * - verifies basic menu handling in config_menu()
      */
     p_in = set_stdin_text("0\n");
     assert(config_menu(&settings) == UI_HOME);
