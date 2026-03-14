@@ -134,4 +134,9 @@ static void test_config_menu(void) {
     settings.max_ticks = 100;
     settings.rand_seed = 1;
     settings.output_mode = NORMAL;
+
+    /* Test 1: selecting back should return UI_HOME */
+    p_in = set_stdin_text("0\n");
+    assert(config_menu(&settings) == UI_HOME);
+    fclose(p_in);
 }
