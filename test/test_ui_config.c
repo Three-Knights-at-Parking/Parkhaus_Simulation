@@ -180,3 +180,30 @@ static void test_config_menu_numeric_edits(void)
     fclose(p_in);
     assert(settings.gates == 2U);
 }
+
+static void test_config_menu_gate_conflict_resolution(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    /* Start state: tick_length = 10, gate_entry_time = 5 (valid)
+     * Change gate entry time to 6 -> invalid with tick 10
+     * Then choose automatic tick adjustment and select next valid tick 12.
+     *
+     * Covers:
+     * - parse_long()
+     * - read_long_in_range()
+     * - is_time_config_valid()
+     * - resolve_tick_gate_conflict()
+     * - find_prev_valid_tick()
+     * - find_next_valid_tick()
+     */
+    p_in = set_stdin_text("5\n6\n2\n2\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+
+    assert(settings.gate_entry_inSec == 6U);
+    assert(settings.tick_inSec == 12U);
+}
