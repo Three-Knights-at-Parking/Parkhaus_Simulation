@@ -62,6 +62,31 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 }
 
 /* ------------------------------------------------------------------------- */
+/* Helper Function                                                           */
+/* ------------------------------------------------------------------------- */
+
+static void init_test_settings(Settings *p_settings)
+{
+    assert(p_settings != NULL);
+
+    memset(p_settings, 0, sizeof(*p_settings));
+
+    strcpy(p_settings->name, "InitialName");
+    strcpy(p_settings->src_path, "./config.json");
+    p_settings->capacity = 100U;
+    p_settings->floors = 2U;
+    p_settings->gates = 1U;
+    p_settings->gate_entry_inSec = 5U;
+    p_settings->tick_inSec = 10U;
+    p_settings->min_parking_ticks = 2U;
+    p_settings->max_parking_ticks = 10U;
+    p_settings->entry_probability_perSec_prec = 5.0f;
+    p_settings->max_ticks = 100;
+    p_settings->rand_seed = 1;
+    p_settings->output_mode = NORMAL;
+}
+
+/* ------------------------------------------------------------------------- */
 /* Tests for ui_config.c                                                     */
 /* Tested functions:                                                         */
 /*   - output_mode_to_string()                                               */
@@ -139,4 +164,10 @@ static void test_config_menu(void) {
     p_in = set_stdin_text("0\n");
     assert(config_menu(&settings) == UI_HOME);
     fclose(p_in);
+
+    /* Test 2: selecting name edit with valid input should stay in UI_KONFIG */
+    p_in = set_stdin_text("1\nNewName\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+    assert(strcmp(settings.name, "NewName") == 0);
 }
