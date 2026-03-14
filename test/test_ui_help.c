@@ -120,3 +120,22 @@ static void test_print_help_settings(void)
     /* Test 2: output mode text should appear */
     assert(strstr(buffer, "Output Mode") != NULL);
 }
+
+static void test_print_help_file_handling(void)
+{
+    FILE *p_out = NULL;
+    int saved_fd = -1;
+    char buffer[3000];
+
+    p_out = begin_capture_stdout(&saved_fd);
+
+    print_help_file_handling();
+
+    end_capture_stdout(p_out, saved_fd, buffer, sizeof(buffer));
+
+    /* Test 1: section title should be printed */
+    assert(strstr(buffer, "HELP: FILE & PATH HANDLING") != NULL);
+
+    /* Test 2: path restriction text should appear */
+    assert(strstr(buffer, "Absolute paths") != NULL);
+}
