@@ -261,5 +261,6 @@ void test_ui(void)
     test_read_line();
     test_welcome_message();
     test_ui_start();
+
     printf("All ui.c tests passed successfully!\n");
 }
