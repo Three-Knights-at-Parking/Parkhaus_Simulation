@@ -161,3 +161,12 @@ static void test_ui_statistics_print_final(void)
     assert(strstr(buffer, "No summary statistics available.") != NULL);
     assert(strstr(buffer, "SIMULATION SUMMARY") == NULL);
 }
+
+void test_ui_statisitcs(void)
+{
+    test_ui_statistics_print_header();
+    test_ui_statistics_print_tick();
+    test_ui_statistics_print_final();
+
+    printf("All ui_statistics.c tests passed successfully!\n");
+}
