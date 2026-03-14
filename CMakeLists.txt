@@ -54,6 +54,13 @@ add_executable(Parkhaus_Simulation_Tests
         ${PARKHAUS_TEST_SOURCES}
         test/test_generics.c
         test/main_test.c
+        test/test_ui.c
+        test/test_ui_home.c
+        test/test_ui_help.c
+        test/test_ui_config.c
+        test/test_ui_simulation.c
+        test/test_ui_statistics.c
+        test/test_ui_storage.c
 )
 
 target_link_libraries(Parkhaus_Simulation_Tests
