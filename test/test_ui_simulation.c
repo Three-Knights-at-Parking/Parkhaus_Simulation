@@ -114,3 +114,26 @@ static void test_print_simulationscreen(void)
     assert(strstr(buffer, "Start Simulation") != NULL);
     assert(strstr(buffer, "Go to Configuration") != NULL);
 }
+
+static void test_simulation_menu(void)
+{
+    FILE *p_in = NULL;
+    Settings settings = {0};
+    Simulation simulation = {0};
+
+    init_test_settings(&settings);
+
+    /* Input sequence:
+     * - 0 -> select "Back to Home"
+     */
+    p_in = set_stdin_text("0\n");
+    assert(simulation_menu(&settings, &simulation) == UI_HOME);
+    fclose(p_in);
+
+    /* Input sequence:
+     * - 2 -> select "Go to Configuration"
+     */
+    p_in = set_stdin_text("2\n");
+    assert(simulation_menu(&settings, &simulation) == UI_KONFIG);
+    fclose(p_in);
+}
