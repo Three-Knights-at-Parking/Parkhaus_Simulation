@@ -311,3 +311,20 @@ static void test_config_menu_load_previous_settings(void)
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 }
+
+static void test_config_menu_load_custom_settings(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    /* 13 -> load settings menu
+     * 2  -> custom path prompt
+     * ./config.json -> non-empty path, so load_settings_from_path() is reached
+     * \n -> acknowledge success/failure message in load_settings_from_path()
+     */
+    p_in = set_stdin_text("13\n2\n./config.json\n\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+}
