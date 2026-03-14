@@ -82,3 +82,22 @@ static void test_print_helpscreen(void)
     /* Test 2: menu option should appear */
     assert(strstr(buffer, "1 - Simulation Model & Overview") != NULL);
 }
+
+static void test_print_help_simulation(void)
+{
+    FILE *p_out = NULL;
+    int saved_stdout_fd = -1;
+    char buffer[3000];
+
+    p_out = begin_capture_stdout(&saved_stdout_fd);
+
+    print_help_simulation();
+
+    end_capture_stdout(p_out,saved_stdout_fd, buffer, sizeof(buffer));
+
+    /* Test 1: section title should be printed */
+    assert(strstr(buffer, "HELP: SIMULATION MODEL") != NULL);
+
+    /* Test 2: return hint should be printed */
+    assert(strstr(buffer, "Press ENTER to return to the Help Menu..."));
+}
