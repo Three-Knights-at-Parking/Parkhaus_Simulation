@@ -1,3 +1,51 @@
+/**
+* @file Test_ui_storage.c
+ * @brief Unit tests for the storage menu module.
+ *
+ * This file contains assert-based unit tests for the public functions
+ * implemented in ui_storage.c.
+ *
+ * Directly tested functions:
+ * - print_storagescreen()
+ * - storage_menu()
+ *
+ * Indirectly covered static helper functions:
+ * - load_default_statistics_file()
+ * - load_custom_statistics_file_prompt()
+ * - load_statistics_from_path()
+ *
+ * Static helper functions that are not guaranteed to execute in these tests:
+ * - print_loaded_statistics()
+ * - ask_tick_output_mode()
+ * - free_loaded_stat_list()
+ *
+ * Reason:
+ * These functions are only executed when a statistics file is successfully
+ * loaded by savehandler_load_and_print(). This behaviour depends on the
+ * external SaveHandler module and on the availability of a valid statistics
+ * file in the runtime environment.
+ *
+ * The unit tests intentionally do not rely on external files or the behaviour
+ * of external modules. Therefore the successful loading path cannot be forced
+ * deterministically during testing.
+ *
+ * The tests verify all deterministic behaviour inside ui_storage.c:
+ * - correct screen output
+ * - correct menu navigation
+ * - correct branching into load paths
+ * - correct UI state transitions
+ *
+ * Full execution of the loading success path would require either:
+ * - replacing savehandler_load_and_print() with a test stub, or
+ * - providing a guaranteed valid statistics file in the test environment.
+ *
+ * Since neither is part of this test setup, the tests focus on the deterministic
+ * control flow of the module.
+ *
+ * All tests simulate stdin and stdout using temporary files in order to
+ * provide deterministic input sequences and to capture terminal output.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
