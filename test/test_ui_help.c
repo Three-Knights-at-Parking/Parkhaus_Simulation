@@ -77,8 +77,8 @@ static void test_print_helpscreen(void)
     end_capture_stdout(p_out, saved_stdout_fd, buffer, sizeof(buffer));
 
     /* Test 1: title should be printed */
-    assert(strstr(buffer, "HELP MENU"));
+    assert(strstr(buffer, "HELP MENU") != NULL);
 
     /* Test 2: menu option should appear */
-    assert(strstr(buffer, "1 - Simulation Model & Overview"));
+    assert(strstr(buffer, "1 - Simulation Model & Overview") != NULL);
 }
