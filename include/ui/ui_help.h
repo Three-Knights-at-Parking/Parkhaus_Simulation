@@ -47,6 +47,7 @@ typedef enum
  * The help menu allows navigation to:
  * - simulation model explanation
  * - settings explanation
+ * - file and path handling explanation
  * - return to home menu
  */
 void print_helpscreen(void);
@@ -81,6 +82,18 @@ void print_help_simulation(void);
  * - output mode
  */
 void print_help_settings(void);
+
+/**
+ * @brief Prints the file and path handling help page.
+ *
+ * Explains:
+ * - configuration file usage (.json)
+ * - statistics storage format (.csv)
+ * - allowed file paths
+ * - restricted paths (absolute paths, directory traversal)
+ * - default fallback paths
+ */
+void print_help_file_handling(void);
 
 /**
  * @brief Handles user interaction in the help menu.
