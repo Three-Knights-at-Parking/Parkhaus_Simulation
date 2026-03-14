@@ -60,3 +60,24 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 
     fclose(p_tmp);
 }
+
+/* ------------------------------------------------------------------------- */
+/* Tests for ui_config.c                                                     */
+/* Tested functions:                                                         */
+/*   - output_mode_to_string()                                               */
+/*   - print_configscreen()                                                  */
+/*   - config_menu()                                                         */
+/* ------------------------------------------------------------------------- */
+
+static void test_output_mode_to_string(void)
+{
+    /* Test 1: NORMAL should map correctly */
+    assert(strcmp(output_mode_to_string(NORMAL), "NORMAL") == 0);
+
+    /* Test 2: VERBOSE should map correctly */
+    assert(strcmp(output_mode_to_string(VERBOSE), "VERBOSE") == 0);
+
+    /* Additional checks */
+    assert(strcmp(output_mode_to_string(NONE), "NONE") == 0);
+    assert(strcmp(output_mode_to_string(DEBUG), "DEBUG") == 0);
+}
