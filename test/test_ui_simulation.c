@@ -1,3 +1,24 @@
+/**
+ * @file Test_ui_simulation.c
+ * @brief Unit tests for the simulation menu module.
+ *
+ * This file contains assert-based unit tests for the functions implemented
+ * in ui_simulation.c. The tests verify correct behaviour of the simulation
+ * menu screen, basic menu navigation, and backend statistics forwarding.
+ *
+ * Tested functionality includes:
+ * - printing the simulation menu screen
+ * - handling simulation menu navigation
+ * - forwarding backend statistics output to ui_statistics
+ *
+ * The backend statistics functions in this module only forward data to the
+ * ui_statistics module. Therefore the tests verify that these forwarding
+ * functions execute correctly for different output modes without errors.
+ *
+ * All tests simulate stdin and stdout using temporary files in order to
+ * provide deterministic input sequences and to capture terminal output.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
