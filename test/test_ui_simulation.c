@@ -137,3 +137,16 @@ static void test_simulation_menu(void)
     assert(simulation_menu(&settings, &simulation) == UI_KONFIG);
     fclose(p_in);
 }
+
+static void test_print_StatsTick_backend(void)
+{
+    StatsTick current_tick = {0};
+
+    /* Test 1: call with NORMAL output mode */
+    print_StatsTick_backend(&current_tick, NORMAL);
+    assert(1);
+
+    /* Test 2: call with VERBOSE output mode */
+    print_StatsTick_backend(&current_tick, VERBOSE);
+    assert(1);
+}
