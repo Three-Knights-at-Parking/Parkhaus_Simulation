@@ -102,3 +102,11 @@ static void test_storage_menu(void) {
     assert(storage_menu() == UI_HOME);
     fclose(p_in);
 }
+
+void test_ui_storage(void)
+{
+    test_print_storagescreen();
+    test_storage_menu();
+
+    printf("All ui_storage.c tests passed successfully!");
+}
