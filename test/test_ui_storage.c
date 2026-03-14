@@ -213,5 +213,5 @@ void test_ui_storage(void)
     test_print_storagescreen();
     test_storage_menu();
 
-    printf("All ui_storage.c tests passed successfully!");
+    printf("All ui_storage.c tests passed successfully\n!");
 }
