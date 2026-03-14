@@ -63,3 +63,28 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
 
     fclose(p_tmp);
 }
+
+/* ------------------------------------------------------------------------- */
+/* Helper Function                                                           */
+/* ------------------------------------------------------------------------- */
+
+static void init_test_settings(Settings *p_settings)
+{
+    assert(p_settings != NULL);
+
+    memset(p_settings, 0, sizeof(*p_settings));
+
+    strcpy(p_settings->name, "SimTest");
+    strcpy(p_settings->src_path, "./config.json");
+    p_settings->capacity = 100U;
+    p_settings->floors = 2U;
+    p_settings->gates = 1U;
+    p_settings->gate_entry_inSec = 5U;
+    p_settings->tick_inSec = 10U;
+    p_settings->min_parking_ticks = 2U;
+    p_settings->max_parking_ticks = 10U;
+    p_settings->entry_probability_perSec_prec = 5.0f;
+    p_settings->max_ticks = 100;
+    p_settings->rand_seed = 1;
+    p_settings->output_mode = NORMAL;
+}
