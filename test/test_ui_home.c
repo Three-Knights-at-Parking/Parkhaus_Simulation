@@ -91,3 +91,18 @@ static void test_print_homescreen(void)
     /* Test 2: Menu option should appear */
     assert(strstr(buffer, "1 - Simulation") != NULL);
 }
+
+static void test_home_menu(void)
+{
+    FILE *p_in = NULL;
+
+    /* Test 1: selecting simulation */
+    p_in = set_stdin_text("1\n");
+    assert(home_menu() == UI_SIMULATION);
+    fclose(p_in);
+
+    /* Test 2: selecting exit */
+    p_in = set_stdin_text("0\n");
+    assert(home_menu() == UI_EXIT);
+    fclose(p_in);
+}
