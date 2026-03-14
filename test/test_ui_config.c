@@ -140,3 +140,17 @@ static void test_config_menu_back(void)
     assert(config_menu(&settings) == UI_HOME);
     fclose(p_in);
 }
+
+static void test_config_menu_name_edit(void)
+{
+    FILE *p_in = NULL;
+    Settings settings;
+
+    init_test_settings(&settings);
+
+    p_in = set_stdin_text("1\nNewName\n");
+    assert(config_menu(&settings) == UI_KONFIG);
+    fclose(p_in);
+
+    assert(strcmp(settings.name, "NewName") == 0);
+}
