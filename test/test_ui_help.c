@@ -43,7 +43,7 @@ static FILE *begin_capture_stdout(int *p_saved_stdout_fd)
 static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
                                char *p_buffer, size_t buffer_len)
 {
-    size_t read_len;
+    size_t read_len = 0U;
 
     assert(p_tmp != NULL);
     assert(p_buffer != NULL);
@@ -58,4 +58,27 @@ static void end_capture_stdout(FILE *p_tmp, int saved_stdout_fd,
     p_buffer[read_len] = '\0';
 
     fclose(p_tmp);
+}
+
+/* ------------------------------------------------------------------------- */
+/* Tests                                                                     */
+/* ------------------------------------------------------------------------- */
+
+static void test_print_helpscreen(void)
+{
+    FILE *p_out = NULL;
+    int saved_stdout_fd = -1;
+    char buffer[3000];
+
+    p_out = begin_capture_stdout(&saved_stdout_fd);
+
+    print_helpscreen();
+
+    end_capture_stdout(p_out, saved_stdout_fd, buffer, sizeof(buffer));
+
+    /* Test 1: title should be printed */
+    assert(strstr(buffer, "HELP MENU"));
+
+    /* Test 2: menu option should appear */
+    assert(strstr(buffer, "1 - Simulation Model & Overview"));
 }
