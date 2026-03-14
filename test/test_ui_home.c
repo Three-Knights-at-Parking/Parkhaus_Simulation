@@ -106,3 +106,11 @@ static void test_home_menu(void)
     assert(home_menu() == UI_EXIT);
     fclose(p_in);
 }
+
+void test_ui_home(void)
+{
+    test_print_homescreen();
+    test_home_menu();
+
+    printf("All ui_home.c tests passed successfully!\n");
+}
