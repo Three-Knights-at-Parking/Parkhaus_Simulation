@@ -10,7 +10,7 @@
 #include "utils/RNG.h"
 
 
-uint16_t demand_generate_total_perTick(const Settings *p_settings)
+int demand_generate_total_perTick(const Settings *p_settings)
 {
     checkNull(p_settings);
 

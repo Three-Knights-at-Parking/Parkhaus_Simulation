@@ -32,11 +32,12 @@ int get_vehicle_minimum_space(GenericVehicle *p_vehicle)
         return ERROR;
     }
     //if (p_vehicle.type == CAR) //future Feature
-
-    Car *p_car = (Car *) p_vehicle;
-
-    return p_car->minimum_spaces;
-
+    if (p_vehicle->base.type == CAR)
+    {
+        Car *p_car = (Car *) p_vehicle;
+        return p_car->minimum_spaces;
+    }
+    return ERROR;
 }
 
 int get_vehicle_space_needed(GenericVehicle *p_vehicle)

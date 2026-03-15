@@ -12,6 +12,6 @@
  * @author: ibach
  * @param p_settings Pointer to simulation settings.
  */
-uint16_t demand_generate_total_perTick(const Settings *p_settings);
+int demand_generate_total_perTick(const Settings *p_settings);
 
 #endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_DEMAND_H
