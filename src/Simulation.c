@@ -116,7 +116,7 @@ int simulation_tick(Simulation *p_sim) {
         return ERROR;
     }
     int totaldemand = demand_generate_total_perTick(p_sim->settings);
-    GateRouting_DistributeTotalDemand(p_sim->settings, totaldemand, p_sim->parkhouse->gate_queues, p_sim->current_tick);
+    GateRouting_DistributeTotalDemand(p_sim, p_sim->settings, totaldemand, p_sim->parkhouse->gate_queues, p_sim->current_tick);
 
     if (parkhouse_tick((SimulationObject*) p_sim->parkhouse, p_sim->settings, p_sim->StatList, p_sim->current_tick) == ERROR) {
         return ERROR;
