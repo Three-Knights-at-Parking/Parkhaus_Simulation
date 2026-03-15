@@ -123,7 +123,6 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
 
     //demand for this Tick for this queue
     uint16_t demand;
-    stats_tick_add_arrivals_generated(p_StatList, p_gate_queue->demand);
     demand = p_gate_queue->demand + queue_length(p_gate_queue); //or queue_get_demand(p_gate_queue);
     if (demand == 0U) {
         return OK;
