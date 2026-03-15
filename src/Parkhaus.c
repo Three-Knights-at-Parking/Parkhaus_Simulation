@@ -505,27 +505,28 @@ int park_vehicle(Parkhaus *p_parkhouse, GenericVehicle *p_vehicle) {
     if (p_parkhouse->p_parked_head == NULL)
     {
         p_parkhouse->p_parked_head = p_vehicle;
+        return OK;
     }
-    else{
-        if (p_parkhouse->p_parked_tail == NULL)
-        {
-            p_parkhouse->p_parked_head->p_next = p_vehicle;
-            p_parkhouse->p_parked_tail = p_vehicle;
-        }
-        else
-        {
-            if (p_parkhouse->p_parked_tail->p_next == NULL)
-            {
-                p_parkhouse->p_parked_tail->p_next = p_vehicle;
-                p_parkhouse->p_parked_tail = p_vehicle;
-            }
-            else
-            {
-             print_error("park_vehicle: Parking-Vehicle-List is corrupted");
-                return ERROR;
-            }
-        }
+
+    if (p_parkhouse->p_parked_tail == NULL)
+    {
+        p_parkhouse->p_parked_head->p_next = p_vehicle;
+        p_parkhouse->p_parked_tail = p_vehicle;
+        return OK;
     }
+
+    if (p_parkhouse->p_parked_tail->p_next == NULL)
+    {
+        p_parkhouse->p_parked_tail->p_next = p_vehicle;
+        p_parkhouse->p_parked_tail = p_vehicle;
+        return OK;
+    }
+    else
+    {
+        print_error("park_vehicle: Parking-Vehicle-List is corrupted");
+        return ERROR;
+    }
+
     return OK;
 }
 
