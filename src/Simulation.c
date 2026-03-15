@@ -13,9 +13,10 @@
 #include "utils/StatList.h"
 
 int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_StatList) {
-    checkNull(p_sim);
-    checkNull(p_settings);
-    checkNull(p_StatList);
+    if (checkNull(p_sim) || checkNull(p_settings) || checkNull(p_StatList)) {
+        print_error_s("central pointer error", HIGH);
+        return ERROR;
+    }
 
     p_sim->settings = (Settings *) p_settings;
     p_sim->StatList = (StatList *) p_StatList;
@@ -246,5 +247,5 @@ static void simulation_cleanup_children(Simulation *p_sim) {
         p_sim->StatList = NULL;
     }
 }
-}
+
 
