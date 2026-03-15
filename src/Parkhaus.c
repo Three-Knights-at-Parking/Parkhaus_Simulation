@@ -186,7 +186,7 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
     //checking for valid function call
     if (p_parkhouse == NULL || p_settings == NULL || p_StatList == NULL)
     {
-        print_error("parkhouse_tick_fill_subtick: central Pointer ERROR");
+        print_error_s("parkhouse_tick_fill_subtick: central Pointer ERROR", HIGH);
         return ERROR;
     }
     if (p_parkhouse->gate_queues == NULL || p_settings->gates <= 1U)
