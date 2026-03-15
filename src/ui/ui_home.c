@@ -1,5 +1,5 @@
 /**
-* @file ui_home.c
+ * @file ui_home.c
  * @brief Home menu implementation (main navigation).
  *
  * The home menu is responsible for:

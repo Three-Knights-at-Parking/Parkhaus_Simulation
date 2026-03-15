@@ -66,7 +66,7 @@ void clear_terminal(void);
 /**
  * @brief Reads a raw menu selection from stdin.
  *
- * @return Parsed integer on success, or -1 on invalid input,
+ * @return Parsed integer on success, or ERROR on invalid input,
  *         overflow or underflow.
  */
 int user_input(void);
