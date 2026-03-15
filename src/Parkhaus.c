@@ -124,12 +124,10 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     }
 
     //demand for this Tick for this queue
-    demand = p_gate_queue->demand; //or queue_get_demand(p_gate_queue);
+    demand = p_gate_queue->demand + queue_length(p_gate_queue); //or queue_get_demand(p_gate_queue);
     if (demand == 0U) {
         return OK;
     }
-
-    stats_tick_add_arrivals_generated(p_StatList, demand);
 
     //anz. der möglichen Entrys pro Tick
     entries_limit = p_settings->real_equivalent / p_settings->gate_entry_inSec;
@@ -187,7 +185,7 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
     //checking for valid function call
     if (p_parkhouse == NULL || p_settings == NULL || p_StatList == NULL)
     {
-        print_error("parkhouse_tick_fill_subtick: central Pointer ERROR");
+        print_error_s("parkhouse_tick_fill_subtick: central Pointer ERROR", HIGH);
         return ERROR;
     }
     if (p_parkhouse->gate_queues == NULL || p_settings->gates <= 1U)
@@ -324,7 +322,6 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     //no vehicle found in list
     if (p_cur == NULL)
     {
-        //
         //deleting lost car
         remove_vehicle(p_vehicle);
         print_error("vehicle_leaving: vehicle not found in parkhouse - vehicle destroyed");
@@ -359,6 +356,7 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
 
     status = remove_vehicle(p_vehicle);
     if (status == ERROR) { print_error("remove_leaving: remove_vehicle: vehicle exited with error"); }
+
     if (p_parkhouse->p_parked_head == NULL) {
         p_parkhouse->p_parked_tail = NULL;
     }
@@ -402,8 +400,9 @@ uint16_t fill_from_queue(Parkhaus *p_parkhouse, Queue *p_gate_queue, GenericVehi
 
         //can the vehicle even "park bad" & probability
         if (open_space >= (minimum * 2U) && rng_percent() <= BAD_PARKING_CHANCE_PERCENT) {
-            spaces_needed = (minimum * 2U);
+            p_car->spaces_needed = (minimum * 2U);
         }
+        p_car->spaces_needed = minimum;
         //adding the vehicle to parkhouse queue
         status = park_vehicle(p_parkhouse, p_vehicle);
         if (status == ERROR)
