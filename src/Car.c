@@ -29,7 +29,6 @@ int car_destroy(Car *p_car) {
         printf("car_destroy: car pointer is NULL\n");
         return ERROR;
     }
-    free(&(p_car->base));
     free(p_car);
     return OK;
 }

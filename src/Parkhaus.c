@@ -359,7 +359,6 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
 
     status = remove_vehicle(p_vehicle);
     if (status == ERROR) { print_error("remove_leaving: remove_vehicle: vehicle exited with error"); }
-    free(p_cur); //FIXME needed?
 
     if (p_parkhouse->p_parked_head == NULL) {
         p_parkhouse->p_parked_tail = NULL;
