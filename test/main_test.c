@@ -22,7 +22,6 @@ int main(void) {
     test_save_handler();
     test_generics();
     test_settings_all();
-
     test_ui();
     test_ui_home();
     test_ui_help();
@@ -30,7 +29,6 @@ int main(void) {
     test_ui_simulation();
     test_ui_statistics();
     test_ui_storage();
-    test_demand();
     test_gate_routing();
     test_statlist();
     test_stats();

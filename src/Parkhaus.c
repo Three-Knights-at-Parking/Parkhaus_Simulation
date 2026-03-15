@@ -112,9 +112,7 @@ int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, c
 int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, const Settings* p_settings,
                                 StatList* p_StatList,
                                 GenericVehicle **pp_vehicle_list_head, Queue *p_gate_queue) {
-    uint16_t demand;
-    uint16_t entries_done = 0;
-    uint16_t entries_limit;
+
     bool queue_blocked = false;
     int status = OK;
 
@@ -124,13 +122,16 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     }
 
     //demand for this Tick for this queue
+    uint16_t demand;
+    stats_tick_add_arrivals_generated(p_StatList, p_gate_queue->demand);
     demand = p_gate_queue->demand + queue_length(p_gate_queue); //or queue_get_demand(p_gate_queue);
     if (demand == 0U) {
         return OK;
     }
 
     //anz. der möglichen Entrys pro Tick
-    entries_limit = p_settings->real_equivalent / p_settings->gate_entry_inSec;
+    uint16_t entries_limit = p_settings->real_equivalent / p_settings->gate_entry_inSec;
+    uint16_t entries_done = 0;
 
     //Entry Cycle
     while (demand > 0U && entries_done < entries_limit && !queue_blocked) {
