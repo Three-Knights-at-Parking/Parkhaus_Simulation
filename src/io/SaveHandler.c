@@ -100,12 +100,6 @@ int savehandler_save_tick(const Simulation *p_sim, const StatsTick *p_tickstats,
         print_error_s("Could not open stats file for writing.", HIGH);
         return ERROR;
     }
-    if (fseek(f, 0, SEEK_END) == 0) {
-        long file_size = ftell(f);
-        if (file_size == 0) {
-            savehandler_write_header_if_new(f, p_sim, mode);
-        }
-    }
     if (mode == NORMAL) {
         fprintf(f, "%u,%u,%u,%u,%u,%u,%u\n",
                 p_tickstats->current_tick, p_tickstats->capacity_total, p_tickstats->capacity_taken,
@@ -385,4 +379,30 @@ static void savehandler_parse_summary_line(const char *line, StatsSummary *summa
     } else if (strcmp(key, "Bad Parking Share (%)") == 0) {
         summary->bad_parking_share_percent = strtof(value, NULL);
     }
+}
+
+
+int savehandler_init_stats_file(const Simulation *p_sim, const char *dest_path) {
+    if (p_sim == NULL || p_sim->settings == NULL) {
+        return ERROR;
+    }
+
+    const enum OutputMode mode = p_sim->settings->output_mode;
+    if (mode == NONE) {
+        return OK;
+    }
+
+    const char *resolved_path = savehandler_resolve_stats_path(dest_path);
+    if (resolved_path[0] == '\0') {
+        return ERROR;
+    }
+    FILE *f = fopen(resolved_path, "w");
+    if (f == NULL) {
+        print_error_s("Could not initialize stats file for writing.", HIGH);
+        return ERROR;
+    }
+    savehandler_write_header_if_new(f, p_sim, mode);
+
+    fclose(f);
+    return OK;
 }

@@ -65,7 +65,6 @@ int main(void)
         return ERROR;
     }
     ui_start(p_settings, p_simulation);
-    simulation_end(p_simulation);
     if (free_simulation(p_simulation) != OK)
     {
         delete_settings(p_settings);

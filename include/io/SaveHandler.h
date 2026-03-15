@@ -102,7 +102,6 @@
     const char *savehandler_resolve_stats_path(const char *dest_path);
 
     /**
-     * FIXME implemented void pointer to file because of dependency question. This is a temporary Fix!
      * @brief Write settings metadata and CSV header line if the stats file is new/empty.
      *
      * If the file is empty, write metadata and column titles into the stats file. This function
@@ -119,6 +118,15 @@
                                          const Simulation *p_sim,
                                          enum OutputMode mode);
 
-
+    /**
+     * @brief Checks if output file is valid and truncates it at the beginning of the simulation.
+     *
+     * This will not truncate anything if the file dest_path is not valid! It also creates a file, if the path is valid and
+     * the file is not found.
+     * @param p_sim Pointer to the current simulation Object
+     * @param dest_path String to the path of the stats file.
+     * @return Zero (OK) on success, non-zero (ERROR) on error.
+     */
+    int savehandler_init_stats_file(const Simulation *p_sim, const char *dest_path);
 
 #endif // TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SAVEHANDLER_H

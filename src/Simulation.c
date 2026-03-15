@@ -155,7 +155,9 @@ int simulation_start(Simulation *p_sim) {
         return ERROR;
     }
     p_sim->current_tick = 0U;
-
+    if (savehandler_init_stats_file(p_sim, NULL) != OK) {
+        print_warning_s("Failed to initialize stats file. Logging may fail.");
+    }
     if (simulation_run(p_sim) != OK)
     {
         print_warning_s("Simulation failed");

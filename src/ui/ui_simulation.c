@@ -98,7 +98,7 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
             press_enter_to_continue();
             return UI_SIMULATION;
         }
-
+        simulation_end(p_simulation);
         printf("Simulation finished.\n");
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
