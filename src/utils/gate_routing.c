@@ -2,10 +2,12 @@
 
 #include <stdlib.h>
 #include "Queue.h"
+#include "Stats.h"
 #include "utils/RNG.h"
 #include "utils/SafteyUtils.h"
 
-int GateRouting_DistributeTotalDemand(const Settings* settings,
+int GateRouting_DistributeTotalDemand(Simulation *p_sim,
+                                        const Settings* settings,
                                       const uint16_t total_demand,
                                       Queue** gate_queues,
                                       const uint32_t current_tick)
@@ -53,7 +55,11 @@ int GateRouting_DistributeTotalDemand(const Settings* settings,
         sum += queue_get_demand(gate_queues[i]);
     }
 
-    if (sum != total_demand)
+    if (sum == total_demand)
+    {
+        stats_tick_add_arrivals_generated(p_sim->StatList, total_demand);
+    }
+    else
     {
         print_error("GateRouting_DistributeTotalDemand: demand sum mismatch");
         return ERROR;
