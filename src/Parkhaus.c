@@ -125,12 +125,10 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     }
 
     //demand for this Tick for this queue
-    demand = p_gate_queue->demand; //or queue_get_demand(p_gate_queue);
+    demand = p_gate_queue->demand + queue_length(p_gate_queue); //or queue_get_demand(p_gate_queue);
     if (demand == 0U) {
         return OK;
     }
-
-    stats_tick_add_arrivals_generated(p_StatList, demand);
 
     //anz. der möglichen Entrys pro Tick
     entries_limit = p_settings->real_equivalent / p_settings->gate_entry_inSec;
@@ -403,8 +401,9 @@ uint16_t fill_from_queue(Parkhaus *p_parkhouse, Queue *p_gate_queue, GenericVehi
 
         //can the vehicle even "park bad" & probability
         if (open_space >= (minimum * 2U) && rng_percent() <= BAD_PARKING_CHANCE_PERCENT) {
-            spaces_needed = (minimum * 2U);
+            p_car->spaces_needed = (minimum * 2U);
         }
+        p_car->spaces_needed = minimum;
         //adding the vehicle to parkhouse queue
         status = park_vehicle(p_parkhouse, p_vehicle);
         if (status == ERROR)
