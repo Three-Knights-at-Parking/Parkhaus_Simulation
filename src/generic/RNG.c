@@ -35,8 +35,7 @@ int rng_init(Settings *p_settings)
 }
 
 uint32_t rng_next_u32(void) {
-    // Xorshift32 algorithm: Extremely fast, extremely high quality,
-    // and guarantees a full 32-bit output on every platform.
+    // Xorshift32 algorithm
     uint32_t x = rng_state;
     x ^= x << 13;
     x ^= x >> 17;
