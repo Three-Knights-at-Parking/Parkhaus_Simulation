@@ -8,12 +8,15 @@
 #include "Queue.h"
 #include "Stats.h"
 #include "io/SaveHandler.h"
+#include "utils/demand.h"
+#include "utils/gate_routing.h"
 #include "utils/StatList.h"
 
 int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_StatList) {
-    checkNull(p_sim);
-    checkNull(p_settings);
-    checkNull(p_StatList);
+    if (checkNull(p_sim) || checkNull(p_settings) || checkNull(p_StatList)) {
+        print_error_s("central pointer error", HIGH);
+        return ERROR;
+    }
 
     p_sim->settings = (Settings *) p_settings;
     p_sim->StatList = (StatList *) p_StatList;
@@ -113,12 +116,38 @@ int simulation_tick(Simulation *p_sim) {
     if (StatsTick_init(p_sim, p_sim->parkhouse->capacity, p_sim->current_tick) == ERROR) {
         return ERROR;
     }
+    int totaldemand = demand_generate_total_perTick(p_sim->settings);
+    GateRouting_DistributeTotalDemand(p_sim->settings, totaldemand, p_sim->parkhouse->gate_queues, p_sim->current_tick);
 
     if (parkhouse_tick((SimulationObject*) p_sim->parkhouse, p_sim->settings, p_sim->StatList, p_sim->current_tick) == ERROR) {
         return ERROR;
     }
 
-    //FIXME either Tick record or direktes anhängen an die STATLISZ
+    if (stats_tick_set_capacity(p_sim->StatList,
+                             (uint16_t)p_sim->parkhouse->capacity_taken,
+                             get_open_space(p_sim->parkhouse)) != OK) {
+        return ERROR;
+                             }
+
+    uint32_t queue_length_end = 0U;
+    for (uint32_t gate = 0U; gate < p_sim->settings->gates; ++gate) {
+        if (p_sim->parkhouse->gate_queues[gate] != NULL) {
+            queue_length_end += queue_length(p_sim->parkhouse->gate_queues[gate]);
+        }
+    }
+
+    if (p_sim->StatList->p_current_tick != NULL) {
+        if (queue_length_end > UINT8_MAX) {
+            p_sim->StatList->p_current_tick->queue_length_end = UINT8_MAX;
+        } else {
+            p_sim->StatList->p_current_tick->queue_length_end = (uint8_t)queue_length_end;
+        }
+
+        if (savehandler_save_tick(p_sim, p_sim->StatList->p_current_tick, NULL) != OK) {
+            return ERROR;
+        }
+    }
+
     return OK;
 }
 
@@ -149,7 +178,7 @@ int simulation_run(Simulation *p_sim) {
         return ERROR;
     }
 
-    for (p_sim->current_tick; p_sim->current_tick < p_sim->settings->max_ticks; p_sim->current_tick++) {
+    for (uint32_t runs = 0; runs < p_sim->settings->max_ticks; runs++) {
         if (simulation_tick(p_sim) == ERROR) {
             return ERROR;
         }
@@ -163,7 +192,7 @@ void simulation_end(Simulation *p_sim) {
         return;
     }
 
-    if (p_sim->StatList != NULL) {
+    if (p_sim->StatList != NULL && p_sim->StatList->p_summary != NULL) {
         StatsSummary summary;
         if (stats_build_summary(p_sim->StatList, p_sim->StatList->p_summary) == OK) {
             savehandler_save_summary(p_sim, p_sim->StatList->p_summary, NULL);
@@ -179,8 +208,8 @@ int free_simulation(Simulation *p_sim) {
         print_warning_s("pointer error");
         return ERROR;
     }
-    parkhouse_free(p_sim->parkhouse);
-    free(p_sim->parkhouse);
+
+    simulation_cleanup_children(p_sim);
     free(p_sim);
     return OK;
 }
@@ -212,5 +241,11 @@ static void simulation_cleanup_children(Simulation *p_sim) {
         free(p_sim->parkhouse);
         p_sim->parkhouse = NULL;
     }
+    //FIXME hier freen oder außerhalb?
+    if (p_sim->StatList != NULL) {
+        StatList_free(p_sim->StatList);
+        p_sim->StatList = NULL;
+    }
 }
+
 

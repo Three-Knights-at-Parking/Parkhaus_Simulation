@@ -23,7 +23,7 @@ int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_
     p_parkhouse->p_parked_tail = NULL;
     return OK;
 }
-//FIXME Ist hier nicht eine p_parkhouse pointer nötig anstelle des SimulaionObjecct da es in Parkhaus abgelegt ist?
+
 int parkhouse_tick(SimulationObject* p_self, const Settings* p_settings, StatList* p_StatList, uint32_t current_tick)
 {
     if (p_self == NULL || p_settings == NULL || p_StatList == NULL) {
@@ -359,7 +359,7 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
 
     status = remove_vehicle(p_vehicle);
     if (status == ERROR) { print_error("remove_leaving: remove_vehicle: vehicle exited with error"); }
-    free(p_cur);
+    free(p_cur); //FIXME needed?
 
     if (p_parkhouse->p_parked_head == NULL) {
         p_parkhouse->p_parked_tail = NULL;
@@ -434,6 +434,9 @@ int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remai
         if (queue_add_random_vehicle(p_gate_queue, current_tick, p_settings) == ERROR) {
             print_error("open_demand: queue_add_random_vehicle error");
             return ERROR;
+        }
+        if (p_StatList->p_current_tick != NULL) {
+            p_StatList->p_current_tick->enqueued += 1U;
         }
         demand_remaining--;
     }

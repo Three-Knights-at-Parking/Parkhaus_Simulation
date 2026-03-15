@@ -43,7 +43,7 @@ int GateRouting_DistributeTotalDemand(const Settings* settings,
     //zufallsverteilung von demand der übrig ist
     for (int i = 0; i < remaining; ++i)
     {
-        uint32_t random_gate = rng_gate_index(remaining);
+        uint32_t random_gate = rng_gate_index(gates);
         queue_set_demand(gate_queues[random_gate], queue_get_demand(gate_queues[random_gate]) + 1);
     }
 
