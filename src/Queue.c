@@ -83,6 +83,11 @@ int queue_dequeue(Queue *p_queue) {
     if (p_queue->p_head == NULL) {
         p_queue->p_tail = NULL;
     }
+    else
+    {
+        GenericVehicle* nextTail = p_queue->p_head->p_next;
+        p_queue->p_tail = nextTail;
+    }
 
     if (p_queue->capacity > 0) {
         p_queue->capacity--;
