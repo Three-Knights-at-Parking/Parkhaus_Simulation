@@ -325,6 +325,7 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     //no vehicle found in list
     if (p_cur == NULL)
     {
+        //
         //deleting lost car
         remove_vehicle(p_vehicle);
         print_error("vehicle_leaving: vehicle not found in parkhouse - vehicle destroyed");
@@ -359,8 +360,6 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
 
     status = remove_vehicle(p_vehicle);
     if (status == ERROR) { print_error("remove_leaving: remove_vehicle: vehicle exited with error"); }
-    free(p_cur); //FIXME needed?
-
     if (p_parkhouse->p_parked_head == NULL) {
         p_parkhouse->p_parked_tail = NULL;
     }
@@ -558,10 +557,8 @@ int update_on_vehicle_exit(Parkhaus* p_parkhouse, StatList* p_StatList, GenericV
         print_error("update_on_vehicle_exit: Data Error");
         return ERROR;
     }
-    else {
-        p_vehicle->park_house_left = current_tick;
-        p_parkhouse->capacity_taken -= required_space;
-    }
+    p_vehicle->park_house_left = current_tick;
+    p_parkhouse->capacity_taken -= required_space;
 
     if (stats_tick_add_vehicle(p_StatList, p_vehicle, current_tick) == ERROR)
     {
@@ -589,9 +586,7 @@ int update_on_vehicle_entry(Parkhaus *p_parkhouse, StatList *p_StatList, Generic
         print_error("update_on_vehicle_entry: needed space exceeds capacity");
         return ERROR;
     }
-    else {
-        p_parkhouse->capacity_taken += required_space;
-    }
+    p_parkhouse->capacity_taken += required_space;
 
     if (stats_tick_add_vehicle(p_StatList, p_vehicle, current_tick) == ERROR)
     {

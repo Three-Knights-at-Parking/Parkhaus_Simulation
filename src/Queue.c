@@ -85,7 +85,6 @@ int queue_dequeue(Queue *p_queue) {
     return OK;
 }
 
-//Done
 GenericVehicle *queue_get_next(const Queue *p_queue) {
     if (p_queue == NULL || queue_is_empty(p_queue)) {
         return NULL;

@@ -42,7 +42,6 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
 
 
     //erstellen der Queues
-    //FIXME CHECK IF THIS TAYS LIKE THAT
     Queue **gate_queues = calloc(p_sim->settings->gates, sizeof(Queue *));
     if (gate_queues == NULL) {
         simulation_cleanup_children(p_sim);
