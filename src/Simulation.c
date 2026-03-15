@@ -13,7 +13,7 @@
 #include "utils/StatList.h"
 
 int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_StatList) {
-    if (checkNull(p_sim) || checkNull(p_settings) || checkNull(p_StatList)) {
+    if (checkNull(p_sim) || checkNull(p_settings)) {
         print_error_s("central pointer error", HIGH);
         return ERROR;
     }
@@ -197,8 +197,6 @@ void simulation_end(Simulation *p_sim) {
             savehandler_save_summary(p_sim, p_sim->StatList->p_summary, NULL);
         }
     }
-
-    simulation_cleanup_children(p_sim);
 }
 
 
@@ -236,15 +234,13 @@ static void simulation_cleanup_children(Simulation *p_sim) {
             free(p_sim->parkhouse->gate_queues);
             p_sim->parkhouse->gate_queues = NULL;
         }
+        if (p_sim->StatList != NULL) {
+            StatList_free(p_sim->StatList);
+            p_sim->StatList = NULL;
+        }
         parkhouse_free(p_sim->parkhouse);
         free(p_sim->parkhouse);
         p_sim->parkhouse = NULL;
     }
-    //FIXME hier freen oder außerhalb?
-    if (p_sim->StatList != NULL) {
-        StatList_free(p_sim->StatList);
-        p_sim->StatList = NULL;
-    }
+
 }
-
-

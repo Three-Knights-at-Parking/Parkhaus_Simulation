@@ -57,12 +57,7 @@ int main(void)
         return ERROR;
     }
 
-
-    // Passing an empty list since we don't to use it whatsoever?
-    // I wonder why passing null drives an error... @Daniel
-    StatList list;
-    memset(&list, 0, sizeof(StatList));
-    if (simulation_init(p_simulation, p_settings, &list) != OK)
+    if (simulation_init(p_simulation, p_settings, NULL) != OK)
     {
         print_error_s("Failed to init simulation object", HIGH);
         delete_settings(p_settings);
@@ -70,16 +65,11 @@ int main(void)
         return ERROR;
     }
     simulation_start(p_simulation);
-    //ui_start(p_settings, p_simulation);
-
+    ui_start(p_settings, p_simulation);
+    simulation_end(p_simulation);
     if (free_simulation(p_simulation) != OK)
     {
         delete_settings(p_settings);
-        return ERROR;
-    }
-
-    if (delete_settings(p_settings) != OK)
-    {
         return ERROR;
     }
 
