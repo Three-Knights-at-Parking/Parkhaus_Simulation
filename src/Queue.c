@@ -56,6 +56,12 @@ int queue_enqueue(Queue *p_queue, GenericVehicle *p_vehicle) {
         p_queue->capacity = 1;
         return OK;
     }
+    if (p_queue->p_tail == NULL)
+    {
+        p_queue->p_head->p_next = p_vehicle;
+        p_queue->p_tail = p_vehicle;
+        p_queue->capacity++;
+    }
 
     p_queue->p_tail->p_next = p_vehicle;
     p_queue->p_tail = p_vehicle;
