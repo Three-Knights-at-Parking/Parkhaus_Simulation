@@ -1,7 +1,3 @@
-//
-// Created by ibach on 06.03.2026.
-//
-
 #include "types.h"
 #include "utils/demand.h"
 #include <math.h>

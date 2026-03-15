@@ -3,7 +3,7 @@
 enum Severity{LOW, MEDIUM, HIGH};
 #define print_error_s(msg, severity) print_error_s_internal(msg, severity, __func__)
 #define print_warning_s(msg) print_warning_s_internal(msg, __func__)
-#define print_log_s(msg) print_warning_s_internal(msg, __func__)
+#define print_log_s(msg) print_log_s_internal(msg, __func__)
 
 
 /**

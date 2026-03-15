@@ -98,6 +98,9 @@ int settings_load_from_file(Settings *p_settings, const char *src_path) {
     if (json_object_object_get_ex(parsed_json, "mode_select", &tmp_obj)) {
         p_settings->mode_select = (uint8_t)json_object_get_int(tmp_obj);
     }
+    if (json_object_object_get_ex(parsed_json, "output_mode", &tmp_obj)) {
+        p_settings->output_mode = (enum OutputMode)json_object_get_int(tmp_obj);
+    }
     if (json_object_object_get_ex(parsed_json, "entry_probability_perSec_prec", &tmp_obj)) {
         p_settings->entry_probability_perSec_prec = (float)json_object_get_double(tmp_obj);
     }
@@ -165,6 +168,7 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
     json_object_object_add(obj, "max_parking_ticks", json_object_new_int64((int64_t) p_settings->max_parking_ticks));
     json_object_object_add(obj, "min_parking_ticks", json_object_new_int64((int64_t) p_settings->min_parking_ticks));
     json_object_object_add(obj, "mode_select", json_object_new_int((int32_t) p_settings->mode_select));
+    json_object_object_add(obj, "output_mode", json_object_new_int((int32_t) p_settings->output_mode));
 
     // JSON-C uses double for floating point numbers
     json_object_object_add(obj, "entry_probability_perSec_prec", json_object_new_double((double)p_settings->entry_probability_perSec_prec));
