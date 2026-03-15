@@ -64,7 +64,8 @@ int main(void)
         free(p_simulation);
         return ERROR;
     }
-    ui_start(p_settings, p_simulation);
+    simulation_start(p_simulation);
+    //ui_start(p_settings, p_simulation);
     if (free_simulation(p_simulation) != OK)
     {
         delete_settings(p_settings);

@@ -13,7 +13,6 @@ int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_
     if (p_parkhouse == NULL || p_settings == NULL || p_gate_queues == NULL) {
         return ERROR;
     }
-    //p_parkhouse->name = p_settings->name[0]; FIXME Parkhaus Name
     p_parkhouse->base.type = PARKHAUS;
     p_parkhouse->capacity = p_settings->capacity;
     p_parkhouse->floors = p_settings->floors;
@@ -193,12 +192,12 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
     }
     if (p_parkhouse->gate_queues == NULL || p_settings->gates <= 1U)
     {
-        print_warning_s("Wrong use of function, HIGH");
+        print_warning_s("Wrong use of function");
         return ERROR;
     }
     if ((p_settings->real_equivalent % p_settings->gate_entry_inSec) != 0)
     {
-        print_warning_s("Tick in seconds is not compatible with gate_entry in seconds, MEDIUM");
+        print_warning_s("Tick in seconds is not compatible with gate_entry in seconds");
         return ERROR;
     }
 
@@ -229,7 +228,7 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
             Queue* p_gate_queue = p_parkhouse->gate_queues[gate];
             if (p_gate_queue == NULL)
             {
-                print_warning_s("Missing queue, MEDIUM");
+                print_warning_s("Missing queue");
                 return ERROR;
             }
 

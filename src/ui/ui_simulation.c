@@ -105,11 +105,11 @@ ui_state simulation_menu(Settings *p_settings, Simulation *p_simulation)
 
         return UI_SIMULATION;
     }
-    else if (choice == SIMULATION_MENU_CONFIG)
+    if (choice == SIMULATION_MENU_CONFIG)
     {
         return UI_KONFIG;
     }
-    else if (choice == SIMULATION_MENU_BACK)
+    if (choice == SIMULATION_MENU_BACK)
     {
         return UI_HOME;
     }
