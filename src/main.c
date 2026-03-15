@@ -12,6 +12,11 @@
 #include "../include/ui/ui.h"
 #include "../include/Settings.h"
 #include "../include/Simulation.h"
+#include "ui/ui_config.h"
+#include "ui/ui_help.h"
+#include "ui/ui_home.h"
+#include "ui/ui_simulation.h"
+#include "ui/ui_storage.h"
 #include "utils/SafteyUtils.h"
 
 int main(void)
@@ -68,9 +73,41 @@ int main(void)
     // From a user POV this is quite retarded, because once enabled,
     // they need to manually change the value in the settings if something goes wrong.
     // oh well.
+    //
+    //
+    // UPDATE: I hope this fixes it. Frankly depends on the way UI is implemented.
     if (p_settings->output_mode == DEBUG) {
         simulation_start(p_simulation);
-        ui_start(p_settings, p_simulation);
+        ui_state state = home_menu();
+
+        while (state != UI_EXIT)
+        {
+            if (state == UI_HOME)
+            {
+                state = home_menu();
+            }
+            else if (state == UI_KONFIG)
+            {
+                state = config_menu(p_settings);
+            }
+            else if (state == UI_SIMULATION)
+            {
+                state = simulation_menu(p_settings, p_simulation);
+            }
+            else if (state == UI_STORAGE)
+            {
+                state = storage_menu();
+            }
+            else if (state == UI_HELP)
+            {
+                state = help_menu();
+            }
+            else
+            {
+                state = UI_HOME;
+            }
+        }
+
     }
     if (p_settings->output_mode != DEBUG) {
         ui_start(p_settings, p_simulation);
