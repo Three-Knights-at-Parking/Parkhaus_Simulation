@@ -16,7 +16,8 @@
  * @param gate_queues Pointer to the array of gate queues.
  * @param current_tick Current simulation tick.
  */
-int GateRouting_DistributeTotalDemand(const Settings* settings,
+int GateRouting_DistributeTotalDemand(Simulation *p_sim,
+                                        const Settings* settings,
                                       uint16_t total_demand,
                                       Queue** gate_queues,
                                       uint32_t current_tick);

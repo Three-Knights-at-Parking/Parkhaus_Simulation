@@ -42,7 +42,7 @@ enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};
  * Minimum Vehicle Spaces
  */
 
-enum MinimumSpace{ Bike_Space = 1, Car_Space = 2 };
+enum MinimumSpace{Car_Space = 1 }; // further options like car needs 2 spcaes bike 1
 
 //FIXME Kannste das nächste mal auch selber machen :)  STRG+x STRG+v
 //important Backup defines
@@ -95,7 +95,7 @@ struct Simulation {
     SimulationObject base;
     Settings* settings; // The underlying
     uint32_t current_tick; // Current tick time.
-    Parkhaus* parkhaus; // The Parkhaus for this Simulation
+    Parkhaus* parkhouse; // The Parkhouse for this Simulation
     StatList* StatList; // Statistikcontainer fuer Tick- und Gesamtwerte
 };
 
@@ -147,6 +147,7 @@ struct Settings {
     uint8_t gates; // Number of gates. This will affect queue time. ##UI##
     uint16_t gate_entry_inSec; // Time needed for an vehicle to enter the parkhouse ##UI##
 	uint16_t tick_inSec; //Time in seconds of one Tick ##UI##
+    uint16_t queue_max_length; // Maximum number of vehicles allowed in each gate queue ##UI##
     uint32_t max_parking_ticks; //maximum of Ticks a car is allowed to Park ##UI##
     uint32_t min_parking_ticks; //minimum of Ticks a car will park -> assumption is 1 ##UI##
 	uint8_t mode_select; //0 = none / 1 = normal / 2 = verbose / 3 = Error ##UI##
@@ -183,7 +184,7 @@ struct StatsTick {
     uint16_t departed; /**< Departed from garage in this tick. */
 
     /* Raw queue values */
-    uint8_t queue_length_end; /**< Queue length at tick end (global). */
+    uint16_t queue_length_end; /**< Queue length at tick end (global). */
     uint32_t queue_rejections; /**< Vehicles that could not queue (tick). */
     uint64_t queue_wait_entered_sum_ticks; /**< Total wait time of all vehicles that entered in this tick. */
     uint32_t queue_wait_entered_count; /**< Number of vehicles entered in this tick for wait-time evaluation. */

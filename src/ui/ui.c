@@ -1,3 +1,13 @@
+/**
+ * @file ui.c
+ * @brief Core UI state machine and shared terminal/input helper functions.
+ *
+ * This module provides:
+ * - the main UI state machine
+ * - shared input parsing and validation
+ * - shared terminal helper functions
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,7 +68,7 @@ int user_input(void)
 
     if (fgets(buffer, sizeof(buffer), stdin) == NULL)
     {
-        return -1;
+        return ERROR;
     }
 
     errno = 0;
@@ -67,13 +77,13 @@ int user_input(void)
     /* Overflow/underflow */
     if (errno != 0)
     {
-        return -1;
+        return ERROR;
     }
 
     /* No digits were found */
     if (endptr == buffer)
     {
-        return -1;
+        return ERROR;
     }
 
     /* Skip trailing whitespace */
@@ -85,13 +95,13 @@ int user_input(void)
     /* Reject trailing garbage, e.g. "12abc" */
     if (*endptr != '\0')
     {
-        return -1;
+        return ERROR;
     }
 
     /* Range check before cast */
     if (value < INT_MIN || value > INT_MAX)
     {
-        return -1;
+        return ERROR;
     }
 
     return (int)value;
@@ -176,8 +186,6 @@ int read_line(char *p_buffer, const size_t buffer_len)
 
 ui_state welcome_message(void)
 {
-    clear_terminal();
-
     printf("=========================================\n");
     printf("     Parkhaus-Simulation Rauenegg\n");
     printf("=========================================\n\n");
@@ -191,9 +199,9 @@ ui_state welcome_message(void)
     printf("and inspect stored statistics.\n\n");
 
     printf("For a short explanation of the simulation model and all\n");
-    printf("important settings, open the HELP menu from the Home Menu.\n\n");
+    printf("important settings, open the HELP menu from the Home Menu.\n");
 
-    printf("Press ENTER to continue...\n");
+    printf("Press ENTER to continue...");
 
     press_enter_to_continue();
 
@@ -212,7 +220,7 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
     {
         if (state == UI_HOME)
         {
-            state = home_menu(p_settings);
+            state = home_menu();
         }
         else if (state == UI_KONFIG)
         {
@@ -224,7 +232,7 @@ ui_state ui_start(Settings *p_settings, Simulation *p_simulation)
         }
         else if (state == UI_STORAGE)
         {
-            state = storage_menu(p_settings);
+            state = storage_menu();
         }
         else if (state == UI_HELP)
         {

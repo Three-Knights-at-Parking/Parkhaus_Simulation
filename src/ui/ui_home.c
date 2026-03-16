@@ -1,5 +1,5 @@
 /**
-* @file ui_home.c
+ * @file ui_home.c
  * @brief Home menu implementation (main navigation).
  *
  * The home menu is responsible for:
@@ -8,10 +8,10 @@
  * - returning the selected next UI state
  */
 
+#include <stdio.h>
+
 #include "../include/ui/ui.h"
 #include "../include/ui/ui_home.h"
-
-#include <stdio.h>
 
 /* ========================================================================= */
 /* Screen printing                                                           */
@@ -21,22 +21,23 @@ void print_homescreen(void)
 {
     clear_terminal();
 
-    printf("==============================\n");
-    printf("         Home-Menu\n");
-    printf("==============================\n");
-    printf("1 - Simulation\n");
-    printf("2 - Configuration\n");
-    printf("3 - Storage\n");
-    printf("4 - Help\n");
-    printf("0 - Quit\n");
-    printf("\n");
+    printf("====================================\n");
+    printf("             HOME MENU\n");
+    printf("====================================\n\n");
+    printf("What would you like to do?\n\n");
+    printf("  1 - Simulation    (Run the parking simulation)\n");
+    printf("  2 - Configuration (Edit settings like capacity, ticks, etc.)\n");
+    printf("  3 - Storage       (Load and view past simulation statistics)\n");
+    printf("  4 - Help          (View instructions and documentation)\n");
+    printf("  0 - Quit          (Exit the application)\n\n");
 }
 
 /* ========================================================================= */
 /* Menu logic                                                                */
 /* ========================================================================= */
 
-ui_state home_menu(Settings *p_settings) {
+ui_state home_menu()
+{
     int choice = 0;
     validation_flag valid = INVALID;
 
@@ -50,19 +51,19 @@ ui_state home_menu(Settings *p_settings) {
 
     /* Map numeric menu choice to UI state.
        The state machine in ui_start() will call the appropriate menu handler. */
-    if (choice == 1)
+    if (choice == HOME_MENU_SIMULATION)
     {
         return UI_SIMULATION;
     }
-    else if (choice == 2)
+    else if (choice == HOME_MENU_CONFIG)
     {
         return UI_KONFIG;
     }
-    else if (choice == 3)
+    else if (choice == HOME_MENU_STORAGE)
     {
         return UI_STORAGE;
     }
-    else if (choice == 4)
+    else if (choice == HOME_MENU_HELP)
     {
         return UI_HELP;
     }

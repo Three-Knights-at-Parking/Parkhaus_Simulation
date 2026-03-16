@@ -66,7 +66,11 @@ enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
 #define SETTINGS_DEFAULT_IS_LEAVABLE NON_LEAVABLE // Cars cannot leave the queue
 #define SECONDS_IN_DAY 86400
 #define SETTINGS_MAX_SIZE_PARAM 255
-#define DEFAULT_MAX_QUEUE_LENGTH 10 //standard limit für Queue length
+
+#define SETTINGS_DEFAULT_QUEUE_MAX_LENGTH 10
+#define SETTINGS_MINIMUM_QUEUE_MAX_LENGTH 1
+#define SETTINGS_MAXIMUM_QUEUE_MAX_LENGTH 255
+
 #define BAD_PARKING_CHANCE_PERCENT 2 // 2/100 -> annahme das 2% aller Fahrzeuge schlecht Parken
 
 
@@ -116,6 +120,7 @@ enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
      * @param mode_select 0 = none / 1 = normal / 2 = verbose / 3 = Error
      * @param entry_probability_perSec_prec probability of a Car entering per second
      * @param is_leavable Determines if vehicles can leave the queue early at any positions.
+     * @param queue_max_length The maximum size of queues.
      * @return 0 on success, non-zero if parameters are invalid.
      */
     int settings_init(Settings *p_settings,
@@ -134,7 +139,8 @@ enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
                       uint32_t min_parking_ticks,
                       uint8_t mode_select,
                       float entry_probability_perSec_prec,
-                      enum QueueLeavable is_leavable);
+                      enum QueueLeavable is_leavable,
+                      uint16_t queue_max_length);
 
     /**
      * @brief Set a path to a config file to read from.
@@ -224,6 +230,14 @@ enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
      * @return 0 if valid, non_zero if invalid
      */
     int settings_is_valid_system_path_string(const char *path);
+
+    /**
+         * @brief Set the maximum number of vehicles allowed in each queue.
+         * @param p_settings Pointer to the Settings object to modify.
+         * @param queue_max_length Maximum queue length per gate.
+         * @return 0 on success, non-zero on error.
+         */
+    int settings_set_queue_max_length(Settings *p_settings, uint16_t queue_max_length);
 
 
     #endif //TEIL1_PARKHAUS_SIMULATION_PLANNUNG_SETTINGS_H

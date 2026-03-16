@@ -3,20 +3,22 @@
 
 /**
  * @file ui.h
- * @brief Public interface of the terminal-based UI (state machine, input helpers).
+ * @brief Public interface of the terminal-based UI.
  *
  * This module provides:
- * - The main UI state machine (ui_start)
- * - Basic user input and validation helpers
- * - Simple terminal helper functions used by multiple UI modules
+ * - the main UI state machine
+ * - shared terminal helper functions
+ * - shared input parsing and validation helpers
  */
 
-#include <stdint.h>
+#include "types.h"
 
-#include "Settings.h"
+/* ========================================================================= */
+/* UI state definitions                                                      */
+/* ========================================================================= */
 
 /**
- * @brief UI state identifiers for the main UI state machine.
+ * @brief UI states used by the main UI state machine.
  */
 typedef enum
 {
@@ -29,7 +31,7 @@ typedef enum
 } ui_state;
 
 /**
- * @brief Generic validation result used by UI input validation functions.
+ * @brief Generic validation result for UI input checks.
  */
 typedef enum
 {
@@ -44,40 +46,59 @@ typedef enum
 /**
  * @brief Waits for the user to press ENTER.
  *
- * Reads and discards one line from stdin. If the user types more than fits into
- * the internal buffer, the remaining characters are discarded as well.
+ * Reads and discards one line from stdin. If the user types more than fits
+ * into the internal buffer, the remaining characters are discarded as well.
  */
 void press_enter_to_continue(void);
 
 /**
- * @brief Clears the terminal output in a portable way (pseudo clear).
+ * @brief Clears the terminal output in a portable way.
  *
  * Prints multiple newlines to push previous output out of view.
- * (This does not truly clear the terminal scrollback buffer.)
+ * This does not clear the terminal scrollback buffer.
  */
 void clear_terminal(void);
 
 /* ========================================================================= */
-/* Shared input helpers                                                      */
+/* Shared input helper functions                                             */
 /* ========================================================================= */
 
 /**
  * @brief Reads a raw menu selection from stdin.
  *
- * @return Parsed integer on success, or -1 on invalid input/overflow/underflow.
+ * @return Parsed integer on success, or ERROR on invalid input,
+ *         overflow or underflow.
  */
 int user_input(void);
 
 /**
  * @brief Validates a menu choice against a valid range [0..max_valid_number].
  *
- * @param[in] user_choice       The value entered by the user.
- * @param[in] max_valid_number  Maximum allowed menu number (minimum is always 0).
+ * @param[in] user_choice The value entered by the user.
+ * @param[in] max_valid_number Maximum allowed menu number.
  * @return VALID if user_choice is within range, otherwise INVALID.
  */
-validation_flag validate_user_input(const int user_choice, const int max_valid_number);
+validation_flag validate_user_input(const int user_choice,
+                                    const int max_valid_number);
 
+/**
+ * @brief Removes a trailing newline character from a string.
+ *
+ * @param[in,out] p_text Pointer to the string to modify.
+ * @return OK on success, ERROR if p_text is NULL or empty.
+ */
 int trim_newline(char *p_text);
+
+/**
+ * @brief Reads one line from stdin into a buffer.
+ *
+ * If the entered line is longer than the buffer, the remaining
+ * characters are discarded. A trailing newline is removed.
+ *
+ * @param[out] p_buffer Destination buffer.
+ * @param[in] buffer_len Size of the destination buffer.
+ * @return OK on success, ERROR on invalid parameters or input failure.
+ */
 int read_line(char *p_buffer, size_t buffer_len);
 
 /* ========================================================================= */
@@ -94,6 +115,8 @@ ui_state welcome_message(void);
 /**
  * @brief Starts the UI state machine and handles navigation between menus.
  *
+ * @param[in] p_settings Pointer to the active settings object.
+ * @param[in] p_simulation Pointer to the active simulation object.
  * @return UI_EXIT when the application should terminate.
  */
 ui_state ui_start(Settings *p_settings, Simulation *p_simulation);

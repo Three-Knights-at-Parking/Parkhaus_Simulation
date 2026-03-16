@@ -98,11 +98,17 @@ int settings_load_from_file(Settings *p_settings, const char *src_path) {
     if (json_object_object_get_ex(parsed_json, "mode_select", &tmp_obj)) {
         p_settings->mode_select = (uint8_t)json_object_get_int(tmp_obj);
     }
+    if (json_object_object_get_ex(parsed_json, "output_mode", &tmp_obj)) {
+        p_settings->output_mode = (enum OutputMode)json_object_get_int(tmp_obj);
+    }
     if (json_object_object_get_ex(parsed_json, "entry_probability_perSec_prec", &tmp_obj)) {
         p_settings->entry_probability_perSec_prec = (float)json_object_get_double(tmp_obj);
     }
     if (json_object_object_get_ex(parsed_json, "is_leavable", &tmp_obj)) {
         p_settings->is_leavable = (enum QueueLeavable)json_object_get_int(tmp_obj);
+    }
+    if (json_object_object_get_ex(parsed_json, "queue_max_length", &tmp_obj)) {
+        settings_set_queue_max_length(p_settings, (uint16_t)json_object_get_int(tmp_obj));
     }
 
     // json_object_put decrements the reference count and frees memory when it hits 0.
@@ -165,6 +171,8 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
     json_object_object_add(obj, "max_parking_ticks", json_object_new_int64((int64_t) p_settings->max_parking_ticks));
     json_object_object_add(obj, "min_parking_ticks", json_object_new_int64((int64_t) p_settings->min_parking_ticks));
     json_object_object_add(obj, "mode_select", json_object_new_int((int32_t) p_settings->mode_select));
+    json_object_object_add(obj, "output_mode", json_object_new_int((int32_t) p_settings->output_mode));
+    json_object_object_add(obj, "queue_max_length", json_object_new_int((int32_t) p_settings->queue_max_length));
 
     // JSON-C uses double for floating point numbers
     json_object_object_add(obj, "entry_probability_perSec_prec", json_object_new_double((double)p_settings->entry_probability_perSec_prec));
@@ -178,6 +186,7 @@ int settings_save_to_file(const Settings *p_settings, const char *dest_path) {
         print_error_s("Failed to write settings file. Ensure the directory exists.", HIGH);
         return ERROR;
     }
+    print_log_s("Saved settings to file.");
     return OK;
 }
 
@@ -197,34 +206,72 @@ int settings_init(Settings *p_settings,
                   const uint32_t min_parking_ticks,
                   const uint8_t mode_select,
                   const float entry_probability_perSec_prec,
-                  const enum QueueLeavable is_leavable) {
+                  const enum QueueLeavable is_leavable,
+                  const uint16_t queue_max_length) {
 
     if (checkNull(p_settings) || checkNull(name)  || checkNull(src_path)) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
+    if (settings_is_valid_system_path_string(src_path) == OK) {
+        if (settings_load_from_file(p_settings, src_path) == OK) {
+            print_warning_s("Settings file already exists, using existing settings.");
+            return OK;
+        }
+    }else {
+        if (settings_load_from_file(p_settings, SETTINGS_DEFAULT_PATH) == OK) {
+            print_warning_s("Settings file already exists, using existing settings.");
+            return OK;
+        }
+    }
+
+
     p_settings->name[0] = '\0';
     p_settings->src_path = NULL;
     p_settings->stats_path = NULL;
 
-    if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) return ERROR;
-    if (settings_set_gates(p_settings, gates) != OK) return ERROR;
-    if (settings_set_size(p_settings, capacity) != OK) return ERROR;
-    if (settings_set_floors(p_settings, floors) != OK) return ERROR;
-    if (settings_set_max_ticks(p_settings, max_ticks) != OK) return ERROR;
-    if (settings_set_rand_seed(p_settings, rand_seed) != OK) return ERROR;
-    if (settings_set_output_mode(p_settings, output_mode) != OK) return ERROR;
-    if (settings_set_name(p_settings, name) != OK) return ERROR;
-    if (settings_set_src_path(p_settings, src_path) != OK) return ERROR;
+    /**
+     * I really don't think using brackets is the more readable code in this case, but alas the requirements
+     * haveth forced my hand.
+     */
+    if (settings_set_real_equivalent(p_settings, real_equivalent) != OK) {
+        return ERROR;
+    }
+    if (settings_set_gates(p_settings, gates) != OK) {
+        return ERROR;
+    }
+    if (settings_set_size(p_settings, capacity) != OK) {
+        return ERROR;
+    }
+    if (settings_set_floors(p_settings, floors) != OK) {
+        return ERROR;
+    }
+    if (settings_set_max_ticks(p_settings, max_ticks) != OK) {
+        return ERROR;
+    }
+    if (settings_set_rand_seed(p_settings, rand_seed) != OK) {
+        return ERROR;
+    }
+    if (settings_set_output_mode(p_settings, output_mode) != OK) {
+        return ERROR;
+    }
+    if (settings_set_name(p_settings, name) != OK) {
+        return ERROR;
+    }
+    if (settings_set_src_path(p_settings, src_path) != OK) {
+        return ERROR;
+    }
 
     p_settings->gate_entry_inSec = gate_entry_inSec;
     p_settings->tick_inSec = tick_inSec;
+    if (settings_set_queue_max_length(p_settings, queue_max_length) != OK) {
+        return ERROR;
+    }
     p_settings->max_parking_ticks = max_parking_ticks;
     p_settings->min_parking_ticks = min_parking_ticks;
     p_settings->mode_select = mode_select;
     p_settings->entry_probability_perSec_prec = entry_probability_perSec_prec;
     p_settings->is_leavable = is_leavable;
-
     return OK;
 }
 
@@ -249,7 +296,8 @@ int settings_set_size(Settings *p_settings, const uint16_t size) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (size < SETTINGS_MINIMUM_CAPACITY || size > SETTINGS_MAXIMUM_CAPACITY) {        p_settings->capacity = 1;
+    if (size < SETTINGS_MINIMUM_CAPACITY || size > SETTINGS_MAXIMUM_CAPACITY) {
+        p_settings->capacity = 1;
         print_warning_s("Invalid capacity, setting to default (1).");
         return UNKNOWN;
     }
@@ -262,7 +310,8 @@ int settings_set_floors(Settings *p_settings, const uint8_t floors) {
         print_error_s("Field cannot be null.", HIGH);
         return ERROR;
     }
-    if (floors < SETTINGS_MINIMUM_FLOORS || floors > SETTINGS_MAXIMUM_FLOORS) {        p_settings->floors = 1;
+    if (floors < SETTINGS_MINIMUM_FLOORS || floors > SETTINGS_MAXIMUM_FLOORS) {
+        p_settings->floors = 1;
         print_warning_s("Invalid number of floors, setting to default (1).");
         return UNKNOWN;
     }
@@ -512,6 +561,22 @@ static int settings_create_path_to_file(const char* path) {
     }
 
     free(path_copy);
+    return OK;
+}
+int settings_set_queue_max_length(Settings *p_settings, const uint16_t queue_max_length) {
+    if (checkNull(p_settings)) {
+        print_error_s("Field cannot be null.", HIGH);
+        return ERROR;
+    }
+
+    if (queue_max_length < SETTINGS_MINIMUM_QUEUE_MAX_LENGTH ||
+        queue_max_length > SETTINGS_MAXIMUM_QUEUE_MAX_LENGTH) {
+        p_settings->queue_max_length = SETTINGS_DEFAULT_QUEUE_MAX_LENGTH;
+        print_warning_s("Invalid queue max length, setting to default.");
+        return UNKNOWN;
+        }
+
+    p_settings->queue_max_length = queue_max_length;
     return OK;
 }
 

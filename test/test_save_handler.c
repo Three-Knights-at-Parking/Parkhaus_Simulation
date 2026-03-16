@@ -5,7 +5,6 @@
 
 #include "io/SaveHandler.h"
 #include "types.h"
-#include "./test_settings.c"
 
 
 static void cleanup_loaded_ticks(StatList *list) {
@@ -115,14 +114,26 @@ static void test_save_summary_appends_summary_lines(void) {
     sim.settings = &settings;
 
     summary.total_ticks = 50;
+    summary.capacity_total = 200;
     summary.arrivals_total = 120;
+    summary.enqueued_total = 115;
     summary.entered_total = 110;
     summary.departed_total = 100;
     summary.capacity_taken_percent_avg = 55.5f;
     summary.capacity_taken_percent_peak = 97.0f;
+    summary.capacity_taken_peak_tick = 33;
+    summary.first_full_tick = 41;
+    summary.full_ticks = 3;
     summary.queue_length_avg = 2.5f;
+    summary.queue_length_peak = 8;
+    summary.queue_length_peak_tick = 24;
+    summary.queue_rejections_total = 6;
     summary.queue_wait_avg_ticks = 4;
     summary.queue_wait_max_ticks = 12;
+    summary.queue_active_ratio_percent = 44.0f;
+    summary.parking_duration_avg_ticks = 18;
+    summary.blocker_full_ratio_percent = 10.0f;
+    summary.bad_parking_cases_total = 2;
     summary.bad_parking_share_percent = 3.0f;
 
     const char *full_path = savehandler_resolve_stats_path(dest_name);
@@ -140,15 +151,19 @@ static void test_save_summary_appends_summary_lines(void) {
 
     assert(strstr(buffer, "--- SIMULATION SUMMARY ---") != NULL);
     assert(strstr(buffer, "Total Ticks,50") != NULL);
-    assert(strstr(buffer, "Total Arrivals,120") != NULL);
-    assert(strstr(buffer, "Total Entered,110") != NULL);
-    assert(strstr(buffer, "Total Departed,100") != NULL);
-    assert(strstr(buffer, "Avg Wait Time (Ticks),4") != NULL);
-    assert(strstr(buffer, "Max Wait Time (Ticks),12") != NULL);
+    assert(strstr(buffer, "Capacity Total,200") != NULL);
+    assert(strstr(buffer, "Peak Utilization Tick,33") != NULL);
+    assert(strstr(buffer, "First FULL Tick,41") != NULL);
+    assert(strstr(buffer, "FULL Ticks,3") != NULL);
+    assert(strstr(buffer, "Queue Peak,8") != NULL);
+    assert(strstr(buffer, "Queue Peak Tick,24") != NULL);
+    assert(strstr(buffer, "Queue Rejections Total,6") != NULL);
+    assert(strstr(buffer, "Avg Parking Duration (Ticks),18") != NULL);
+    assert(strstr(buffer, "Blocker FULL Ratio (%),10.00") != NULL);
+    assert(strstr(buffer, "Bad Parking Total,2") != NULL);
 
     remove(full_path);
 }
-
 
 static void test_load_and_print_reads_tick_and_summary(void) {
     Settings settings;
@@ -159,6 +174,7 @@ static void test_load_and_print_reads_tick_and_summary(void) {
     StatList list;
     const char *dest_name = "test_load.csv";
     const char *full_path;
+    enum OutputMode mode;
 
     memset(&settings, 0, sizeof(settings));
     memset(&sim, 0, sizeof(sim));
@@ -208,7 +224,7 @@ static void test_load_and_print_reads_tick_and_summary(void) {
     assert(savehandler_save_summary(&sim, &summary_to_save, dest_name) == OK);
 
     list.p_summary = &loaded_summary;
-    assert(savehandler_load_and_print(dest_name, &list) == OK);
+    assert(savehandler_load_and_print(dest_name, &list, &mode) == OK);
 
     assert(list.p_tick_head != NULL);
     assert(list.p_tick_tail != NULL);
@@ -232,36 +248,15 @@ static void test_load_and_print_reads_tick_and_summary(void) {
     cleanup_loaded_ticks(&list);
     remove(full_path);
 }
-int main(void) {
+
+void test_save_handler() {
     test_resolve_stats_path_defaults();
+    printf("Save Handler - test resolve default paths passed\n");
     test_save_tick_normal_writes_header_and_data();
+    printf("Save Handler - write header passed\n");
     test_save_summary_appends_summary_lines();
+    printf("Save Handler - Appends Summary Line passed\n");
     test_load_and_print_reads_tick_and_summary();
+    printf("Save Handler - Reads Tick and Summary passed\n");
     printf("All SaveHandler tests passed.\n");
-
-    printf("Running Settings.c tests...\n");
-
-    test_settings_init();
-    printf(" - test_settings_init passed.\n");
-
-    test_settings_setters_valid();
-    printf(" - test_settings_setters_valid passed.\n");
-
-    test_settings_setters_invalid();
-    printf(" - test_settings_setters_invalid passed.\n");
-
-    test_settings_path_validation();
-    printf(" - test_settings_path_validation passed.\n");
-
-    test_settings_to_parkhaus();
-    printf(" - test_settings_to_parkhaus passed.\n");
-
-    test_settings_save_and_load();
-    printf(" - test_settings_save_and_load passed.\n");
-
-    test_delete_settings();
-    printf(" - test_delete_settings passed.\n");
-
-    printf("All Settings.c tests passed successfully!\n");
-    return 0;
 }
