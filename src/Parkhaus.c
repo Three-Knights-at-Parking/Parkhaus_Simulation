@@ -253,7 +253,7 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse,
     uint16_t demand = queue_get_demand(p_gate_queue);
     if (demand <= 0U && queue_is_empty(p_gate_queue))
     {
-        print_warning_s("NO demnad there, LOW");
+        //print_warning_s("NO demnad there, LOW");
         return OK;
     }
 
