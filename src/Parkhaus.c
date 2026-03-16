@@ -14,7 +14,7 @@ int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_
         return ERROR;
     }
     p_parkhouse->base.type = PARKHAUS;
-    p_parkhouse->capacity = p_settings->capacity;
+    p_parkhouse->capacity = p_settings->capacity * p_settings->floors;
     p_parkhouse->floors = p_settings->floors;
     p_parkhouse->capacity_taken = 0;
     p_parkhouse->gate_queues = p_gate_queues;
