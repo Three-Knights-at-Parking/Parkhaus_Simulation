@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "Stats.h"
+#include "Queue.h"
 #include "types.h"
 #include "utils/SafteyUtils.h"
 #include "utils/StatList.h"
@@ -105,6 +106,28 @@ int stats_tick_set_capacity(StatList *p_stats, uint16_t taken, uint16_t free) {
     p_stats->p_current_tick->capacity_taken = taken;
     p_stats->p_current_tick->capacity_free = free;
     p_stats->p_current_tick->capacity_total = (uint16_t)(taken + free);
+
+    return OK;
+}
+
+int stats_tick_set_queue_length_end(StatList *p_stats, Queue * const *pp_gate_queues, uint32_t gates) {
+    uint64_t queue_length_end = 0U;
+
+    if (checkNull(p_stats) || checkNull(p_stats->p_current_tick) || checkNull(pp_gate_queues)) {
+        return ERROR;
+    }
+
+    for (uint32_t gate = 0U; gate < gates; ++gate) {
+        if (pp_gate_queues[gate] != NULL) {
+            queue_length_end += queue_length(pp_gate_queues[gate]);
+        }
+    }
+
+    if (queue_length_end > UINT16_MAX) {
+        p_stats->p_current_tick->queue_length_end = UINT16_MAX;
+    } else {
+        p_stats->p_current_tick->queue_length_end = (uint16_t)queue_length_end;
+    }
 
     return OK;
 }

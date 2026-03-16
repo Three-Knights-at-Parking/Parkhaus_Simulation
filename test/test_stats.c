@@ -5,6 +5,7 @@
 
 #include "Stats.h"
 #include "Parkhaus.h"
+#include "Queue.h"
 #include "Car.h"
 #include "types.h"
 
@@ -94,6 +95,41 @@ static void test_stats_tick_add_and_capacity(void) {
     assert(StatsTick_free(&list) == OK);
 }
 
+static void test_stats_tick_set_queue_length_end(void) {
+    Simulation sim;
+    StatList list;
+    StatsSummary summary;
+    setup_sim_with_list(&sim, &list, &summary);
+
+    Queue q1;
+    Queue q2;
+    Queue q3;
+    memset(&q1, 0, sizeof(q1));
+    memset(&q2, 0, sizeof(q2));
+    memset(&q3, 0, sizeof(q3));
+    q1.capacity = 2;
+    q2.capacity = 0;
+    q3.capacity = 5;
+
+    Queue *queues[4] = {&q1, NULL, &q2, &q3};
+
+    assert(stats_tick_set_queue_length_end(NULL, queues, 4) == ERROR);
+    assert(stats_tick_set_queue_length_end(&list, queues, 4) == ERROR);
+
+    assert(StatsTick_init(&sim, 20, 1) == OK);
+    assert(stats_tick_set_queue_length_end(&list, NULL, 4) == ERROR);
+    assert(stats_tick_set_queue_length_end(&list, queues, 4) == OK);
+    assert(list.p_current_tick->queue_length_end == 7);
+
+    q1.capacity = UINT16_MAX;
+    q3.capacity = 1;
+    Queue *overflow_queues[2] = {&q1, &q3};
+    assert(stats_tick_set_queue_length_end(&list, overflow_queues, 2) == OK);
+    assert(list.p_current_tick->queue_length_end == UINT16_MAX);
+
+    assert(StatsTick_free(&list) == OK);
+}
+
 static void test_stats_build_summary(void) {
     Simulation sim;
     StatList list;
@@ -159,6 +195,7 @@ void test_stats(void) {
     test_stats_init_and_free();
     test_stats_init_and_free_errors();
     test_stats_tick_add_and_capacity();
+    test_stats_tick_set_queue_length_end();
     test_stats_build_summary();
     test_stats_get_latest_tick_empty_and_nonempty();
     printf("Stats tests passed\n");
