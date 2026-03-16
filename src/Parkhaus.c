@@ -124,7 +124,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     //demand for this Tick for this queue
     uint16_t newDemand = 0;
     newDemand = p_gate_queue->demand; //or queue_get_demand(p_gate_queue);
-    if (newDemand == 0U && queue_length(p_gate_queue) == 0) {
+    if (newDemand == 0U && queue_is_empty(p_gate_queue)) {
         return OK;
     }
 
@@ -161,6 +161,11 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
             else
             {
                 required_space = fill_from_queue(p_parkhouse, p_gate_queue, &p_vehicle);
+                if (p_vehicle == NULL)
+                {
+                    print_error_s("error in fill_from_queue", HIGH);
+                    return ERROR;
+                }
                 update_on_vehicle_entry(p_parkhouse, p_StatList, p_vehicle, required_space, current_tick);
 
                 //entry from queue
@@ -206,19 +211,21 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
     uint16_t subticks = p_settings->real_equivalent / p_settings->gate_entry_inSec;
     //this represents the max entries per tick
 
-    //Adding total demand of all queues to StatsTick
-    uint16_t total = 0;
-    for (gate = 0; gate < p_settings->gates; gate++)
-    {
-        if (p_parkhouse->gate_queues[gate] != NULL)
-        {
-            total = total + queue_get_demand(p_parkhouse->gate_queues[gate]);
-        }
-    }
-    if (total > 0U)
-    {
-        stats_tick_add_arrivals_generated(p_StatList, total);
-    }
+    //FIXME seems to be double
+
+    // //Adding total demand of all queues to StatsTick
+    // uint16_t total = 0;
+    // for (gate = 0; gate < p_settings->gates; gate++)
+    // {
+    //     if (p_parkhouse->gate_queues[gate] != NULL)
+    //     {
+    //         total = total + queue_get_demand(p_parkhouse->gate_queues[gate]);
+    //     }
+    // }
+    // if (total > 0U)
+    // {
+    //     stats_tick_add_arrivals_generated(p_StatList, total);
+    // }
 
 
     for (uint16_t cycle = 0; cycle < subticks; cycle++)
@@ -257,7 +264,7 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse,
     }
 
     uint16_t demand = queue_get_demand(p_gate_queue);
-    if (demand <= 0U)
+    if (demand <= 0U && queue_is_empty(p_gate_queue))
     {
         print_warning_s("NO demnad there, LOW");
         return OK;
@@ -287,9 +294,13 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse,
         else
         {
             required_space = fill_from_queue(p_parkhouse, p_gate_queue, &p_vehicle);
+            if (p_vehicle == NULL)
+            {
+                print_error_s("error in fill_from_queue", HIGH);
+                return ERROR;
+            }
+
             update_on_vehicle_entry(p_parkhouse, p_StatList, p_vehicle, required_space, current_tick);
-            queue_set_demand(p_gate_queue, required_space);
-            demand--;
         }
     }
 
@@ -404,7 +415,10 @@ uint16_t fill_from_queue(Parkhaus *p_parkhouse, Queue *p_gate_queue, GenericVehi
     {
         //deleting the vehicle from the queue after confirmation of fitting
         status = queue_dequeue(p_gate_queue);
-        if (status == ERROR) { print_error("fill_from_queue: dequeue error"); }
+        if (status == ERROR)
+        {
+            print_error("fill_from_queue: dequeue error");
+        }
 
         //can the vehicle even "park bad" & probability
         if (open_space >= (minimum * 2U) && rng_percent() <= BAD_PARKING_CHANCE_PERCENT) {
