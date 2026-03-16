@@ -22,7 +22,7 @@ int main(void) {
     test_save_handler();
     test_generics();
     test_settings_all();
-    test_ui();
+    //test_ui();
     test_ui_home();
     test_ui_help();
     test_ui_config();

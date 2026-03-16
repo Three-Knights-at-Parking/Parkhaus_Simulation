@@ -44,6 +44,9 @@ int StatsTick_free(StatList *p_stats);
 /** Sets end-of-tick capacity values. */
 int stats_tick_set_capacity(StatList *p_stats, uint16_t taken, uint16_t free);
 
+/** Computes total queue length over all gates and writes clamped value into current tick. */
+int stats_tick_set_queue_length_end(StatList *p_stats, Queue * const *pp_gate_queues, uint32_t gates);
+
 /** Increments queue rejections for the current tick. */
 int stats_tick_add_queue_rejections(StatList *p_stats, uint16_t amount);
 

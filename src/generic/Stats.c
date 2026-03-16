@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "Stats.h"
+#include "Queue.h"
 #include "types.h"
 #include "utils/SafteyUtils.h"
 #include "utils/StatList.h"
@@ -109,6 +110,28 @@ int stats_tick_set_capacity(StatList *p_stats, uint16_t taken, uint16_t free) {
     return OK;
 }
 
+int stats_tick_set_queue_length_end(StatList *p_stats, Queue * const *pp_gate_queues, uint32_t gates) {
+    uint64_t queue_length_end = 0U;
+
+    if (checkNull(p_stats) || checkNull(p_stats->p_current_tick) || checkNull(pp_gate_queues)) {
+        return ERROR;
+    }
+
+    for (uint32_t gate = 0U; gate < gates; ++gate) {
+        if (pp_gate_queues[gate] != NULL) {
+            queue_length_end += queue_length(pp_gate_queues[gate]);
+        }
+    }
+
+    if (queue_length_end > UINT16_MAX) {
+        p_stats->p_current_tick->queue_length_end = UINT16_MAX;
+    } else {
+        p_stats->p_current_tick->queue_length_end = (uint16_t)queue_length_end;
+    }
+
+    return OK;
+}
+
 int stats_tick_add_queue_rejections(StatList *p_stats, uint16_t amount) {
     if (checkNull(p_stats) || checkNull(p_stats->p_current_tick)) {
         return ERROR;
@@ -146,11 +169,11 @@ int stats_tick_add_vehicle(StatList *p_stats, const GenericVehicle *p_vehicle, u
     p_tick = p_stats->p_current_tick;
 
     if (p_vehicle->park_house_entered == current_tick) {
-        const uint32_t entered_at = p_vehicle->park_house_entered;
+        uint32_t entered_at = p_vehicle->park_house_entered;
         p_tick->entered += 1U;
 
         if (entered_at >= p_vehicle->created_at_tick) {
-            const uint32_t wait_ticks = entered_at - p_vehicle->created_at_tick;
+            uint32_t wait_ticks = entered_at - p_vehicle->created_at_tick;
             p_tick->queue_wait_entered_sum_ticks += wait_ticks;
             p_tick->queue_wait_entered_count += 1U;
             if (wait_ticks > p_tick->queue_wait_max_ticks_tick) {
@@ -162,16 +185,19 @@ int stats_tick_add_vehicle(StatList *p_stats, const GenericVehicle *p_vehicle, u
     if (p_vehicle->park_house_left == current_tick) {
         p_tick->departed += 1U;
 
-        if (p_vehicle->park_house_entered > 0U &&
-            p_vehicle->park_house_left >= p_vehicle->park_house_entered) {
-            const uint32_t parking_duration =
-                p_vehicle->park_house_left - p_vehicle->park_house_entered;
+        if (p_vehicle->park_house_entered > 0U && p_vehicle->park_house_left >= p_vehicle->park_house_entered) {
+            uint32_t parking_duration = p_vehicle->park_house_left - p_vehicle->park_house_entered;
             p_tick->parking_duration_departed_sum_ticks += parking_duration;
             p_tick->parking_duration_departed_count += 1U;
         }
+        else
+        {
+            print_error_s("parkhouse_lef of vehicle is bigger than current tick???", HIGH);
+        }
     }
 
-    if (p_vehicle->base.type == CAR) {
+    //possible switch integration or sub function for more types
+    if (p_vehicle->base.type == CAR && p_vehicle->park_house_entered == current_tick) {
         const Car *p_car = (const Car *)p_vehicle;
         if (p_car->spaces_needed > p_car->minimum_spaces) {
             p_tick->bad_parking_cases += 1U;
