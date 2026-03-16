@@ -31,7 +31,7 @@ typedef struct RNG RNG;
 /**
  * Can be expanded in the future to simulate EVs or Motorcycles etc.
  */
-enum ObjectType {CAR, PARKHAUS, QUEUE};
+enum ObjectType {CAR, PARKHAUS, QUEUE, SIMULATION};
 
 /**
  * Return values for functions/validation.

@@ -24,6 +24,8 @@
                               uint32_t created_at,
                               uint32_t parking_time);
 
+    void generic_vehicle_tick(SimulationObject *p_self, uint32_t current_tick);
+
     int get_vehicle_minimum_space(GenericVehicle *p_vehicle);
 
     int get_vehicle_space_needed(GenericVehicle *p_vehicle);

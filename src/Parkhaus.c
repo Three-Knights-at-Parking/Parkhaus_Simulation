@@ -94,7 +94,10 @@ int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, c
     p_vehicle = *pp_vehicle_list_head;
     while (p_vehicle != NULL) {
         GenericVehicle *p_next = p_vehicle->p_next;
-        uint32_t leave_tick = p_vehicle->created_at_tick + p_vehicle->leaving_in_ticks;
+
+        //extra vehicle tick isn't really needed. Only comparison of defined tick of leaving with the current tick needed
+        generic_vehicle_tick((SimulationObject*) p_vehicle, current_tick);
+        uint32_t leave_tick = current_tick + p_vehicle->leaving_in_ticks;
 
         if (current_tick >= leave_tick) {
             if (vehicle_leaving(p_parkhouse, p_StatList, pp_vehicle_list_head, p_vehicle, current_tick) == ERROR) {

@@ -30,11 +30,4 @@
      */
     int car_destroy(Car *p_car);
 
-    /**
-     * @brief Tick function for Car.
-     * @param p_self Pointer to the SimulationObject.psc.
-     * @param current_tick Current simulation tick.
-     */
-    void car_tick(SimulationObject *p_self, uint32_t current_tick);
-
 #endif

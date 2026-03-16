@@ -18,6 +18,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
         return ERROR;
     }
 
+    p_sim->base.type = SIMULATION;
     p_sim->settings = (Settings *) p_settings;
     p_sim->StatList = (StatList *) p_StatList;
     p_sim->current_tick = 0;
