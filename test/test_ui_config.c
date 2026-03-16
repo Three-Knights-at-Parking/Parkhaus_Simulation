@@ -218,7 +218,6 @@ static void test_config_menu_name_edit(void)
 
     assert(strcmp(settings.name, "NewName") == 0);
 }
-
 static void test_config_menu_numeric_edits(void)
 {
     FILE *p_in = NULL;
@@ -226,67 +225,27 @@ static void test_config_menu_numeric_edits(void)
 
     init_test_settings(&settings);
 
-    /* Input sequence:
-     * - 2  -> select "Capacity / Floor"
-     * - 50 -> enter new capacity
-     *
-     * Indirectly covers:
-     * - read_long_in_range
-     * - parse_long
-     */
     p_in = set_stdin_text("2\n50\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.capacity == 50U);
 
-    /* Input sequence:
-     * - 3 -> select "Floors"
-     * - 4 -> enter new floor count
-     *
-     * Indirectly covers:
-     * - read_long_in_range
-     * - parse_long
-     */
     p_in = set_stdin_text("3\n4\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.floors == 4U);
 
-    /* Input sequence:
-     * - 4 -> select "Gates"
-     * - 2 -> enter new gate count
-     *
-     * Indirectly covers:
-     * - read_long_in_range
-     * - parse_long
-     */
     p_in = set_stdin_text("4\n2\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.gates == 2U);
 
-    /* Input sequence:
-     * - 10  -> select "Max Ticks"
-     * - 200 -> enter new max tick count
-     *
-     * Indirectly covers:
-     * - read_long_in_range
-     * - parse_long
-     */
-    p_in = set_stdin_text("10\n200\n");
+    p_in = set_stdin_text("11\n200\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.max_ticks == 200);
 
-    /* Input sequence:
-     * - 11  -> select "Random Seed"
-     * - 123 -> enter new random seed
-     *
-     * Indirectly covers:
-     * - read_long_in_range
-     * - parse_long
-     */
-    p_in = set_stdin_text("11\n123\n");
+    p_in = set_stdin_text("12\n123\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
     assert(settings.rand_seed == 123);
@@ -320,7 +279,6 @@ static void test_config_menu_gate_conflict_resolution(void)
     assert(settings.gate_entry_inSec == 6U);
     assert(settings.tick_inSec == 12U);
 }
-
 static void test_config_menu_parking_time_validation(void)
 {
     FILE *p_in = NULL;
@@ -328,37 +286,20 @@ static void test_config_menu_parking_time_validation(void)
 
     init_test_settings(&settings);
 
-    /* Input sequence:
-     * - 7  -> select "Min Parking Ticks"
-     * - 20 -> enter invalid minimum (> current maximum)
-     * - \n -> acknowledge validation message
-     *
-     * Indirectly covers:
-     * - read_long_in_range
-     * - parse_long
-     * - is_parking_time_config_valid
-     */
-    p_in = set_stdin_text("7\n20\n\n");
+    p_in = set_stdin_text("8\n20\n\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 
     assert(settings.min_parking_ticks == 2U);
 
-    /* Input sequence:
-     * - 8  -> select "Max Parking Ticks"
-     * - 25 -> enter valid maximum
-     *
-     * Indirectly covers:
-     * - read_long_in_range
-     * - parse_long
-     * - is_parking_time_config_valid
-     */
-    p_in = set_stdin_text("8\n25\n");
+    p_in = set_stdin_text("9\n25\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 
     assert(settings.max_parking_ticks == 25U);
 }
+
+
 
 static void test_config_menu_entry_probability(void)
 {
@@ -367,25 +308,14 @@ static void test_config_menu_entry_probability(void)
 
     init_test_settings(&settings);
 
-    /* Input sequence:
-     * - 9  -> select "Entry Probability"
-     * - 2  -> choose "Rate per minute"
-     * - 60 -> enter 60 vehicles/min
-     * - \n -> acknowledge conversion message
-     *
-     * Indirectly covers:
-     * - edit_arrival_rate_mode
-     * - read_float_nonnegative
-     * - parse_float
-     * - convert_rate_to_prob_perc
-     */
-    p_in = set_stdin_text("9\n2\n60\n\n");
+    p_in = set_stdin_text("10\n2\n60\n\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 
     assert(settings.entry_probability_perSec_prec > 0.0f);
     assert(settings.entry_probability_perSec_prec == 100.0f);
 }
+
 
 static void test_config_menu_output_mode(void)
 {
@@ -394,15 +324,7 @@ static void test_config_menu_output_mode(void)
 
     init_test_settings(&settings);
 
-    /* Input sequence:
-     * - 12 -> select "Output Mode"
-     * - 2  -> choose "VERBOSE"
-     *
-     * Indirectly covers:
-     * - edit_mode_select
-     * - apply_mode_select
-     */
-    p_in = set_stdin_text("12\n2\n");
+    p_in = set_stdin_text("13\n2\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 
@@ -416,17 +338,7 @@ static void test_config_menu_load_previous_settings(void)
 
     init_test_settings(&settings);
 
-    /* Input sequence:
-     * - 13 -> select "Load Settings from file"
-     * - 1  -> choose "Load previous settings"
-     * - \n -> acknowledge success/failure message
-     *
-     * Indirectly covers:
-     * - load_settings_menu_prompt
-     * - load_previous_settings
-     * - load_settings_from_path
-     */
-    p_in = set_stdin_text("13\n1\n\n");
+    p_in = set_stdin_text("14\n1\n\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 }
@@ -438,22 +350,10 @@ static void test_config_menu_load_custom_settings(void)
 
     init_test_settings(&settings);
 
-    /* Input sequence:
-     * - 13            -> select "Load Settings from file"
-     * - 2             -> choose "Load from custom path"
-     * - ./config.json -> enter custom path
-     * - \n            -> acknowledge success/failure message
-     *
-     * Indirectly covers:
-     * - load_settings_menu_prompt
-     * - load_custom_settings_prompt
-     * - load_settings_from_path
-     */
-    p_in = set_stdin_text("13\n2\n./config.json\n\n");
+    p_in = set_stdin_text("14\n2\n./config.json\n\n");
     assert(config_menu(&settings) == UI_KONFIG);
     fclose(p_in);
 }
-
 void test_ui_config(void)
 {
     test_output_mode_to_string();

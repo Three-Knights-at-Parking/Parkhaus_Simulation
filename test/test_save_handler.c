@@ -32,7 +32,6 @@ static void test_resolve_stats_path_defaults(void) {
     assert(strcmp(savehandler_resolve_stats_path("safe.csv"), "./stats/safe.csv") == 0);
 }
 
-
 static void test_save_tick_normal_writes_header_and_data(void) {
     Settings settings;
     Simulation sim;
@@ -69,6 +68,7 @@ static void test_save_tick_normal_writes_header_and_data(void) {
     const char *full_path = savehandler_resolve_stats_path(dest_name);
     remove(full_path);
 
+    assert(savehandler_init_stats_file(&sim, dest_name) == OK);
     assert(savehandler_save_tick(&sim, &tick, dest_name) == OK);
 
     FILE *f = fopen(full_path, "r");
@@ -85,9 +85,6 @@ static void test_save_tick_normal_writes_header_and_data(void) {
 
     remove(full_path);
 }
-
-
-
 static void test_save_summary_appends_summary_lines(void) {
     Settings settings;
     Simulation sim;
@@ -139,6 +136,7 @@ static void test_save_summary_appends_summary_lines(void) {
     const char *full_path = savehandler_resolve_stats_path(dest_name);
     remove(full_path);
 
+    assert(savehandler_init_stats_file(&sim, dest_name) == OK);
     assert(savehandler_save_summary(&sim, &summary, dest_name) == OK);
 
     FILE *f = fopen(full_path, "r");
@@ -149,6 +147,7 @@ static void test_save_summary_appends_summary_lines(void) {
     buffer[bytes] = '\0';
     fclose(f);
 
+    assert(strstr(buffer, "# Simulation Settings") != NULL);
     assert(strstr(buffer, "--- SIMULATION SUMMARY ---") != NULL);
     assert(strstr(buffer, "Total Ticks,50") != NULL);
     assert(strstr(buffer, "Capacity Total,200") != NULL);
@@ -164,7 +163,6 @@ static void test_save_summary_appends_summary_lines(void) {
 
     remove(full_path);
 }
-
 static void test_load_and_print_reads_tick_and_summary(void) {
     Settings settings;
     Simulation sim;
