@@ -82,6 +82,7 @@ struct Parkhaus {
     uint16_t capacity; // Number of total parking spaces.
     uint8_t floors; // Number of floors. This is currently miscellaneous.
     uint32_t capacity_taken; // Number of slots filled.
+    uint8_t gate_count; // Number of actually allocated gate queues.
     Queue **gate_queues; // array of Queue* with size = num_gates
     GenericVehicle *p_parked_head; // linked list of parked vehicles.
     GenericVehicle *p_parked_tail;

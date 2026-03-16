@@ -523,17 +523,14 @@ static int load_settings_from_path(Settings *p_settings, const char *p_path)
         return ERROR;
     }
 
+    if (p_path == NULL)
+    {
+        p_path = SETTINGS_DEFAULT_PATH;
+    }
+
     if (settings_load_from_file(p_settings, p_path) != OK)
     {
-        if (p_path == NULL)
-        {
-            printf("Loading previous simulation settings failed.\n");
-        }
-        else
-        {
-            printf("Loading settings from custom path failed.\n");
-        }
-
+        printf("Loading settings failed.\n");
         printf("Press ENTER to continue...\n");
         press_enter_to_continue();
         return ERROR;

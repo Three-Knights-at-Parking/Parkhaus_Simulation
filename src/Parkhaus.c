@@ -9,6 +9,7 @@
 #include "utils/RNG.h"
 #include "Car.h"
 
+
 int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_gate_queues) {
     if (p_parkhouse == NULL || p_settings == NULL || p_gate_queues == NULL) {
         return ERROR;
@@ -17,6 +18,7 @@ int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_
     p_parkhouse->capacity = p_settings->capacity * p_settings->floors;
     p_parkhouse->floors = p_settings->floors;
     p_parkhouse->capacity_taken = 0;
+    p_parkhouse->gate_count = p_settings->gates;
     p_parkhouse->gate_queues = p_gate_queues;
     p_parkhouse->p_parked_head = NULL;
     p_parkhouse->p_parked_tail = NULL;
@@ -628,14 +630,14 @@ int parkhouse_free(Parkhaus* p_parkhouse)
 {
     if (p_parkhouse == NULL)
     {
-        print_error("parkhouse_free: pointer issue");
+        print_error_s("ointer issue", HIGH);
         return ERROR;
     }
     int status = 0;
     //free Cars
     if (p_parkhouse->p_parked_head == NULL || p_parkhouse->p_parked_tail == NULL)
     {
-        print_error("parkhouse_free: no cars in parkhouse");
+        print_error_s("no cars in parkhouse", LOW);
     }
     if (p_parkhouse->p_parked_head != NULL)
     {
@@ -650,7 +652,7 @@ int parkhouse_free(Parkhaus* p_parkhouse)
             status = remove_vehicle(p_vehicle);
             if (status == ERROR)
             {
-                print_error("parkhouse_free: parkhouse_remove_vehicle: failed");
+                print_error_s("parkhouse_remove_vehicle: failed", HIGH);
                 return ERROR;
             }
             p_vehicle = p_next;
@@ -658,6 +660,7 @@ int parkhouse_free(Parkhaus* p_parkhouse)
     }
     p_parkhouse->p_parked_head = NULL;
     p_parkhouse->p_parked_tail = NULL;
+    p_parkhouse->gate_count = 0;
     p_parkhouse->gate_queues = NULL;
     return OK;
 }
