@@ -34,9 +34,6 @@ int car_destroy(Car *p_car) {
     return OK;
 }
 
-//FIXME Keep like this?
-// nope - This should probably look for slot / state changes too, unless you
-// plan on controlling it fully via Parkhaus.
 void car_tick(SimulationObject *p_self, uint32_t current_tick)
 {
     GenericVehicle *p_vehicle = (GenericVehicle *) p_self;

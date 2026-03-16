@@ -1,0 +1,15 @@
+{
+  "name": "Parkhaus Simulation",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "cmake -S . -B build && cmake --build build",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools"
+      ]
+    }
+  }
+}
