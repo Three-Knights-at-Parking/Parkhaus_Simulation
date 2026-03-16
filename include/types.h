@@ -31,7 +31,7 @@ typedef struct RNG RNG;
 /**
  * Can be expanded in the future to simulate EVs or Motorcycles etc.
  */
-enum ObjectType {CAR, PARKHAUS, QUEUE};
+enum ObjectType {CAR, PARKHAUS, QUEUE, SIMULATION};
 
 /**
  * Return values for functions/validation.
@@ -82,6 +82,7 @@ struct Parkhaus {
     uint16_t capacity; // Number of total parking spaces.
     uint8_t floors; // Number of floors. This is currently miscellaneous.
     uint32_t capacity_taken; // Number of slots filled.
+    uint8_t gate_count; // Number of actually allocated gate queues.
     Queue **gate_queues; // array of Queue* with size = num_gates
     GenericVehicle *p_parked_head; // linked list of parked vehicles.
     GenericVehicle *p_parked_tail;
@@ -234,7 +235,7 @@ struct StatsSummary {
 
     /* 3) Queue (global) */
     float queue_length_avg; /**< Average queue length across all ticks (denominator: total_ticks). */
-    uint8_t queue_length_peak; /**< Maximum global queue length. */
+    uint16_t queue_length_peak; /**< Maximum global queue length. */
     uint32_t queue_length_peak_tick; /**< Tick of global queue peak. */
     uint64_t queue_rejections_total; /**< Summe aller Queue-Rejections. */
     uint32_t queue_wait_avg_ticks; /**< Avg. wait time (denominator: summed queue_wait_entered_count; fallback 0 if no samples). */

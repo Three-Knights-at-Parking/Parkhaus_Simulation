@@ -30,11 +30,11 @@ enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
 
 #define SETTINGS_DEFAULT_FLOORS 1           // Default to 1 floor
 #define SETTINGS_MINIMUM_FLOORS 1           // Default to 1 floor
-#define SETTINGS_MAXIMUM_FLOORS 10           // Default to 1 floor
+#define SETTINGS_MAXIMUM_FLOORS 100           // Default to 1 floor
 
 #define SETTINGS_DEFAULT_GATES 1            // Default to 1 gate
 #define SETTINGS_MINIMUM_GATES 1            // Default to 1 gate
-#define SETTINGS_MAXIMUM_GATES 10           // Default to 1 gate
+#define SETTINGS_MAXIMUM_GATES 100          // Default to 1 gate
 
 #define SETTINGS_DEFAULT_REAL_EQUIVALENT 60 // 1 tick = 60 seconds (1 minute)
 #define SETTINGS_MINIMUM_REAL_EQUIVALENT 10 // 1 tick = 10 seconds
@@ -54,7 +54,8 @@ enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
 
 #define SETTINGS_DEFAULT_TICK_SEC 60        // Logical tick step in seconds (usually matches real_equivalent)
 
-#define SETTINGS_DEFAULT_MAXIMUM_PARKING_TICKS 1440 // e.g., 24 hours (1440 minutes) max parking
+#define SETTINGS_DEFAULT_MAXIMUM_PARKING_TICKS 35665 // max parking ticks
+#define SETTINGS_DEFAULT_PARKING_TICKS 1440 // max parking ticks
 #define SETTINGS_DEFAULT_MINIMUM_PARKING_TICKS 1    // Minimum parking time
 
 #define SETTINGS_DEFAULT_MODE_SELECT 1          // 1 = normal mode

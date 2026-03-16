@@ -26,6 +26,15 @@ void generic_vehicle_init(GenericVehicle *p_vehicle,
     p_vehicle->current_floor = 0; //not implemented now
 }
 
+void generic_vehicle_tick(SimulationObject *p_self, uint32_t current_tick)
+{
+    (void)current_tick;
+    GenericVehicle *p_vehicle = (GenericVehicle *) p_self;
+    p_vehicle->leaving_in_ticks--;
+    if (p_vehicle->leaving_in_ticks == 0U) {
+    }
+}
+
 int get_vehicle_minimum_space(GenericVehicle *p_vehicle)
 {
     if (checkNull(p_vehicle)) {

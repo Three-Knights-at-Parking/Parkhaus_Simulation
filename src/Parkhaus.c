@@ -9,6 +9,7 @@
 #include "utils/RNG.h"
 #include "Car.h"
 
+
 int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_gate_queues) {
     if (p_parkhouse == NULL || p_settings == NULL || p_gate_queues == NULL) {
         return ERROR;
@@ -17,6 +18,7 @@ int parkhouse_init(Parkhaus *p_parkhouse, const Settings *p_settings, Queue **p_
     p_parkhouse->capacity = p_settings->capacity * p_settings->floors;
     p_parkhouse->floors = p_settings->floors;
     p_parkhouse->capacity_taken = 0;
+    p_parkhouse->gate_count = p_settings->gates;
     p_parkhouse->gate_queues = p_gate_queues;
     p_parkhouse->p_parked_head = NULL;
     p_parkhouse->p_parked_tail = NULL;
@@ -94,7 +96,10 @@ int parkhouse_tick_empty_general(uint32_t current_tick, Parkhaus* p_parkhouse, c
     p_vehicle = *pp_vehicle_list_head;
     while (p_vehicle != NULL) {
         GenericVehicle *p_next = p_vehicle->p_next;
-        uint32_t leave_tick = p_vehicle->created_at_tick + p_vehicle->leaving_in_ticks;
+
+        //extra vehicle tick isn't really needed. Only comparison of defined tick of leaving with the current tick needed
+        generic_vehicle_tick((SimulationObject*) p_vehicle, current_tick);
+        uint32_t leave_tick = current_tick + p_vehicle->leaving_in_ticks;
 
         if (current_tick >= leave_tick) {
             if (vehicle_leaving(p_parkhouse, p_StatList, pp_vehicle_list_head, p_vehicle, current_tick) == ERROR) {
@@ -133,7 +138,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     uint16_t entries_done = 0;
 
     //Entry Cycle
-    while (newDemand > 0U && entries_done < entries_limit && !queue_blocked) {
+    while ((newDemand > 0U || !queue_is_empty(p_gate_queue)) && entries_done < entries_limit && !queue_blocked) {
         GenericVehicle* p_vehicle = NULL;
         uint16_t required_space = 0;
 
@@ -211,22 +216,6 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
     uint16_t subticks = p_settings->real_equivalent / p_settings->gate_entry_inSec;
     //this represents the max entries per tick
 
-    //FIXME seems to be double
-
-    // //Adding total demand of all queues to StatsTick
-    // uint16_t total = 0;
-    // for (gate = 0; gate < p_settings->gates; gate++)
-    // {
-    //     if (p_parkhouse->gate_queues[gate] != NULL)
-    //     {
-    //         total = total + queue_get_demand(p_parkhouse->gate_queues[gate]);
-    //     }
-    // }
-    // if (total > 0U)
-    // {
-    //     stats_tick_add_arrivals_generated(p_StatList, total);
-    // }
-
 
     for (uint16_t cycle = 0; cycle < subticks; cycle++)
     {
@@ -266,7 +255,7 @@ int parkhouse_fill_subtick_routine(uint32_t current_tick, Parkhaus* p_parkhouse,
     uint16_t demand = queue_get_demand(p_gate_queue);
     if (demand <= 0U && queue_is_empty(p_gate_queue))
     {
-        print_warning_s("NO demnad there, LOW");
+        //print_warning_s("NO demnad there, LOW");
         return OK;
     }
 
@@ -641,14 +630,14 @@ int parkhouse_free(Parkhaus* p_parkhouse)
 {
     if (p_parkhouse == NULL)
     {
-        print_error("parkhouse_free: pointer issue");
+        print_error_s("ointer issue", HIGH);
         return ERROR;
     }
     int status = 0;
     //free Cars
     if (p_parkhouse->p_parked_head == NULL || p_parkhouse->p_parked_tail == NULL)
     {
-        print_error("parkhouse_free: no cars in parkhouse");
+        print_error_s("no cars in parkhouse", LOW);
     }
     if (p_parkhouse->p_parked_head != NULL)
     {
@@ -663,7 +652,7 @@ int parkhouse_free(Parkhaus* p_parkhouse)
             status = remove_vehicle(p_vehicle);
             if (status == ERROR)
             {
-                print_error("parkhouse_free: parkhouse_remove_vehicle: failed");
+                print_error_s("parkhouse_remove_vehicle: failed", HIGH);
                 return ERROR;
             }
             p_vehicle = p_next;
@@ -671,6 +660,7 @@ int parkhouse_free(Parkhaus* p_parkhouse)
     }
     p_parkhouse->p_parked_head = NULL;
     p_parkhouse->p_parked_tail = NULL;
+    p_parkhouse->gate_count = 0;
     p_parkhouse->gate_queues = NULL;
     return OK;
 }
