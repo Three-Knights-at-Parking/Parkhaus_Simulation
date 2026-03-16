@@ -114,14 +114,26 @@ static void test_save_summary_appends_summary_lines(void) {
     sim.settings = &settings;
 
     summary.total_ticks = 50;
+    summary.capacity_total = 200;
     summary.arrivals_total = 120;
+    summary.enqueued_total = 115;
     summary.entered_total = 110;
     summary.departed_total = 100;
     summary.capacity_taken_percent_avg = 55.5f;
     summary.capacity_taken_percent_peak = 97.0f;
+    summary.capacity_taken_peak_tick = 33;
+    summary.first_full_tick = 41;
+    summary.full_ticks = 3;
     summary.queue_length_avg = 2.5f;
+    summary.queue_length_peak = 8;
+    summary.queue_length_peak_tick = 24;
+    summary.queue_rejections_total = 6;
     summary.queue_wait_avg_ticks = 4;
     summary.queue_wait_max_ticks = 12;
+    summary.queue_active_ratio_percent = 44.0f;
+    summary.parking_duration_avg_ticks = 18;
+    summary.blocker_full_ratio_percent = 10.0f;
+    summary.bad_parking_cases_total = 2;
     summary.bad_parking_share_percent = 3.0f;
 
     const char *full_path = savehandler_resolve_stats_path(dest_name);
@@ -139,15 +151,19 @@ static void test_save_summary_appends_summary_lines(void) {
 
     assert(strstr(buffer, "--- SIMULATION SUMMARY ---") != NULL);
     assert(strstr(buffer, "Total Ticks,50") != NULL);
-    assert(strstr(buffer, "Total Arrivals,120") != NULL);
-    assert(strstr(buffer, "Total Entered,110") != NULL);
-    assert(strstr(buffer, "Total Departed,100") != NULL);
-    assert(strstr(buffer, "Avg Wait Time (Ticks),4") != NULL);
-    assert(strstr(buffer, "Max Wait Time (Ticks),12") != NULL);
+    assert(strstr(buffer, "Capacity Total,200") != NULL);
+    assert(strstr(buffer, "Peak Utilization Tick,33") != NULL);
+    assert(strstr(buffer, "First FULL Tick,41") != NULL);
+    assert(strstr(buffer, "FULL Ticks,3") != NULL);
+    assert(strstr(buffer, "Queue Peak,8") != NULL);
+    assert(strstr(buffer, "Queue Peak Tick,24") != NULL);
+    assert(strstr(buffer, "Queue Rejections Total,6") != NULL);
+    assert(strstr(buffer, "Avg Parking Duration (Ticks),18") != NULL);
+    assert(strstr(buffer, "Blocker FULL Ratio (%),10.00") != NULL);
+    assert(strstr(buffer, "Bad Parking Total,2") != NULL);
 
     remove(full_path);
 }
-
 
 static void test_load_and_print_reads_tick_and_summary(void) {
     Settings settings;

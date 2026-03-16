@@ -147,6 +147,7 @@ struct Settings {
     uint8_t gates; // Number of gates. This will affect queue time. ##UI##
     uint16_t gate_entry_inSec; // Time needed for an vehicle to enter the parkhouse ##UI##
 	uint16_t tick_inSec; //Time in seconds of one Tick ##UI##
+    uint16_t queue_max_length; // Maximum number of vehicles allowed in each gate queue ##UI##
     uint32_t max_parking_ticks; //maximum of Ticks a car is allowed to Park ##UI##
     uint32_t min_parking_ticks; //minimum of Ticks a car will park -> assumption is 1 ##UI##
 	uint8_t mode_select; //0 = none / 1 = normal / 2 = verbose / 3 = Error ##UI##

@@ -64,7 +64,7 @@ int simulation_init(Simulation *p_sim, const Settings *p_settings, StatList *p_S
         }
         //initialisierung der einzelnen queues
         //for now default is used of the length
-        if (queue_init(gate_queues[i], DEFAULT_MAX_QUEUE_LENGTH) != OK) {
+        if (queue_init(gate_queues[i], p_sim->settings->queue_max_length) != OK) {
 
             for (uint32_t j = 0; j <= i; ++j) {
 

@@ -53,7 +53,8 @@ int main(void)
             SETTINGS_DEFAULT_MINIMUM_PARKING_TICKS,
             SETTINGS_DEFAULT_MODE_SELECT,
             SETTINGS_DEFAULT_ENTRY_PROB,
-            SETTINGS_DEFAULT_IS_LEAVABLE
+            SETTINGS_DEFAULT_IS_LEAVABLE,
+            SETTINGS_DEFAULT_QUEUE_MAX_LENGTH
         ) != OK)
     {
         print_error_s("Failed to init settings object", HIGH);
@@ -78,6 +79,7 @@ int main(void)
     // UPDATE: I hope this fixes it. Frankly depends on the way UI is implemented.
     if (p_settings->output_mode == DEBUG) {
         simulation_start(p_simulation);
+        simulation_end(p_simulation);
         ui_state state = home_menu();
 
         while (state != UI_EXIT)
@@ -107,7 +109,6 @@ int main(void)
                 state = UI_HOME;
             }
         }
-
     }
     if (p_settings->output_mode != DEBUG) {
         ui_start(p_settings, p_simulation);

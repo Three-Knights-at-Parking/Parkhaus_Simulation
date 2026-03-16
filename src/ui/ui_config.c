@@ -637,7 +637,6 @@ static int load_settings_menu_prompt(Settings *p_settings)
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
-
 int print_configscreen(const Settings *p_settings)
 {
     if (p_settings == NULL)
@@ -659,13 +658,14 @@ int print_configscreen(const Settings *p_settings)
     printf("4  Gates                  : %u\n", (unsigned)p_settings->gates);
     printf("5  Gate Entry Time (sec)  : %u\n", (unsigned)p_settings->gate_entry_inSec);
     printf("6  Tick Length (sec)      : %u\n", (unsigned)p_settings->tick_inSec);
-    printf("7  Min Parking Ticks      : %lu\n", (unsigned long)p_settings->min_parking_ticks);
-    printf("8  Max Parking Ticks      : %lu\n", (unsigned long)p_settings->max_parking_ticks);
-    printf("9  Entry Prob / Sec (%%)   : %.2f\n", p_settings->entry_probability_perSec_prec);
-    printf("10 Max Ticks              : %ld\n", (long)p_settings->max_ticks);
-    printf("11 Random Seed            : %ld\n", (long)p_settings->rand_seed);
-    printf("12 Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
-    printf("13 Load Settings from file\n");
+    printf("7  Queue Max Length       : %u\n", (unsigned)p_settings->queue_max_length);
+    printf("8  Min Parking Ticks      : %lu\n", (unsigned long)p_settings->min_parking_ticks);
+    printf("9  Max Parking Ticks      : %lu\n", (unsigned long)p_settings->max_parking_ticks);
+    printf("10 Entry Prob / Sec (%%)   : %.2f\n", p_settings->entry_probability_perSec_prec);
+    printf("11 Max Ticks              : %ld\n", (long)p_settings->max_ticks);
+    printf("12 Random Seed            : %ld\n", (long)p_settings->rand_seed);
+    printf("13 Output Mode            : %s\n", output_mode_to_string(p_settings->output_mode));
+    printf("14 Load Settings from file\n");
     printf("------------------------------------\n");
     printf("0  Back to Home\n\n");
 
@@ -800,6 +800,24 @@ ui_state config_menu(Settings *p_settings)
             p_settings->gate_entry_inSec = old_gate_entry;
 
             printf("Change cancelled. Previous gate entry time restored.\n");
+            printf("Press ENTER to continue...\n");
+            press_enter_to_continue();
+        }
+
+        return UI_KONFIG;
+    }
+    else if (choice == CONFIG_MENU_QUEUE_MAX_LENGTH)
+    {
+        long value = 0;
+
+        (void)read_long_in_range("Enter maximum queue length per gate: ",
+                                 SETTINGS_MINIMUM_QUEUE_MAX_LENGTH,
+                                 SETTINGS_MAXIMUM_QUEUE_MAX_LENGTH,
+                                 &value);
+
+        if (settings_set_queue_max_length(p_settings, (uint16_t)value) != OK)
+        {
+            printf("Failed to set queue max length.\n");
             printf("Press ENTER to continue...\n");
             press_enter_to_continue();
         }

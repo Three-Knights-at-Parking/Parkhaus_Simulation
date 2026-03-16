@@ -19,7 +19,6 @@
 /* ========================================================================= */
 /* Screen printing                                                           */
 /* ========================================================================= */
-
 int print_simulationscreen(const Settings *p_settings)
 {
     if (p_settings == NULL)
@@ -41,6 +40,7 @@ int print_simulationscreen(const Settings *p_settings)
     printf("Gates                  : %u\n", (unsigned)p_settings->gates);
     printf("Gate Entry Time (sec)  : %u\n", (unsigned)p_settings->gate_entry_inSec);
     printf("Tick Length (sec)      : %u\n", (unsigned)p_settings->tick_inSec);
+    printf("Queue Max Length       : %u\n", (unsigned)p_settings->queue_max_length);
     printf("Min Parking Ticks      : %lu\n", (unsigned long)p_settings->min_parking_ticks);
     printf("Max Parking Ticks      : %lu\n", (unsigned long)p_settings->max_parking_ticks);
     printf("Entry Prob / Sec (%%)   : %.2f\n", p_settings->entry_probability_perSec_prec);

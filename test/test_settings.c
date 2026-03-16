@@ -36,7 +36,8 @@ static void test_settings_init(void) {
                                10,
                                1,
                                5.0f,
-                               NON_LEAVABLE);
+                               NON_LEAVABLE,
+                               15);
 
     assert(result == OK);
     assert(strcmp(s.name, "Raunegg Test") == OK);
@@ -44,6 +45,7 @@ static void test_settings_init(void) {
     assert(s.capacity == 100);
     assert(s.floors == 2);
     assert(s.gates == 3);
+    assert(s.queue_max_length == 15);
     assert(s.real_equivalent == 60);
     assert(s.max_ticks == 1000);
     assert(s.rand_seed == 42);
@@ -127,7 +129,7 @@ static void test_settings_to_parkhaus(void) {
     Parkhaus p;
     memset(&s, 0, sizeof(s));
     memset(&p, 0, sizeof(p));
-    settings_init(&s, "./cfg.json", "Raunegg Test", 50, 3, 2, 60, NORMAL, 100, 1, 5, 60, 100, 1, 1, 5.0f, NON_LEAVABLE);
+    settings_init(&s, "./cfg.json", "Raunegg Test", 50, 3, 2, 60, NORMAL, 100, 1, 5, 60, 100, 1, 1, 5.0f, NON_LEAVABLE, 15);
     assert(settings_to_parkhaus(&s, &p) == OK);
     assert(strcmp(p.name, "Raunegg Test") == 0);
     assert(p.capacity == 150);
@@ -146,7 +148,7 @@ static void test_settings_save_and_load(void) {
     memset(&s_load, 0, sizeof(s_load));
 
     const char* test_file = "./test_settings_io.json";
-    settings_init(&s_save, test_file, "Raunegg Test", 123, 4, 2, 30, VERBOSE, 500, 77, 8, 30, 200, 5, 2, 12.5f, LEAVABLE);
+    settings_init(&s_save, test_file, "Raunegg Test", 123, 4, 2, 30, VERBOSE, 500, 77, 8, 30, 200, 5, 2, 12.5f, LEAVABLE, 15);
     remove(test_file);
     assert(settings_save_to_file(&s_save, test_file) == OK);
     assert(settings_load_from_file(&s_load, test_file) == OK);
