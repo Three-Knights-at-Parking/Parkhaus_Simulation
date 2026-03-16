@@ -123,7 +123,6 @@ int savehandler_save_tick(const Simulation *p_sim, const StatsTick *p_tickstats,
 
     return OK;
 }
-
 int savehandler_save_summary(const Simulation *p_sim, const StatsSummary *p_summary, const char *dest_path) {
     if (p_sim == NULL || p_summary == NULL || p_sim->settings == NULL) {
         return ERROR;
@@ -143,21 +142,41 @@ int savehandler_save_summary(const Simulation *p_sim, const StatsSummary *p_summ
 
     fprintf(f, "\n--- SIMULATION SUMMARY ---\n");
     fprintf(f, "Total Ticks,%u\n", p_summary->total_ticks);
-    fprintf(f, "Total Arrivals,%" PRIu64 "\n", p_summary->arrivals_total);
-    fprintf(f, "Total Entered,%" PRIu64 "\n", p_summary->entered_total);
-    fprintf(f, "Total Departed,%" PRIu64 "\n", p_summary->departed_total);
+
+    fprintf(f, "Capacity Total,%u\n", p_summary->capacity_total);
     fprintf(f, "Avg Utilization (%%),%.2f\n", p_summary->capacity_taken_percent_avg);
     fprintf(f, "Peak Utilization (%%),%.2f\n", p_summary->capacity_taken_percent_peak);
+    fprintf(f, "Peak Utilization Tick,%u\n", p_summary->capacity_taken_peak_tick);
+    fprintf(f, "First FULL Tick,%d\n", p_summary->first_full_tick);
+    fprintf(f, "FULL Ticks,%u\n", p_summary->full_ticks);
+
+    fprintf(f, "Total Arrivals,%" PRIu64 "\n", p_summary->arrivals_total);
+    fprintf(f, "Total Enqueued,%" PRIu64 "\n", p_summary->enqueued_total);
+    fprintf(f, "Total Entered,%" PRIu64 "\n", p_summary->entered_total);
+    fprintf(f, "Total Departed,%" PRIu64 "\n", p_summary->departed_total);
+    fprintf(f, "Net Occupancy Change Total,%.2f\n", p_summary->net_occupancy_change_total);
+    fprintf(f, "Entered Per Tick Avg,%.2f\n", p_summary->entered_per_tick_avg);
+    fprintf(f, "Departed Per Tick Avg,%.2f\n", p_summary->departed_per_tick_avg);
+
     fprintf(f, "Avg Queue Length,%.2f\n", p_summary->queue_length_avg);
+    fprintf(f, "Queue Peak,%u\n", p_summary->queue_length_peak);
+    fprintf(f, "Queue Peak Tick,%u\n", p_summary->queue_length_peak_tick);
+    fprintf(f, "Queue Rejections Total,%" PRIu64 "\n", p_summary->queue_rejections_total);
     fprintf(f, "Avg Wait Time (Ticks),%u\n", p_summary->queue_wait_avg_ticks);
     fprintf(f, "Max Wait Time (Ticks),%u\n", p_summary->queue_wait_max_ticks);
+    fprintf(f, "Queue Active Ratio (%%),%.2f\n", p_summary->queue_active_ratio_percent);
+
+    fprintf(f, "Avg Parking Duration (Ticks),%u\n", p_summary->parking_duration_avg_ticks);
+
+    fprintf(f, "Blocker FULL Ratio (%%),%.2f\n", p_summary->blocker_full_ratio_percent);
+
+    fprintf(f, "Bad Parking Total,%" PRIu64 "\n", p_summary->bad_parking_cases_total);
     fprintf(f, "Bad Parking Share (%%),%.2f\n", p_summary->bad_parking_share_percent);
 
     fclose(f);
     ui_statistics_print_final(p_summary, p_sim->settings->output_mode);
     return OK;
 }
-
 int savehandler_load_and_print(const char *src_path, StatList* list, enum OutputMode* p_output_mode) {
     if (list == NULL) {
         return ERROR;
@@ -333,7 +352,6 @@ static int savehandler_parse_tick_line(const char *line, StatsTick *tick) {
 
     return ERROR;
 }
-
 static void savehandler_parse_summary_line(const char *line, StatsSummary *summary) {
     if (line == NULL || summary == NULL) {
         return;
@@ -360,27 +378,56 @@ static void savehandler_parse_summary_line(const char *line, StatsSummary *summa
 
     if (strcmp(key, "Total Ticks") == 0) {
         summary->total_ticks = (uint32_t)strtoul(value, NULL, 10);
-    } else if (strcmp(key, "Total Arrivals") == 0) {
-        summary->arrivals_total = (uint64_t)strtoull(value, NULL, 10);
-    } else if (strcmp(key, "Total Entered") == 0) {
-        summary->entered_total = (uint64_t)strtoull(value, NULL, 10);
-    } else if (strcmp(key, "Total Departed") == 0) {
-        summary->departed_total = (uint64_t)strtoull(value, NULL, 10);
+    } else if (strcmp(key, "Capacity Total") == 0) {
+        summary->capacity_total = (uint16_t)strtoul(value, NULL, 10);
     } else if (strcmp(key, "Avg Utilization (%)") == 0) {
         summary->capacity_taken_percent_avg = strtof(value, NULL);
     } else if (strcmp(key, "Peak Utilization (%)") == 0) {
         summary->capacity_taken_percent_peak = strtof(value, NULL);
+    } else if (strcmp(key, "Peak Utilization Tick") == 0) {
+        summary->capacity_taken_peak_tick = (uint32_t)strtoul(value, NULL, 10);
+    } else if (strcmp(key, "First FULL Tick") == 0) {
+        summary->first_full_tick = (int32_t)strtol(value, NULL, 10);
+    } else if (strcmp(key, "FULL Ticks") == 0) {
+        summary->full_ticks = (uint32_t)strtoul(value, NULL, 10);
+    } else if (strcmp(key, "Total Arrivals") == 0) {
+        summary->arrivals_total = (uint64_t)strtoull(value, NULL, 10);
+    } else if (strcmp(key, "Total Enqueued") == 0) {
+        summary->enqueued_total = (uint64_t)strtoull(value, NULL, 10);
+    } else if (strcmp(key, "Total Entered") == 0) {
+        summary->entered_total = (uint64_t)strtoull(value, NULL, 10);
+    } else if (strcmp(key, "Total Departed") == 0) {
+        summary->departed_total = (uint64_t)strtoull(value, NULL, 10);
+    } else if (strcmp(key, "Net Occupancy Change Total") == 0) {
+        summary->net_occupancy_change_total = strtod(value, NULL);
+    } else if (strcmp(key, "Entered Per Tick Avg") == 0) {
+        summary->entered_per_tick_avg = strtof(value, NULL);
+    } else if (strcmp(key, "Departed Per Tick Avg") == 0) {
+        summary->departed_per_tick_avg = strtof(value, NULL);
     } else if (strcmp(key, "Avg Queue Length") == 0) {
         summary->queue_length_avg = strtof(value, NULL);
+    } else if (strcmp(key, "Queue Peak") == 0) {
+        summary->queue_length_peak = (uint8_t)strtoul(value, NULL, 10);
+    } else if (strcmp(key, "Queue Peak Tick") == 0) {
+        summary->queue_length_peak_tick = (uint32_t)strtoul(value, NULL, 10);
+    } else if (strcmp(key, "Queue Rejections Total") == 0) {
+        summary->queue_rejections_total = (uint64_t)strtoull(value, NULL, 10);
     } else if (strcmp(key, "Avg Wait Time (Ticks)") == 0) {
         summary->queue_wait_avg_ticks = (uint32_t)strtoul(value, NULL, 10);
     } else if (strcmp(key, "Max Wait Time (Ticks)") == 0) {
         summary->queue_wait_max_ticks = (uint32_t)strtoul(value, NULL, 10);
+    } else if (strcmp(key, "Queue Active Ratio (%)") == 0) {
+        summary->queue_active_ratio_percent = strtof(value, NULL);
+    } else if (strcmp(key, "Avg Parking Duration (Ticks)") == 0) {
+        summary->parking_duration_avg_ticks = (uint16_t)strtoul(value, NULL, 10);
+    } else if (strcmp(key, "Blocker FULL Ratio (%)") == 0) {
+        summary->blocker_full_ratio_percent = strtof(value, NULL);
+    } else if (strcmp(key, "Bad Parking Total") == 0) {
+        summary->bad_parking_cases_total = (uint64_t)strtoull(value, NULL, 10);
     } else if (strcmp(key, "Bad Parking Share (%)") == 0) {
         summary->bad_parking_share_percent = strtof(value, NULL);
     }
 }
-
 
 int savehandler_init_stats_file(const Simulation *p_sim, const char *dest_path) {
     if (p_sim == NULL || p_sim->settings == NULL) {
