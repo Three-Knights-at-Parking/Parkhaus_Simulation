@@ -234,7 +234,7 @@ struct StatsSummary {
 
     /* 3) Queue (global) */
     float queue_length_avg; /**< Average queue length across all ticks (denominator: total_ticks). */
-    uint8_t queue_length_peak; /**< Maximum global queue length. */
+    uint16_t queue_length_peak; /**< Maximum global queue length. */
     uint32_t queue_length_peak_tick; /**< Tick of global queue peak. */
     uint64_t queue_rejections_total; /**< Summe aller Queue-Rejections. */
     uint32_t queue_wait_avg_ticks; /**< Avg. wait time (denominator: summed queue_wait_entered_count; fallback 0 if no samples). */
