@@ -55,6 +55,7 @@ enum QueueLeavable {LEAVABLE, NON_LEAVABLE};
 #define SETTINGS_DEFAULT_TICK_SEC 60        // Logical tick step in seconds (usually matches real_equivalent)
 
 #define SETTINGS_DEFAULT_MAXIMUM_PARKING_TICKS 35665 // max parking ticks
+#define SETTINGS_DEFAULT_PARKING_TICKS 1440 // max parking ticks
 #define SETTINGS_DEFAULT_MINIMUM_PARKING_TICKS 1    // Minimum parking time
 
 #define SETTINGS_DEFAULT_MODE_SELECT 1          // 1 = normal mode
