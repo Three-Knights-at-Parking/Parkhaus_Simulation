@@ -133,7 +133,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     uint16_t entries_done = 0;
 
     //Entry Cycle
-    while (newDemand > 0U && entries_done < entries_limit && !queue_blocked) {
+    while ((newDemand > 0U || !queue_is_empty(p_gate_queue)) && entries_done < entries_limit && !queue_blocked) {
         GenericVehicle* p_vehicle = NULL;
         uint16_t required_space = 0;
 
@@ -210,22 +210,6 @@ int parkhouse_fill_subtick(uint32_t current_tick, Parkhaus* p_parkhouse, const S
     uint8_t gate;
     uint16_t subticks = p_settings->real_equivalent / p_settings->gate_entry_inSec;
     //this represents the max entries per tick
-
-    //FIXME seems to be double
-
-    // //Adding total demand of all queues to StatsTick
-    // uint16_t total = 0;
-    // for (gate = 0; gate < p_settings->gates; gate++)
-    // {
-    //     if (p_parkhouse->gate_queues[gate] != NULL)
-    //     {
-    //         total = total + queue_get_demand(p_parkhouse->gate_queues[gate]);
-    //     }
-    // }
-    // if (total > 0U)
-    // {
-    //     stats_tick_add_arrivals_generated(p_StatList, total);
-    // }
 
 
     for (uint16_t cycle = 0; cycle < subticks; cycle++)
