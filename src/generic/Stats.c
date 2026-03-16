@@ -172,7 +172,7 @@ int stats_tick_add_vehicle(StatList *p_stats, const GenericVehicle *p_vehicle, u
         uint32_t entered_at = p_vehicle->park_house_entered;
         p_tick->entered += 1U;
 
-        if (entered_at > p_vehicle->created_at_tick) {
+        if (entered_at >= p_vehicle->created_at_tick) {
             uint32_t wait_ticks = entered_at - p_vehicle->created_at_tick;
             p_tick->queue_wait_entered_sum_ticks += wait_ticks;
             p_tick->queue_wait_entered_count += 1U;
@@ -196,7 +196,8 @@ int stats_tick_add_vehicle(StatList *p_stats, const GenericVehicle *p_vehicle, u
         }
     }
 
-    if (p_vehicle->base.type == CAR) {
+    //possible switch integration or sub function for more types
+    if (p_vehicle->base.type == CAR && p_vehicle->park_house_entered == current_tick) {
         const Car *p_car = (const Car *)p_vehicle;
         if (p_car->spaces_needed > p_car->minimum_spaces) {
             p_tick->bad_parking_cases += 1U;
