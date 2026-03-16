@@ -122,9 +122,9 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     }
 
     //demand for this Tick for this queue
-    uint16_t demand;
-    demand = p_gate_queue->demand + queue_length(p_gate_queue); //or queue_get_demand(p_gate_queue);
-    if (demand == 0U) {
+    uint16_t newDemand = 0;
+    newDemand = p_gate_queue->demand; //or queue_get_demand(p_gate_queue);
+    if (newDemand == 0U && queue_length(p_gate_queue) == 0) {
         return OK;
     }
 
@@ -133,7 +133,7 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
     uint16_t entries_done = 0;
 
     //Entry Cycle
-    while (demand > 0U && entries_done < entries_limit && !queue_blocked) {
+    while (newDemand > 0U && entries_done < entries_limit && !queue_blocked) {
         GenericVehicle* p_vehicle = NULL;
         uint16_t required_space = 0;
 
@@ -145,7 +145,8 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
                 print_error("parkhouse_tick_fill_general: queue_add_random_vehicle: can't add to Queue");
                 return ERROR;
             }
-            demand--;
+            //reduction of new Demand bc of filling queue up
+            newDemand--;
         }
 
         if (!queue_is_empty(p_gate_queue))
@@ -162,15 +163,15 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
                 required_space = fill_from_queue(p_parkhouse, p_gate_queue, &p_vehicle);
                 update_on_vehicle_entry(p_parkhouse, p_StatList, p_vehicle, required_space, current_tick);
 
+                //entry from queue
                 entries_done++;
-                demand--;
             }
         }
     }
 
-    queue_set_demand(p_gate_queue, demand);
-    if (demand > 0U) {
-        status = open_demand(p_StatList, p_gate_queue, demand, current_tick,  p_settings);
+    queue_set_demand(p_gate_queue, newDemand);
+    if (newDemand > 0U) {
+        status = open_demand(p_StatList, p_gate_queue, newDemand, current_tick,  p_settings);
         if (status == ERROR)
         {
             return ERROR;
@@ -350,15 +351,19 @@ int vehicle_leaving(Parkhaus *p_parkhouse, StatList *p_StatList, GenericVehicle 
     }
 
     //updating Parkhouse and Stats
-    required_space = get_vehicle_minimum_space(p_vehicle);
-    if (get_vehicle_space_needed(p_vehicle) >= required_space) {
-        required_space = get_vehicle_space_needed(p_vehicle);
-    }
+    required_space = get_vehicle_space_needed(p_vehicle);
+
     status = update_on_vehicle_exit(p_parkhouse, p_StatList, p_cur, required_space, current_tick);
-    if (status == ERROR) { print_error("vehicle_leaving: update_on_vehicle_exit: vehicle exited with error"); }
+    if (status == ERROR)
+    {
+        print_error("vehicle_leaving: update_on_vehicle_exit: vehicle exited with error");
+    }
 
     status = remove_vehicle(p_vehicle);
-    if (status == ERROR) { print_error("remove_leaving: remove_vehicle: vehicle exited with error"); }
+    if (status == ERROR)
+    {
+        print_error("remove_leaving: remove_vehicle: vehicle exited with error");
+    }
 
     if (p_parkhouse->p_parked_head == NULL) {
         p_parkhouse->p_parked_tail = NULL;
@@ -427,24 +432,22 @@ uint16_t fill_from_queue(Parkhaus *p_parkhouse, Queue *p_gate_queue, GenericVehi
 //moving left demand into queue or add to rejections
 int open_demand(StatList *p_StatList, Queue *p_gate_queue, uint16_t demand_remaining,
                 uint32_t current_tick, const Settings *p_settings){
-    if (p_StatList == NULL || p_gate_queue == NULL || p_settings == NULL) {
+    if (p_StatList == NULL || p_StatList->p_current_tick == NULL || p_gate_queue == NULL || p_settings == NULL) {
         print_error("open_demand: central pointer error");
         return ERROR;
     }
-
-    while (demand_remaining > 0U && queue_length(p_gate_queue) < p_gate_queue->max_size) {
+    uint16_t openDemand = demand_remaining;
+    while (openDemand > 0U && queue_length(p_gate_queue) < p_gate_queue->max_size) {
         if (queue_add_random_vehicle(p_gate_queue, current_tick, p_settings) == ERROR) {
             print_error("open_demand: queue_add_random_vehicle error");
             return ERROR;
         }
-        if (p_StatList->p_current_tick != NULL) {
-            p_StatList->p_current_tick->enqueued += 1U;
-        }
-        demand_remaining--;
+        openDemand--;
+        p_StatList->p_current_tick->enqueued += 1U;
     }
 
-    if (demand_remaining > 0U) {
-        stats_tick_add_queue_rejections(p_StatList, demand_remaining);
+    if (openDemand > 0U) {
+        stats_tick_add_queue_rejections(p_StatList, openDemand);
     }
 
     return OK;
@@ -537,7 +540,7 @@ int park_vehicle(Parkhaus *p_parkhouse, GenericVehicle *p_vehicle) {
 
 uint16_t get_open_space(const Parkhaus *p_parkhouse) {
     if (p_parkhouse == NULL || p_parkhouse->capacity_taken > p_parkhouse->capacity) {
-        print_error("get_open_space: pointer issue OR capacity_taken > capacity");
+        print_error_s("get_open_space: pointer issue OR capacity_taken > capacity",HIGH);
         return ERROR;
     }
 

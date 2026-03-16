@@ -42,7 +42,7 @@ enum SuccessState{ ERROR = -1, OK = 0, UNKNOWN = 1};
  * Minimum Vehicle Spaces
  */
 
-enum MinimumSpace{ Bike_Space = 1, Car_Space = 2 };
+enum MinimumSpace{Car_Space = 1 }; // further options like car needs 2 spcaes bike 1
 
 //FIXME Kannste das nächste mal auch selber machen :)  STRG+x STRG+v
 //important Backup defines
@@ -183,7 +183,7 @@ struct StatsTick {
     uint16_t departed; /**< Departed from garage in this tick. */
 
     /* Raw queue values */
-    uint8_t queue_length_end; /**< Queue length at tick end (global). */
+    uint16_t queue_length_end; /**< Queue length at tick end (global). */
     uint32_t queue_rejections; /**< Vehicles that could not queue (tick). */
     uint64_t queue_wait_entered_sum_ticks; /**< Total wait time of all vehicles that entered in this tick. */
     uint32_t queue_wait_entered_count; /**< Number of vehicles entered in this tick for wait-time evaluation. */

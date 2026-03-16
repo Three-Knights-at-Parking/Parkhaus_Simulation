@@ -146,11 +146,11 @@ int stats_tick_add_vehicle(StatList *p_stats, const GenericVehicle *p_vehicle, u
     p_tick = p_stats->p_current_tick;
 
     if (p_vehicle->park_house_entered == current_tick) {
-        const uint32_t entered_at = p_vehicle->park_house_entered;
+        uint32_t entered_at = p_vehicle->park_house_entered;
         p_tick->entered += 1U;
 
-        if (entered_at >= p_vehicle->created_at_tick) {
-            const uint32_t wait_ticks = entered_at - p_vehicle->created_at_tick;
+        if (entered_at > p_vehicle->created_at_tick) {
+            uint32_t wait_ticks = entered_at - p_vehicle->created_at_tick;
             p_tick->queue_wait_entered_sum_ticks += wait_ticks;
             p_tick->queue_wait_entered_count += 1U;
             if (wait_ticks > p_tick->queue_wait_max_ticks_tick) {
@@ -162,12 +162,14 @@ int stats_tick_add_vehicle(StatList *p_stats, const GenericVehicle *p_vehicle, u
     if (p_vehicle->park_house_left == current_tick) {
         p_tick->departed += 1U;
 
-        if (p_vehicle->park_house_entered > 0U &&
-            p_vehicle->park_house_left >= p_vehicle->park_house_entered) {
-            const uint32_t parking_duration =
-                p_vehicle->park_house_left - p_vehicle->park_house_entered;
+        if (p_vehicle->park_house_entered > 0U && p_vehicle->park_house_left >= p_vehicle->park_house_entered) {
+            uint32_t parking_duration = p_vehicle->park_house_left - p_vehicle->park_house_entered;
             p_tick->parking_duration_departed_sum_ticks += parking_duration;
             p_tick->parking_duration_departed_count += 1U;
+        }
+        else
+        {
+            print_error_s("parkhouse_lef of vehicle is bigger than current tick???", HIGH);
         }
     }
 

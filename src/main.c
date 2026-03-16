@@ -68,12 +68,13 @@ int main(void)
     // From a user POV this is quite retarded, because once enabled,
     // they need to manually change the value in the settings if something goes wrong.
     // oh well.
+    simulation_start(p_simulation);
     if (p_settings->output_mode == DEBUG) {
         simulation_start(p_simulation);
-        ui_start(p_settings, p_simulation);
+        //ui_start(p_settings, p_simulation);
     }
     if (p_settings->output_mode != DEBUG) {
-        ui_start(p_settings, p_simulation);
+        //ui_start(p_settings, p_simulation);
     }
     if (free_simulation(p_simulation) != OK)
     {

@@ -127,7 +127,7 @@ int simulation_tick(Simulation *p_sim) {
                              get_open_space(p_sim->parkhouse)) != OK) {
         return ERROR;
                              }
-
+//FIXME move into funciton
     uint32_t queue_length_end = 0U;
     for (uint32_t gate = 0U; gate < p_sim->settings->gates; ++gate) {
         if (p_sim->parkhouse->gate_queues[gate] != NULL) {
@@ -136,10 +136,10 @@ int simulation_tick(Simulation *p_sim) {
     }
 
     if (p_sim->StatList->p_current_tick != NULL) {
-        if (queue_length_end > UINT8_MAX) {
-            p_sim->StatList->p_current_tick->queue_length_end = UINT8_MAX;
+        if (queue_length_end > UINT16_MAX) {
+            p_sim->StatList->p_current_tick->queue_length_end = UINT16_MAX;
         } else {
-            p_sim->StatList->p_current_tick->queue_length_end = (uint8_t)queue_length_end;
+            p_sim->StatList->p_current_tick->queue_length_end = (uint16_t)queue_length_end;
         }
 
         if (savehandler_save_tick(p_sim, p_sim->StatList->p_current_tick, NULL) != OK) {
