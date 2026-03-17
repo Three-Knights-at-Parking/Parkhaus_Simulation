@@ -18,7 +18,7 @@ extern void test_ui_statistics(void);
 extern void test_ui_storage(void);
 extern void test_queue(void);
 extern void test_rng(void);
-extern void test_demand(void);
+extern void test_config_file_handler(void);
 
 int main(void) {
     test_save_handler();
@@ -26,6 +26,8 @@ int main(void) {
     test_settings_all();
     test_statlist();
     test_rng();
+    test_config_file_handler();
+
 
     printf("---------------------------------------- \n");
     printf("All Generic Tests passed. \n");

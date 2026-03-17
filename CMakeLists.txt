@@ -53,6 +53,7 @@ enable_testing()
 add_executable(Parkhaus_Simulation_Tests
         ${PARKHAUS_TEST_SOURCES}
         test/test_demand.c
+        test/test_config_file_handler.c
 )
 
 target_link_libraries(Parkhaus_Simulation_Tests
