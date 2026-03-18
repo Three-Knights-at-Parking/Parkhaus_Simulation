@@ -156,7 +156,6 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
 
         if (!queue_is_empty(p_gate_queue))
         {
-
             //check if theres enough space left
             required_space = get_vehicle_minimum_space(p_gate_queue->p_head);
             if (required_space > get_open_space(p_parkhouse)) {
@@ -172,7 +171,6 @@ int parkhouse_tick_fill_general(uint32_t current_tick, Parkhaus* p_parkhouse, co
                     return ERROR;
                 }
                 update_on_vehicle_entry(p_parkhouse, p_StatList, p_vehicle, required_space, current_tick);
-
                 //entry from queue
                 entries_done++;
             }
