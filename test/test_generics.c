@@ -50,7 +50,7 @@ static void test_generic_vehicle(void) {
     assert(get_vehicle_minimum_space(NULL) <= ERROR);
     assert(get_vehicle_space_needed(NULL) <= ERROR);
 }
-static void test_vehicle_list(void) {
+static void test_vehicle_list_generic(void) {
     GenericVehicle *head = NULL;
     GenericVehicle *tail = NULL;
     GenericVehicle *v1 = calloc(1, sizeof(GenericVehicle));
@@ -133,7 +133,7 @@ void test_generics() {
     printf("Generics - SimulationObject passed \n");
     test_generic_vehicle();
     printf("Generics - Vehicle passed\n");
-    test_vehicle_list();
+    test_vehicle_list_generic();
     printf("Generics - Vehicle List passed\n");
     test_stat_list();
     printf("Generics - Stat List passed\n");

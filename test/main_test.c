@@ -19,6 +19,8 @@ extern void test_ui_storage(void);
 extern void test_queue(void);
 extern void test_rng(void);
 extern void test_config_file_handler(void);
+extern void test_car(void);
+extern void test_vehicle_list_generic(void);
 
 int main(void) {
     test_save_handler();
@@ -27,6 +29,8 @@ int main(void) {
     test_statlist();
     test_rng();
     test_config_file_handler();
+    test_vehicle_list_generic();
+    test_car();
 
 
     printf("---------------------------------------- \n");
