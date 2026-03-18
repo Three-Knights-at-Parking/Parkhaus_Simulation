@@ -23,6 +23,21 @@ extern void test_car(void);
 extern void test_vehicle_list_generic(void);
 
 int main(void) {
+
+
+    // UI TESTS
+    test_ui();
+    test_ui_home();
+    test_ui_help();
+    test_ui_config();
+    test_ui_simulation();
+    test_ui_statistics();
+    test_ui_storage();
+
+    printf("---------------------------------------- \n");
+    printf("All UI Tests passed. \n");
+    printf("---------------------------------------- \n");
+
     test_save_handler();
     test_generics();
     test_settings_all();
@@ -31,7 +46,6 @@ int main(void) {
     test_config_file_handler();
     test_vehicle_list_generic();
     test_car();
-
 
     printf("---------------------------------------- \n");
     printf("All Generic Tests passed. \n");
@@ -48,21 +62,6 @@ int main(void) {
     printf("---------------------------------------- \n");
     printf("All Simulation Tests passed. \n");
     printf("---------------------------------------- \n");
-
-
-    // UI TESTS
-    test_ui();
-    test_ui_home();
-    test_ui_help();
-    test_ui_config();
-    test_ui_simulation();
-    test_ui_statistics();
-    test_ui_storage();
-
-    printf("---------------------------------------- \n");
-    printf("All UI Tests passed. \n");
-    printf("---------------------------------------- \n");
-
     printf("All test passed.");
     return 0;
 }
