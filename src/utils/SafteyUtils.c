@@ -36,6 +36,7 @@ void print_error_s_internal(const char *msg, const enum Severity severity, const
 }
 
 int checkEmptyString(const char *src) {
+    return src == NULL || src[0] == '\0';
 }
 
 void print_log_s_internal(const char *msg, const char *func_name) {
