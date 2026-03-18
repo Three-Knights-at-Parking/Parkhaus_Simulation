@@ -1,6 +1,6 @@
 # Anleitung: Tests im Codespace ausführen
 
-Diese Anleitung beschreibt, wie die automatisierten Tests der Parkhaus-Simulation in der GitHub Codespaces-Umgebung vorbereitet, kompiliert und ausgeführt werden. Unsere Test-Suite prüft die Kernlogik und das Datei-Handling. Dafür müssen vorab spezifische Dateibedingungen erfüllt sein.
+Diese Anleitung beschreibt, wie die automatisierten Tests der Parkhaus-Simulation in der GitHub Codespaces-Umgebung vorbereitet, kompiliert und ausgeführt werden. Unsere Test-Suite prüft die Kernlogik und das Datei-Handling. Dafür müssen vorab spezifische Dateibedingungen erfüllt sein. Sollte das Codespace gerade erstellt worden sein, dann wird Codespaces den Build wahrscheinlich selber durchführen. Es wird zuerst gefragt, welcher Compiler verwendet werden soll, dort sollte gcc ausgewählt werden. Meistens kann danach direkt zu 3. gesprungen werden, wenn alle Dateien vorbereitet sind.
 
 ## 1. Voraussetzungen & Dateisystem vorbereiten
 

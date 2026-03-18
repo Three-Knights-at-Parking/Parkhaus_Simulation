@@ -17,7 +17,7 @@ Im Gegensatz zu den automatisierten Tests, die eine strikte Datei-Isolation erfo
 
 ## 2. Programm bauen (CMake)
 
-Wir nutzen CMake, um den Build-Prozess sauber vom Quellcode zu trennen. Falls man zuvor bereits die Tests kompiliert hat und sich noch im `build`-Ordner befindet, einfach direkt bei *Schritt 3* weitermachen. Im integrierten Terminal des Codespaces (ausgehend vom Hauptverzeichnis) müssen folgende Befehle ausgeführt werden:
+Wir nutzen CMake, um den Build-Prozess sauber vom Quellcode zu trennen. Falls man zuvor bereits die Tests kompiliert hat und sich noch im `build`-Ordner befindet, einfach direkt bei *Schritt 3* weitermachen. Sollte das Codespace gerade erstellt worden sein, dann wird Codespaces den Build wahrscheinlich selber durchführen. Es wird zuerst gefragt, welcher Compiler verwendet werden soll, dort sollte gcc ausgewählt werden. Meistens kann danach direkt zu 3. gesprungen werden. Im integrierten Terminal des Codespaces (ausgehend vom Hauptverzeichnis) müssen folgende Befehle ausgeführt werden:
 
 **Schritt 1: Build-Verzeichnis erstellen und betreten**
 ```bash
